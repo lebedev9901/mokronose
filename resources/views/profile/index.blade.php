@@ -2,30 +2,24 @@
 
 @section('title', 'Профиль')
 @section('content')
-
-@php
-// Определяем текущую страницу, если нет - profile
-$page = $page ?? 'profile';
-@endphp
-
+<div class="container">
 <div class="profile-container" style="display:flex; gap:20px; align-items:flex-start; min-height:400px;">
 
     {{-- Меню слева --}}
     <div class="profile-menu" style="width:250px;">
-        @include('profile.sections.menu')
+        @include('profile.sections.menu', ['current_page' => $page])
     </div>
 
     {{-- Контент справа --}}
     <div class="profile-content" style="flex:1;">
         @php
-            // Выбираем, какую секцию подключать
             $section = match($page) {
                 'orders'    => 'profile.sections.orders',
                 'pet'       => 'profile.sections.pet',
                 'addresses' => 'profile.sections.addresses',
                 'support'   => 'profile.sections.support',
                 'reviews'   => 'profile.sections.reviews',
-                default     => 'profile.sections.menu', // защита от несуществующей страницы
+                default     => 'profile.sections.profile',
             };
         @endphp
 
@@ -33,9 +27,8 @@ $page = $page ?? 'profile';
     </div>
 </div>
 
-{{-- Форма выхода --}}
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
     @csrf
 </form>
-
+</div>
 @endsection
