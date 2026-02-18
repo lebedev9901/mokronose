@@ -1,0 +1,81 @@
+
+
+.profile__form{
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.profile__form-list{
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile__form-item{
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile__form-input{
+  width: 350px;
+  font-size: 18px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border: 1px solid #2A6E71;
+  color: #333;
+}
+
+.profile__form-input:focus{
+  outline: none;
+}
+
+.profile__form-input[type="submit"]{
+  background-color: #2A6E71;
+  color: white;
+}
+
+.profile__form-input[type="submit"]:hover{
+  background-color: #2A6E7199;
+  color: white;
+  cursor: pointer;
+}
+
+
+.profile__image-block{
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile__image{
+  width: 300px;
+  height: 250px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  background-color: #999;
+}
+
+.button__img{
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+}
+
+.button__img button{
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.button__img button:hover{
+  border-bottom: 1px solid black;
+}

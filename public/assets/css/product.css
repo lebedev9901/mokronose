@@ -1,0 +1,135 @@
+
+
+.product-page {
+    padding: 80px 0;
+}
+
+.breadcrumbs {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.breadcrumbs a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.product-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+}
+
+.product-gallery img {
+    width: 100%;
+    border-radius: 20px;
+}
+
+.product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-title {
+    font-size: 42px;
+}
+
+.product-short-desc {
+    font-size: 18px;
+    color: #555;
+}
+
+.product-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+}
+
+.product-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #E76F51;
+}
+
+.product-order-btn {
+    margin-top: 20px;
+    padding: 18px;
+    font-size: 20px;
+    border-radius: 16px;
+    border: none;
+    background: #F4A261;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.product-order-btn:hover {
+    background: #E76F51;
+}
+
+.product-help {
+    font-size: 14px;
+    color: #777;
+}
+
+
+
+
+/* отзывы товара */
+
+
+.product-reviews {
+    padding: 80px 0;
+    background: #f9f9f9;
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.review-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.06);
+}
+
+.review-text {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.review-author {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.review-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.review-add-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 14px 30px;
+    border-radius: 30px;
+    background: transparent;
+    border: 2px solid #F4A261;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.review-add-btn:hover {
+    background: #F4A261;
+}
+

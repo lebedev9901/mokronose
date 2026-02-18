@@ -1,0 +1,116 @@
+.product__action{
+    flex-direction: row;
+    gap: 10px;
+}
+
+.product__visual{
+    width: 100%;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product__admin-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+    transition: transform .3s ease, box-shadow .3s ease;
+    -webkit-transition: transform .3s ease, box-shadow .3s ease;
+    -moz-transition: transform .3s ease, box-shadow .3s ease;
+    -ms-transition: transform .3s ease, box-shadow .3s ease;
+    -o-transition: transform .3s ease, box-shadow .3s ease;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+    height: 400px;
+    width: 300px;
+}
+
+
+
+.product__admin-image img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.product__admin-info {
+    padding: 25px;
+}
+
+.product__admin-title {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.product__admin-desc {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.product__admin-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.product__admin-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #E76F51;
+}
+
+.product__admin-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn__admin-cart,
+.btn__admin-order {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.btn__admin-cart {
+    background: transparent;
+    border: 2px solid #F4A261;
+}
+
+.btn__admin-cart:hover {
+    background: #F4A261;
+}
+
+.btn__admin-order {
+    background: #E76F51;
+    border: none;
+    color: #fff;
+}
+
+.btn__admin-order:hover {
+    background: #d85b3f;
+}
+
+.product__admin-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: #F4A261;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.product__admin-btn:hover {
+    background: #E76F51;
+}

@@ -1,0 +1,10 @@
+.category{
+    flex-direction: row;
+    gap: 20px;
+    padding: 30px;
+}
+
+.category_visual{
+    width: 100%;
+   
+}

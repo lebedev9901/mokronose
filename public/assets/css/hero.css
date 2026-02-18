@@ -1,0 +1,70 @@
+.hero__contain{
+    min-height: 70vh;
+    background:        linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),        url("../img/hero.jpg") center / cover no-repeat;
+    color: #fff;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+    position: relative;
+}
+
+.hero__title{
+  font-size: 52px;
+  width: 100%;
+  text-align: center;
+  text-shadow: 2px 2px 13px black;
+}
+
+.hero__subtitle{
+  font-size: 26px;
+  opacity: 0.9;
+    text-shadow: 2px 2px 5px black;
+    flex-direction: row;
+    gap: 24px;
+}
+
+.hero__subtitle-item{
+  background: rgba(255,255,255,.1);
+  padding: 12px 18px;
+  width: 250px;
+justify-content: center;
+  height: 100px;
+  align-items: center;
+  display: flex;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
+}
+
+.hero__btn{
+  font-size: 22px;
+  width: 350px;
+  padding: 16px 36px;
+  border-radius: 25px;
+  border: 5px solid #F4A261;
+  color: #f5f5f5;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  text-shadow: 1px 1px  10px black;
+  margin-top: 100px;
+  text-align: center;
+}
+
+.hero__btn:hover{
+  border: 5px solid #E76F51;
+  color: #E76F51;
+
+}
