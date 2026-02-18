@@ -6,7 +6,7 @@
 <h1>Корзина</h1>
 
 @if($items->isEmpty())
-    <p>Корзина пуста</p>
+    <p>Корзина пуста. Перейдите в <a href="{{route('catalog')}}">каталог</a> для заказа</p>
 @else
 <table>
     <thead>
@@ -60,7 +60,7 @@
             </tr>
         </tfoot>
 </table>
-@endif
+
 
 <form action="{{ route('cart.clear') }}" method="POST">
     @csrf
@@ -73,5 +73,6 @@
     </form>
 @else
     <p>Чтобы оформить заказ, пожалуйста, <a href="{{ route('login') }}">войдите</a>.</p>
+@endif
 @endif
 @endsection

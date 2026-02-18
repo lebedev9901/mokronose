@@ -63,7 +63,7 @@
                                               
                         <div class="header__enter flex">
                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard()->check()): ?>
-                                    <a href="<?php echo e(route('dashboard')); ?>" class="btn-reset header__user">
+                                    <a href="<?php echo e(route('profile.index')); ?>" class="btn-reset header__user">
                                         ЛК   
                                     </a>
                                 <?php else: ?>

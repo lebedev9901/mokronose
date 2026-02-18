@@ -51,22 +51,19 @@ Route::post('register', [RegisteredUserController::class, 'store']);
 Route::post('/orders', [OrderController::class, 'store'])->name('order.store');
 Route::get('/orders', [OrderController::class, 'store'])->name('order.success');
 
-// Route::get('/', function () {
-//     return view('home');
-// });
-
-// Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
-// Route::get('/catalog/{product}', [CatalogController::class, 'show'])->name('catalog.show');
 
 Route::get('/dashboard', function () {
     return redirect('/profile');
 })->middleware(['auth'])->name('dashboard');
 
-// Route::middleware('auth')->get('/profile', [ProfileController::class, 'index']);
-
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/{page}', [ProfileController::class, 'index'])->name('profile.page');
+   
+
+
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 

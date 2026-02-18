@@ -25,7 +25,19 @@
     -o-border-radius: 18px;
 }
 
+.dashboard__list-link {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #000;
+    background: #f7f7f7;
+}
 
+.dashboard__list-link.active {
+    background: #003566;
+    color: #fff;
+}
 
 .dashboard__list-item:hover {
     transform: translateY(-6px);

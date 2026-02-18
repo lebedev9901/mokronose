@@ -1,23 +1,23 @@
-@extends('layouts.app')
 
-@section('title', 'Профиль')
-@section('content')
 
-@php
+<?php $__env->startSection('title', 'Профиль'); ?>
+<?php $__env->startSection('content'); ?>
+
+<?php
 // Определяем текущую страницу, если нет - profile
 $page = $page ?? 'profile';
-@endphp
+?>
 
 <div class="profile-container" style="display:flex; gap:20px; align-items:flex-start; min-height:400px;">
 
-    {{-- Меню слева --}}
+    
     <div class="profile-menu" style="width:250px;">
-        @include('profile.sections.menu')
+        <?php echo $__env->make('profile.sections.menu', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 
-    {{-- Контент справа --}}
+    
     <div class="profile-content" style="flex:1;">
-        @php
+        <?php
             // Выбираем, какую секцию подключать
             $section = match($page) {
                 'orders'    => 'profile.sections.orders',
@@ -27,15 +27,17 @@ $page = $page ?? 'profile';
                 'reviews'   => 'profile.sections.reviews',
                 default     => 'profile.sections.menu', // защита от несуществующей страницы
             };
-        @endphp
+        ?>
 
-        @include($section)
+        <?php echo $__env->make($section, array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 </div>
 
-{{-- Форма выхода --}}
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
-    @csrf
+
+<form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display:none;">
+    <?php echo csrf_field(); ?>
 </form>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\xampp\htdocs\mokronose\resources\views/profile/index.blade.php ENDPATH**/ ?>

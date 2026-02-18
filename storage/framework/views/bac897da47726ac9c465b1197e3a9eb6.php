@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/product.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/previews.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/profile.css')); ?> ">
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/dasboard.css')); ?> ">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/dashboard.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/form.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/product__visual.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/category_visual.css')); ?> ">

@@ -63,7 +63,7 @@
                                               
                         <div class="header__enter flex">
                                @auth
-                                    <a href="{{route('dashboard')}}" class="btn-reset header__user">
+                                    <a href="{{route('profile.index')}}" class="btn-reset header__user">
                                         ЛК   
                                     </a>
                                 @else

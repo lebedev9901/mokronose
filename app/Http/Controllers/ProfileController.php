@@ -15,10 +15,20 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
 
-    public function index()
-    {
-        return view('index');
-    }
+    public function index(Request $request)
+{
+    $page = $page ?? 'profile'; // стартовая страница — profile
+    $section = match($page) {
+        'orders'    => 'profile.sections.orders',
+        'addresses' => 'profile.sections.addresses',
+        'pet'       => 'profile.sections.pet',
+        'support'   => 'profile.sections.support',
+        'reviews'   => 'profile.sections.reviews',
+        default     => 'profile.sections.profile',
+    };
+
+    return view('profile.index', compact('section', 'page'));
+}
 
     public function edit(Request $request): View
     {
