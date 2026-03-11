@@ -67,10 +67,9 @@
     <button type="submit">Очистить корзину</button>
 </form>
 @if(Auth::check())
-    <form action="{{ route('order.store') }}" method="POST">
-        @csrf
-        <button type="submit">Оформить заказ</button>
-    </form>
+    <a href="{{ route('order.checkout') }}" class="btn btn-success">
+    Оформить заказ
+</a>
 @else
     <p>Чтобы оформить заказ, пожалуйста, <a href="{{ route('login') }}">войдите</a>.</p>
 @endif

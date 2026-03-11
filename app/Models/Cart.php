@@ -32,4 +32,9 @@ class Cart extends Model
             return $item->qty * $item->product->price;
         });
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'products_id');
+    }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('support_chats', function(Blueprint $table){
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['open', 'closed'])->default('open');
             $table->timestamps();
         });

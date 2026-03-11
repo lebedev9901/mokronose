@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\SupportChatMessage;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartController;
@@ -7,8 +8,12 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SupportChatController;
+use App\Http\Controllers\SupportController;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/admin/support-chat/{chatId}', SupportChatMessage::class)->name('livewire.support-chat-messages');
 
 
 
@@ -48,15 +53,29 @@ Route::post('register', [RegisteredUserController::class, 'store']);
 // });
 
 
-Route::post('/orders', [OrderController::class, 'store'])->name('order.store');
-Route::get('/orders', [OrderController::class, 'store'])->name('order.success');
+Route::middleware(['auth'])->group(function (){
+
+    
+
+    // Страница выбора доставки и оплаты
+    Route::get('/orders/checkout', [OrderController::class, 'checkout'])->name('order.checkout');
+
+    // Подтверждение оформления
+    Route::post('/orders/checkout', [OrderController::class, 'confirm'])->name('order.confirm');
+
+
+});
+
+//  Route::post('/orders', [OrderController::class, 'store'])->name('order.store');
 
 
 Route::get('/dashboard', function () {
     return redirect('/profile');
 })->middleware(['auth'])->name('dashboard');
 
-
+    Route::get('/profile/section/orders', [OrderController::class, 'index'])->name('profile.orders');
+    Route::get('/chat/{id}', [SupportChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{id}/send', [SupportChatController::class, 'send'])->name('chat.send');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/{page}', [ProfileController::class, 'index'])->name('profile.page');

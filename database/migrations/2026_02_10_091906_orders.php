@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['new', 'cinfirmed', 'canceled'])->default('new');
             $table->decimal('total_price', 10, 2);
+            $table->text('delivery_method')->nullable();
+            $table->text('payment_method')->nullable();
             $table->text('support_comment')->nullable();
             $table->timestamps();
         });

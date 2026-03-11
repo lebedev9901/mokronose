@@ -13,6 +13,22 @@ class Order extends Model
         'status',
         'total_price',
         'support_comment',
+        'delivery_method',
+        'payment_method',
     ];
 
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function chat()
+    {
+        return $this->hasOne(SupportChat::class, 'order_id', 'id');
+    }
 }

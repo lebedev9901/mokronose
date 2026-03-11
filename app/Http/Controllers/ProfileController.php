@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,18 @@ class ProfileController extends Controller
 
         public function index($page = null)
         {
+            
+            $user = auth()->user();
+
+            // Если страница заказов
+            if ($page === 'orders') {
+                // Получаем все заказы текущего пользователя
+                $orders = Order::where('user_id', $user->id)->get();
+
+                // Передаем переменную в view
+                return view('profile.sections.orders', compact('orders'));
+            }
+
             $page = $page ?? 'profile'; // стартовая страница — profile
 
             return view('profile.index', compact('page'));
@@ -65,4 +78,6 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    
 }
