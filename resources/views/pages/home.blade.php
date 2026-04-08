@@ -25,7 +25,7 @@
                         <a href="{{route('catalog')}}" class="hero__btn ">
                             Перейти в каталог
                         </a>
-                        <p>
+                        <p class="hero__note">
                             * Все товары сертифицированы. Актуальную информацию читайте в описании товара
                         </p>
                     </div>
@@ -81,57 +81,42 @@
         <h2 class="section__title">Популярные лакомства</h2>
 
         <div class="products__contain">
+            @foreach($products as $product)
             <article class="product__card">
-                <img src="img/product-1.jpg" alt="Говяжье лёгкое">
-                
-                <h3>Говяжье лёгкое</h3>
+                @php
+                        $preview = $product->images->where('is_preview', true)->first()
+                            ?? $product->images->first();
+                    @endphp
+
+                    @if ($preview)
+                        <img src="{{ asset('storage/' . $preview->image) }}">
+                    @endif
+                <h3>{{$product->title}}</h3>
                 <p class="product__desc">
-                    Подходит для щенков и взрослых собак
+                    {{$product->description}}
                 </p>
 
                 <div class="product__meta">
-                    <span>50 г</span>
-                    <span class="price">350 ₽</span>
+                    <span>{{$product->width}}</span>
+                    <span class="price">{{$product->price}}</span>
                 </div>
 
-                <button class="btn-accent">
-                    Заказать
-                </button>
-            </article>
-            <article class="product__card">
-                <img src="img/hrustiki.png" alt="Говяжье лёгкое">
-                
-                <h3>Говяжье лёгкое</h3>
-                <p class="product__desc">
-                    Подходит для щенков и взрослых собак
-                </p>
-
-                <div class="product__meta">
-                    <span>50 г</span>
-                    <span class="price">350 ₽</span>
+                <div class="product__actions">
+                     <form>
+                        @csrf
+                        <button type="button" class="btn btn-success mt-2 add-to-cart product__btn" data-id="{{ $product->id }}">
+                            В корзину
+                        </button>
+                    </form>    
+                    <a href="{{route('product', $product->id)}}" class="btn-accent product__link">
+                        Подробнее
+                    </a>
+                   
                 </div>
-
-                <button class="btn-accent">
-                    Заказать
-                </button>
+              
+                 
             </article>
-            <article class="product__card">
-                <img src="img/logotype.png" alt="Говяжье лёгкое">
-                
-                <h3>Говяжье лёгкое</h3>
-                <p class="product__desc">
-                    Подходит для щенков и взрослых собак
-                </p>
-
-                <div class="product__meta">
-                    <span>50 г</span>
-                    <span class="price">350 ₽</span>
-                </div>
-
-                <button class="btn-accent">
-                    Заказать
-                </button>
-            </article>
+            @endforeach
         </div>
     </div>
 </section>
@@ -144,27 +129,27 @@
 
         <div class="process-grid">
             <div class="process-card">
-                <span class="step-num">01</span>
-                <h3>Отбор сырья</h3>
-                <p>Используем только свежее мясо от проверенных поставщиков</p>
+                <span class="step-num">#1</span>
+                <h3 class="process-title">Отбор сырья</h3>
+                <p class="process-descr">Используем только свежее мясо от проверенных поставщиков</p>
             </div>
 
             <div class="process-card">
-                <span class="step-num">02</span>
-                <h3>Ручная обработка</h3>
-                <p>Нарезка и подготовка без автоматизированных линий</p>
+                <span class="step-num">#2</span>
+                <h3 class="process-title">Ручная обработка</h3>
+                <p class="process-descr">Нарезка и подготовка без автоматизированных линий</p>
             </div>
 
             <div class="process-card">
-                <span class="step-num">03</span>
-                <h3>Сушка</h3>
-                <p>Низкотемпературная сушка для сохранения пользы</p>
+                <span class="step-num">#3</span>
+                <h3 class="process-title">Сушка</h3>
+                <p class="process-descr">Низкотемпературная сушка для сохранения пользы</p>
             </div>
 
             <div class="process-card">
-                <span class="step-num">04</span>
-                <h3>Контроль и упаковка</h3>
-                <p>Проверка каждой партии и герметичная упаковка</p>
+                <span class="step-num">#4</span>
+                <h3 class="process-title">Контроль и упаковка</h3>
+                <p class="process-descr">Проверка каждой партии и герметичная упаковка</p>
             </div>
         </div>
     </div>
@@ -174,36 +159,19 @@
         <h2 class="section-title">Отзывы наших клиентов</h2>
 
         <div class="reviews-grid">
+        @foreach($reviews as $review)
             <article class="review-card">
                 <p class="review-text">
-                    Собака в восторге, беру уже второй раз. Отличное качество!
+                    {{$review->text}}
                 </p>
                 <div class="review-author">
-                    <img src="img/hrustiki.png" alt="Отзыв">
-                    <div>
-                        <strong>Анна</strong>
-                        <span>Корги, 2 года</span>
-                    </div>
+                        <strong class="review-name">{{$review->user->name}}</strong>
+                        <span class="reviews-product">{{$review->product->title}}</span>
+                        <span class="review-rating">⭐ {{$review->rating}}</span>
                 </div>
             </article>
-
-            <article class="review-card">
-                <p class="review-text">
-                    Очень порадовал состав и быстрая обратная связь
-                </p>
-                <div class="review-author">
-                    <img src="img/logotype.png" alt="Отзыв">
-                    <div>
-                        <strong>Игорь</strong>
-                        <span>Хаски</span>
-                    </div>
-                </div>
-            </article>
+            @endforeach
         </div>
-
-        <button class="btn-outline">
-            Все отзывы
-        </button>
     </div>
 </section>
 <section class="faq">
@@ -251,4 +219,7 @@
         </div>
     </div>
 </section>
+<script>
+console.log('JS работает');
+</script>
 @endsection

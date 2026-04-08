@@ -6,6 +6,9 @@
 
 <div class="container">
 
+    <button type="button" onclick="window.history.back()">
+    ← Назад
+</button>
     <h2>Чат поддержки (заказ #{{ $chat->order_id }})</h2>
 
     <div class="chat-container" style="max-width:600px; margin:auto;">

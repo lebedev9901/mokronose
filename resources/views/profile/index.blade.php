@@ -3,15 +3,15 @@
 @section('title', 'Профиль')
 @section('content')
 <div class="container">
-<div class="profile-container" style="display:flex; gap:20px; align-items:flex-start; min-height:400px;">
+<div class="profile-container" >
 
     {{-- Меню слева --}}
-    <div class="profile-menu" style="width:250px;">
+    <div class="profile-menu" >
         @include('profile.sections.menu', ['current_page' => $page])
     </div>
 
     {{-- Контент справа --}}
-    <div class="profile-content" style="flex:1;">
+    <div class="profile-content" >
         @php
             $section = match($page) {
                 'orders'    => 'profile.sections.orders',
@@ -23,7 +23,7 @@
             };
         @endphp
 
-        @include($section)
+        @include($section, ['page' => $page, 'orders' => $orders])
     </div>
 </div>
 

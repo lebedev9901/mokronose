@@ -3,11 +3,14 @@
 use App\Filament\Pages\SupportChatMessage;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\auth\VkAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SupportChatController;
 use App\Http\Controllers\SupportController;
 use Filament\Facades\Filament;
@@ -17,12 +20,13 @@ Route::get('/admin/support-chat/{chatId}', SupportChatMessage::class)->name('liv
 
 
 
-Route::view('/', 'pages.home')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product');
-
-Route::post('/cart/add/{product}', [CartController::class, 'add'])
-    ->name('cart.add');
+// Route::post('/cart/add/{product}', [CartController::class, 'add'])
+    // ->name('cart.add');
+Route::post('/cart/add-ajax/{product}', [CartController::class, 'addAjax'])->name('cart.add');
+Route::get('/cart/count', [CartController::class, 'count']);
 
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
@@ -31,10 +35,8 @@ Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear')
 Route::put('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
 
 
-Route::view('/product', 'pages.product')->name('product');
-
 Route::view('/aboute', 'pages.aboute')->name('aboute');
-Route::view('/reviews', 'pages.reviews')->name('reviews');
+Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');
 Route::view('/pay', 'pages.pay')->name('pay');
 
 
@@ -51,8 +53,13 @@ Route::post('register', [RegisteredUserController::class, 'store']);
 //     Route::view('/categories', 'admin.categories')->name('admin.categories');
 //     Route::view('/products', 'admin.products')->name('admin.products');
 // });
+Route::get('/auth/vk', [VkAuthController::class, 'redirect']);
+Route::get('/auth/vk/callback', [VkAuthController::class, 'callback']);
+use Laravel\Socialite\Facades\Socialite;
 
-
+Route::get('/debug-vk', function () {
+    dd(Socialite::driver('vkontakte'));
+});
 Route::middleware(['auth'])->group(function (){
 
     
@@ -77,9 +84,13 @@ Route::get('/dashboard', function () {
     Route::get('/chat/{id}', [SupportChatController::class, 'show'])->name('chat.show');
     Route::post('/chat/{id}/send', [SupportChatController::class, 'send'])->name('chat.send');
 Route::middleware('auth')->group(function () {
+
+    Route::get('/profile/order/{order}', [OrderController::class, 'show'])->name('orders.show');
+
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/profile/{page}', [ProfileController::class, 'index'])->name('profile.page');
-   
+  
+    Route::get('/profile/{page?}', [ProfileController::class, 'index'])->name('profile.page');
+
 
 
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

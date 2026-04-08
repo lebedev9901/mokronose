@@ -27,7 +27,14 @@ if(auth()->check() && auth()->user()->role === 'admin'){
                 @elseif($item['page'] === 'admin')
                     <a href="/admin" class="dashboard__list-link {{ $isActive ? 'active' : '' }}">
                 @else
-                    <a href="{{ $item['page'] === 'profile' ? route('profile.index') : route('profile.page', $item['page']) }}" class="dashboard__list-link {{ $isActive ? 'active' : '' }}">
+                    @php
+$route = $item['page'] === 'profile'
+    ? route('profile.page')
+    : route('profile.page', ['page' => $item['page']]);
+@endphp
+
+<a href="{{ $route }}"
+   class="dashboard__list-link {{ $isActive ? 'active' : '' }}">
                 @endif
                         <h4 class="dashboard__link-title">{{ $item['title'] }}</h4>
                         <p class="dashboard__link-descr">{{ $item['descr'] }}</p>

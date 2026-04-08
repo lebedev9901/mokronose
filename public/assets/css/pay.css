@@ -1,0 +1,165 @@
+:root {
+  --color-bg: #FAF7F2;        /* основной фон (теплый, не серый) */
+  --color-surface: #FFFFFF;   /* карточки */
+  --color-primary: #8B5A2B;   /* основной (мясной / коричневый) */
+  --color-primary-hover: #6F451F;
+
+  --color-accent: #E8A96B;    /* вкусный акцент (лакомства) */
+  --color-accent-soft: #F3D2B3;
+
+  --color-text: #2B2B2B;
+  --color-text-light: #6B6B6B;
+
+  --color-border: #E5DED5;
+}
+
+.pay__container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.pay__title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    font-size: 60px;
+    margin-bottom: 40px;
+}
+
+.pay__card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: 0.3s;
+    position: relative;
+    min-height: 300px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% / 2 - 20px);
+}
+
+.pay__card-text{
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+}
+
+.pay__card-text-title{
+    font-size: 40px;
+    width: 100%;
+}
+.pay__card-text-descr{
+    font-size: 20px;
+    z-index: 4;
+    color: var(--color-text);
+}
+.pay__card-num{
+    position: absolute;
+    z-index: 1;
+    font-size: 200px;
+    opacity: .4;
+    left: 150px;
+    color: var(--color-accent);
+}
+
+.pay__card:hover {
+     transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+    background-color: var(--color-accent-soft);
+}
+
+
+
+.pay__card-list {
+  flex-direction: row;
+  gap: 30px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  padding: 10px;
+}
+
+.pay__card-list li {
+    width: calc(100% / 3 - 30px);
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+    gap: 10px;
+    flex-direction: column;
+    font-size: 30px;
+    justify-content: space-around;
+}
+
+.card__img{
+    width: 70px;
+}
+
+.cdek{
+    width: 150px;
+}
+
+.text__list{
+    flex-direction: row;
+    gap: 20px;
+}
+
+.text__list li{
+    font-size: 26px;
+}
+
+
+.pay__delivery-services {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.pay__service {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg);
+}
+
+.pay__service img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+
+.pay__list {
+    list-style: disc;
+    padding-left: 20px;
+    margin-bottom: 20px;
+    color: var(--color-text);
+    z-index: 4;
+}
+
+.pay__list {
+    list-style: disc;
+    padding-left: 20px;
+    margin-bottom: 20px;
+    color: var(--color-text);
+}
+
+.pay__card-text {
+    color: var(--color-text);
+    margin-bottom: 10px;
+}

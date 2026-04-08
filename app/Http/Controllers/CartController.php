@@ -116,4 +116,55 @@ class CartController extends Controller
         }
     }
 
+    public function addAjax(Product $product)
+    {
+        $sessionId = session()->getId();
+        $userId = Auth::id();
+
+        $cart = Cart::firstOrCreate(
+            $userId ? ['user_id' => $userId] : ['session_id' => $sessionId],
+            ['user_id' => $userId ?: null, 'session_id' => $userId ? null : $sessionId],
+        );
+
+        $cartItem = $cart->items()->where('product_id', $product->id)->first();
+
+        if($cartItem ){
+            $cartItem->increment('qty');
+        }else{
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'user_id' => $userId ?: null,
+                'session_id' => $userId ? null : $sessionId,
+                'product_id' => $product->id,
+                'qty' => 1
+            ]);
+        }
+
+        $count = $cart->items()->sum('qty');
+
+        return response()->json([
+            'success' => true,
+            'count' => $count 
+        ]);
+
+    }
+
+    public function count()
+{
+    $sessionId = session()->getId();
+    $userId = Auth::id();
+
+    $cart = Cart::where(function($q) use ($userId, $sessionId){
+        if($userId){
+            $q->where('user_id', $userId);
+        } else {
+            $q->where('session_id', $sessionId);
+        }
+    })->first();
+
+    $count = $cart ? $cart->items()->sum('qty') : 0;
+
+    return response()->json(['count' => $count]);
+}
+
 }
