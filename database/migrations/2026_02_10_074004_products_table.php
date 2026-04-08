@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('preview');
             $table->string('weight');
             $table->decimal('price', 10, 2);
             $table->float('rating')->default(0);

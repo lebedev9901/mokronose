@@ -5,60 +5,93 @@
 @section('content')
 <div class="container">
 
-    <h1>Оформление заказа</h1>
+  <div class="checkout">
 
-    {{-- Состав заказа --}}
-    <div class="order-summary">
-        <h3>Ваш заказ</h3>
+    <h1 class="section-title">Оформление заказа</h1>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Товар</th>
-                    <th>Кол-во</th>
-                    <th>Цена</th>
-                    <th>Сумма</th>
-                </tr>
-            </thead>
-            <tbody>
+    <div class="checkout-grid">
+
+        <!-- ЛЕВАЯ ЧАСТЬ -->
+        <form action="{{ route('order.confirm') }}" method="POST" class="checkout-form"  id="checkout-form">
+            @csrf
+
+            <!-- КОНТАКТЫ -->
+            <div class="checkout-block">
+                <h3>Контактные данные</h3>
+
+                <input type="text" name="name" placeholder="Ваше имя" required>
+                <input type="tel" name="phone" placeholder="Телефон" required>
+            </div>
+
+            <!-- ДОСТАВКА -->
+            <div class="checkout-block">
+                <h3>Доставка</h3>
+
+                <label class="radio">
+                    <input type="radio" name="delivery_method" value="pickup">
+                    Самовывоз
+                </label>
+
+                <label class="radio">
+                    <input type="radio" name="delivery_method" value="courier">
+                    Курьер (Яндекс)
+                </label>
+
+                <label class="radio">
+                    <input type="radio" name="delivery_method" value="cdek">
+                    СДЭК
+                </label>
+
+                <label class="radio">
+                    <input type="radio" name="delivery_method" value="post">
+                    Почта России
+                </label>
+            </div>
+
+            <!-- ОПЛАТА -->
+            <div class="checkout-block">
+                <h3>Оплата</h3>
+
+                <label class="radio">
+                    <input type="radio" name="payment_method" value="cash">
+                    Наличными
+                </label>
+
+                <label class="radio">
+                    <input type="radio" name="payment_method" value="online">
+                    Онлайн
+                </label>
+            </div>
+
+        </form>
+
+        <!-- ПРАВАЯ ЧАСТЬ -->
+        <div class="checkout-summary">
+
+            <h3>Ваш заказ</h3>
+
+            <div class="checkout-items">
                 @foreach($cartItems as $item)
-                    <tr>
-                        <td>{{ $item->product->title }}</td>
-                        <td>{{ $item->qty }}</td>
-                        <td>{{ $item->product->price }}</td>
-                        <td>{{ number_format($item->product->price, 2) }} ₽</td>
-                        <td>{{ number_format($item->product->price * $item->qty, 2) }} ₽</td>
-                    </tr>
+                    <div class="checkout-item">
+                        <span>{{ $item->product->title }}</span>
+                        <span>{{ $item->qty }} × {{ $item->product->price }} ₽</span>
+                    </div>
                 @endforeach
-            </tbody>
-        </table>
+            </div>
 
-        <h3>Итого: {{ number_format($total, 2) }} ₽</h3>
+            <div class="checkout-total">
+                <span>Итого:</span>
+                <strong>{{ number_format($total, 2) }} ₽</strong>
+            </div>
+
+            <button type="submit" form="checkout-form" class="btn-primary">
+                Подтвердить заказ
+            </button>
+
+        </div>
+
     </div>
 
-    <hr>
-
-    <form action="{{ route('order.confirm') }}" method="POST">
-        @csrf
-
-        <h3>Способ доставки</h3>
-        <label><input type="radio" name="delivery_method" value="pickup"> Самовывоз</label><br>
-       <label><input type="radio" name="delivery_method" value="courier" required> Янекс.Маркет</label><br>
-        <label><input type="radio" name="delivery_method" value="post"> СДЭК</label><br>
-        <label><input type="radio" name="delivery_method" value="post"> Почта россии</label>
-
-        <hr>
-
-        <h3>Способ оплаты</h3>
-        <label><input type="radio" name="payment_method" value="cash"> Наличные при получении (Самовывоз)</label><br>
-        <label><input type="radio" name="payment_method" value="online"> Онлайн-оплата (Перевод)</label>
-
-        <hr>
-
-        <button type="submit" class="btn btn-primary">
-            Подтвердить заказ
-        </button>
-    </form>
-
+</div>
 </div>
 @endsection

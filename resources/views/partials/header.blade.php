@@ -40,12 +40,14 @@
                         </ul>
                     </div>
                     <div class="header__contain-bottom flex">
-                        <div class="header__search">
-                            <input type="search" name="" id="">
-                            <button class="btn-reset">
+                     
+                            <form class="header__search" action="{{route('catalog')}}" method="GET">
+                            <input type="search" name="search" value="{{request('search')}}">
+                            <button class="btn-reset" type="submit">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title>Search SVG Icon</title><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21l-4.486-4.494M19 10.5a8.5 8.5 0 1 1-17 0a8.5 8.5 0 0 1 17 0Z"/></svg>
                             </button>
-                        </div>                     
+                        </form>
+                                             
                         <ul class="header__links list-reset flex">
                             <li class="header__links-item">
                                 <a href="{{ route('catalog')}}">Каталог</a>
@@ -75,7 +77,7 @@
                             
 
                             <a  href="{{route('cart')}}" class="btn-reset">
-                                Корзина  <span class="cart-count"></span>
+                                Корзина  <span class="cart-count" id="cart-count">0</span>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#prefix__clip0_702_2)" fill="#f5f5f5"><path d="M7 24a2 2 0 100-4 2 2 0 000 4zM17 24a2 2 0 100-4 2 2 0 000 4zM22.984 6.018A3.675 3.675 0 0020.364 5H5.654l-.263-2.062A3.328 3.328 0 002.087 0H1.5A1.5 1.5 0 000 1.5 1.5 1.5 0 001.5 3h.587a.331.331 0 01.326.3l1.5 11.759A3.327 3.327 0 007.217 18h10.122a5.5 5.5 0 005.3-4.042l1.246-4.531a3.489 3.489 0 00-.901-3.409zm-3.234 7.145A2.508 2.508 0 0117.339 15H7.217a.33.33 0 01-.325-.3L6.037 8h14.477a.5.5 0 01.486.632l-1.25 4.531z"/></g><defs><clipPath id="prefix__clip0_702_2"><path fill="#fff" d="M0 0h24v24H0z"/></clipPath></defs></svg>
                             </a>
                         </div>

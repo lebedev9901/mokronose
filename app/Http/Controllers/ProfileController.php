@@ -16,23 +16,24 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
 
-        public function index($page = null)
+        public function index(Request $request, $page = 'profile')
         {
             
             $user = auth()->user();
 
+            $orders = collect();
+
             // Если страница заказов
             if ($page === 'orders') {
-                // Получаем все заказы текущего пользователя
-                $orders = Order::where('user_id', $user->id)->get();
-
-                // Передаем переменную в view
-                return view('profile.sections.orders', compact('orders'));
+                $orders = auth()->user()
+                    ->orders()
+                    ->latest()
+                    ->paginate(10); // ✅ ОБЯЗАТЕЛЬНО
             }
 
             $page = $page ?? 'profile'; // стартовая страница — profile
 
-            return view('profile.index', compact('page'));
+            return view('profile.index', ['page' => $page,'orders' => $orders], compact('user'));
         }
 
     public function edit(Request $request): View

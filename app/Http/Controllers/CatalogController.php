@@ -14,15 +14,22 @@ class CatalogController extends Controller
 
         $query = Product::with('categories');
 
-        if($request->category){
+        // 🔍 поиск
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // 🏷 фильтр по категории
+        if ($request->filled('category')) {
             $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('id', $request->category);
+                $q->where('categories.id', $request->category);
             });
         }
 
-        $products = $query->latest()->paginate(9);
+        $products = $query->latest()->paginate(9)->withQueryString();
 
-        // return view('home');
         return view('catalog.index', compact('products', 'categories'));
     }
+
+    
 }

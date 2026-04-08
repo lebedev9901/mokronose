@@ -3,75 +3,105 @@
 
 @section('title', 'корзина')
 @section('content')
-<h1>Корзина</h1>
+<div class="container">
 
-@if($items->isEmpty())
-    <p>Корзина пуста. Перейдите в <a href="{{route('catalog')}}">каталог</a> для заказа</p>
-@else
-<table>
-    <thead>
-        <tr>
-            <th>Товар</th>
-            <th>Количество</th>
-            <th>Цена</th>
-            <th>Сумма</th>
-            <th>Действие</th>
-        </tr>
-    </thead>
-    <tbody>
-       @foreach($items as $item)
-<tr>
-    <td>{{ $item->product->title }}</td>
-    <td>{{ number_format($item->product->price, 2) }} ₽</td>
-    <td>
-        <form action="{{ route('cart.update', $item) }}" method="POST" style="display:inline-block;">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="qty" value="{{ $item->qty - 1 }}">
-            <button type="submit" @if($item->qty <= 1) disabled @endif>-</button>
-        </form>
+    <div class="cart">
 
-        {{ $item->qty }}
+    <h1 class="section-title">Корзина</h1>
 
-        <form action="{{ route('cart.update', $item) }}" method="POST" style="display:inline-block;">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="qty" value="{{ $item->qty + 1 }}">
-            <button type="submit">+</button>
-        </form>
-    </td>
-    <td>{{ number_format($item->qty * $item->product->price, 2) }} ₽</td>
-    <td>
-        <form action="{{ route('cart.remove', $item) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Удалить</button>
-        </form>
-    </td>
-</tr>
-@endforeach
-    </tbody>
-     <tfoot>
-            <tr>
-                <td><strong>Всего товаров:</strong></td>
-                <td></td>
-                <td>{{ $cart->total_qty }}</td>
-                <td>{{ number_format($cart->total_price, 2) }} ₽</td>
-            </tr>
-        </tfoot>
-</table>
+    @if($items->isEmpty())
+        <div class="cart-empty">
+            <p>Корзина пуста</p>
+            <a href="{{route('catalog')}}" class="btn-primary">Перейти в каталог</a>
+        </div>
+    @else
 
+    <div class="cart-grid">
 
-<form action="{{ route('cart.clear') }}" method="POST">
-    @csrf
-    <button type="submit">Очистить корзину</button>
-</form>
-@if(Auth::check())
-    <a href="{{ route('order.checkout') }}" class="btn btn-success">
-    Оформить заказ
-</a>
-@else
-    <p>Чтобы оформить заказ, пожалуйста, <a href="{{ route('login') }}">войдите</a>.</p>
-@endif
-@endif
+        <!-- ТОВАРЫ -->
+        <div class="cart-items">
+
+            @foreach($items as $item)
+            <div class="cart-item">
+
+                <div class="cart-item__info">
+                    <h3>{{ $item->product->title }}</h3>
+                    <p>{{ number_format($item->product->price, 2) }} ₽</p>
+                </div>
+
+                <!-- КОЛИЧЕСТВО -->
+                <div class="cart-qty">
+
+                    <form action="{{ route('cart.update', $item) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="qty" value="{{ $item->qty - 1 }}">
+                        <button @if($item->qty <= 1) disabled @endif>−</button>
+                    </form>
+
+                    <span>{{ $item->qty }}</span>
+
+                    <form action="{{ route('cart.update', $item) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="qty" value="{{ $item->qty + 1 }}">
+                        <button>+</button>
+                    </form>
+
+                </div>
+
+                <!-- СУММА -->
+                <div class="cart-sum">
+                    {{ number_format($item->qty * $item->product->price, 2) }} ₽
+                </div>
+
+                <!-- УДАЛИТЬ -->
+                <form action="{{ route('cart.remove', $item) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button class="cart-remove">✕</button>
+                </form>
+
+            </div>
+            @endforeach
+
+        </div>
+
+        <!-- ИТОГ -->
+        <div class="cart-summary">
+
+            <h3>Итого</h3>
+
+            <div class="cart-summary__row">
+                <span>Товаров:</span>
+                <span>{{ $cart->total_qty }}</span>
+            </div>
+
+            <div class="cart-summary__row">
+                <span>Сумма:</span>
+                <span>{{ number_format($cart->total_price, 2) }} ₽</span>
+            </div>
+
+            @if(Auth::check())
+                <a href="{{ route('order.checkout') }}" class="btn-primary">
+                    Оформить заказ
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="btn-primary">
+                    Войти и оформить
+                </a>
+            @endif
+
+            <form action="{{ route('cart.clear') }}" method="POST">
+                @csrf
+                <button class="cart-clear">Очистить корзину</button>
+            </form>
+
+        </div>
+
+    </div>
+
+    @endif
+</div>
+</div>
 @endsection

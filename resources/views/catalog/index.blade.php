@@ -5,7 +5,7 @@
 @section('content')
     <div class="container">
         <h2 class="section-title">Каталог лакомств</h2>
-        <div class="catalog-filters">
+        <div class="catalog-filters flex">
     <a href="{{ route('catalog') }}"
        class="{{ request('category') ? '' : 'active' }}">
         Все
@@ -22,7 +22,14 @@
               @foreach ($products as $product)
             <article class="product-card" >
                 <div class="product-image" >
-                    <img src="{{ $product->images->first()?->image ?? ''}}" alt="{{ $product->title }}">
+                   @php
+                        $preview = $product->images->where('is_preview', true)->first()
+                            ?? $product->images->first();
+                    @endphp
+
+                    @if ($preview)
+                        <img src="{{ asset('storage/' . $preview->image) }}">
+                    @endif
                 </div>
 
                 <div class="product-info">
@@ -44,17 +51,22 @@
                         <span class="qty-number">1</span>
                         <button class="qty-plus">+</button>
                     </div>
-                        <form action="{{ route('cart.add', $product) }}" method="POST">
+                         <form>
                         @csrf
-                        <button type="submit">В корзину</button>
+                        <button type="button" class="btn product-btn add-to-cart " data-id="{{ $product->id }}">
+                            В корзину
+                        </button>
                         </form>
-                        <button class="btn-order">Заказать</button>
-                            </div>
+                            <button class="btn-order product-link">Подробнее</button>
+                        </div>
                 </div>
             </article>
             @endforeach        
             
-            <div class="custom-pagination">
+            
+
+        </div>
+        <div class="custom-pagination">
     @if ($products->onFirstPage())
         <span class="disabled">«</span>
     @else
@@ -75,8 +87,6 @@
         <span class="disabled">»</span>
     @endif
 </div>
-
-        </div>
 
     </div>
 @endsection

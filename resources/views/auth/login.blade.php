@@ -44,4 +44,8 @@
             </x-primary-button>
         </div>
     </form>
+
+    <a href="/auth/vk">
+    Войти через VK
+</a>
 </x-guest-layout>

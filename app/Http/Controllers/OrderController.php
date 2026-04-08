@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
+use App\Services\VkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,7 @@ class OrderController extends Controller
     }
 
 
-    public function confirm(Request $request)
+    public function confirm(Request $request, VkService $vk)
     {
         $request->validate([
             'delivery_method' => 'required',
@@ -55,7 +56,7 @@ class OrderController extends Controller
             return redirect()->route('cart')->with('error', 'Корзина пуста');
         }
 
-        DB::transaction(function () use ($cartItems, $request)
+        DB::transaction(function () use ($cartItems, $request, $vk)
         {
 
         
@@ -70,6 +71,12 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'status' => 'new',
             ]);
+
+            $user = auth()->user();
+
+            if ($user->vk_id) {
+                $vk->sendMessage($user->vk_id, "Ваш заказ №{$order->id} успешно создан!");
+            }
 
             // 2. order_items
             foreach($cartItems as $item){
@@ -97,6 +104,8 @@ class OrderController extends Controller
             // 3. очистка корзины в БД
             CartItem::where('user_id', auth()->id())->delete();
         });
+
+        
         return redirect()->route('order.confirm')->with('success', 'Заказ оформлен');
     }
     
@@ -105,13 +114,34 @@ class OrderController extends Controller
         return view('orders.confirm');
     }
 
-      public function index()
+    //   public function index()
+    // {
+    //     $orders = Order::where('user_id', auth()->id())
+    //         ->with('chat') // ВАЖНО
+    //         ->latest()
+    //         ->get();
+
+    //     return view('profile.orders', compact('orders'));
+    // }
+
+    public function index()
     {
-        $orders = Order::where('user_id', auth()->id())
-            ->with('chat') // ВАЖНО
-            ->latest()
-            ->get();
+        $orders = auth()->user()
+        ->orders()
+        ->with('chat')
+        ->latest();
 
         return view('profile.orders', compact('orders'));
+    }
+
+    public function show(Order $order)
+    {
+        if($order->user_id !== auth()->id()){
+            abort(403);
+        }
+    
+        $order->load('chat', 'items.product');
+
+        return view('profile.orders.show', compact('order'));
     }
 }
