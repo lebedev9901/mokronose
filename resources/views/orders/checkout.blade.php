@@ -9,79 +9,9 @@
 
     <h1 class="section-title">Оформление заказа</h1>
 
-    <div class="checkout-grid">
-
-        <!-- ЛЕВАЯ ЧАСТЬ -->
-        <form action="{{ route('order.confirm') }}" method="POST" class="checkout-form"  id="checkout-form">
-            @csrf
-
-            <!-- КОНТАКТЫ -->
-            <div class="checkout-block">
-                <h3>Контактные данные</h3>
-
-                <input type="text"
-       name="name"
-       value="{{ old('name', auth()->user()->name) }}"
-       placeholder="Ваше имя"
-       required>
-
-<input type="tel"
-       name="phone"
-       value="{{ old('phone', auth()->user()->phone) }}"
-       placeholder="Телефон"
-       required>
-            </div>
-
-            <!-- ДОСТАВКА -->
-            <div class="checkout-block">
-                <h3>Доставка</h3>
-
-                <label class="radio">
-                    <input type="radio" name="delivery_method" value="pickup">
-                    Самовывоз
-                </label>
-
-                <label class="radio">
-                    <input type="radio" name="delivery_method" value="courier">
-                    Курьер (Яндекс)
-                </label>
-
-                <label class="radio">
-                    <input type="radio" name="delivery_method" value="cdek">
-                    СДЭК
-                </label>
-
-                <label class="radio">
-                    <input type="radio" name="delivery_method" value="post">
-                    Почта России
-                </label>
-            </div>
-            <div id="delivery-extra"></div>
-            <div id="selected-delivery" style="margin-top:10px;"></div>
-
-            <!-- ОПЛАТА -->
-            <div class="checkout-block">
-                <h3>Оплата</h3>
-
-                <label class="radio">
-                    <input type="radio" name="payment_method" value="cash">
-                    Наличными
-                </label>
-
-                <label class="radio">
-                    <input type="radio" name="payment_method" value="online">
-                    Онлайн
-                </label>
-            </div>
-            <script>
-                window.userAddresses = @json(auth()->user()->addresses);
-            </script>
-        </form>
-
-        <!-- ПРАВАЯ ЧАСТЬ -->
-        <div class="checkout-summary">
-
-            <h3>Ваш заказ</h3>
+    {{-- Состав заказа --}}
+    <div class="order-summary">
+        <h3>Ваш заказ</h3>
 
             <div class="checkout-items">
                 @foreach($cartItems as $item)

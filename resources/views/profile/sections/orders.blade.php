@@ -40,7 +40,7 @@
             </div>
 
         </div>
-
+        {{ $orders->links() }}
     @empty
 
         <div class="empty-block">

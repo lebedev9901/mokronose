@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="profile-content">
 
             <div class="profile-header">
@@ -310,3 +311,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/profile/sections/addresses.blade.php ENDPATH**/ ?>
+=======
+
+<h1>Адреса</h1>
+<?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/profile/sections/addresses.blade.php ENDPATH**/ ?>
+>>>>>>> 6c8703de2f5adfd1e5348e4946eaaf01427e01e0

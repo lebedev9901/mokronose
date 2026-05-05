@@ -137,6 +137,12 @@ class OrderController extends Controller
                 $vk->sendMessage($user->vk_id, "Ваш заказ №{$order->id} успешно создан!");
             }
 
+            $user = auth()->user();
+
+            if ($user->vk_id) {
+                $vk->sendMessage($user->vk_id, "Ваш заказ №{$order->id} успешно создан!");
+            }
+
             // 2. order_items
             foreach($cartItems as $item){
                 OrderItem::create([
@@ -199,7 +205,7 @@ class OrderController extends Controller
             abort(403);
         }
     
-        $order->load('chat', 'items.product','address');
+        $order->load('chat', 'items.product');
 
         return view('profile.orders.show', compact('order'));
     }

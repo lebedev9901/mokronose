@@ -15,7 +15,11 @@ if(auth()->check() && auth()->user()->role === 'admin'){
 ?>
 
 <nav>
+<<<<<<< HEAD
     <ul class="dashboard__list list-reset">
+=======
+    <ul class="dashboard__list flex flex-col list-none gap-2">
+>>>>>>> 6c8703de2f5adfd1e5348e4946eaaf01427e01e0
         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $menu_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
             <?php
                 $isActive = $item['page'] === $current_page;

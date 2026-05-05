@@ -49,6 +49,9 @@
         
             <?php echo $__env->make('partials.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </body>
+<<<<<<< HEAD
     <?php echo $__env->yieldPushContent('scripts'); ?>
+=======
+>>>>>>> 6c8703de2f5adfd1e5348e4946eaaf01427e01e0
 </html>
 <?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/layouts/app.blade.php ENDPATH**/ ?>
