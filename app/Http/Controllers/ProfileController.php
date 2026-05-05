@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -46,19 +47,45 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
 
-        $request->user()->save();
+public function update(Request $request)
+{
+    $user = auth()->user();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    $request->validate([
+        'first_name' => 'nullable|string',
+        'last_name' => 'nullable|string',
+        'middle_name' => 'nullable|string',
+        'email' => 'required|email',
+        'phone' => 'nullable|string',
+        'avatar' => 'nullable|image|max:2048',
+    ]);
+
+    // UPDATE TEXT FIELDS
+    $user->first_name = $request->first_name;
+    $user->last_name = $request->last_name;
+    $user->middle_name = $request->middle_name;
+    $user->email = $request->email;
+    $user->phone = $request->phone;
+
+    // ✔ AVATAR FIX
+    if ($request->hasFile('avatar')) {
+
+        $file = $request->file('avatar');
+
+        $path = $file->store('avatars', 'public');
+
+        $user->avatar = '/storage/' . $path;
     }
 
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'user' => $user
+    ]);
+}
     /**
      * Delete the user's account.
      */

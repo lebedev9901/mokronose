@@ -10,36 +10,43 @@
 
     <h1>Отзывы клиентов</h1>
 
-    <div class="reviews__cards-contain flex">
+    <div class="reviews-grid">
 
         @foreach($reviews as $review)
-            <div class="reviews__card flex">
+            <div class="reviews__card">
 
-                {{-- Текст отзыва --}}
-                <p class="reviews__card-text">
-                    "{{ $review->text }}"
-                </p>
+    <!-- ⭐ Рейтинг -->
+    <div class="reviews__card-rating">
+        @for($i = 1; $i <= 5; $i++)
+            <span class="{{ $i <= $review->rating ? 'star active' : 'star' }}">
+                ★
+            </span>
+        @endfor
+    </div>
 
-                {{-- Рейтинг --}}
-                <div class="reviews__card-rating">
-                    @for($i = 1; $i <= 5; $i++)
-                        <span>
-                            {{ $i <= $review->rating ? '★' : '☆' }}
-                        </span>
-                    @endfor
-                </div>
+    <!-- 💬 Текст -->
+    <p class="reviews__card-text">
+        {{ $review->text }}
+    </p>
 
-                {{-- Пользователь --}}
-                <div class="reviews__card-user flex">
-                    👤 {{ $review->user->name }}
-                </div>
+    <!-- 👤 Пользователь -->
+    <div class="reviews__card-user">
+        <div class="avatar">
+            {{ mb_substr($review->user->name, 0, 1) }}
+        </div>
 
-                {{-- Товар --}}
-                <div class="reviews__card-product">
-                    📦 {{ $review->product->title }}
-                </div>
+        <div>
+            <div class="name">{{ $review->user->name }}</div>
+            <div class="date">{{ $review->created_at->format('d.m.Y') }}</div>
+        </div>
+    </div>
 
-            </div>
+    <!-- 📦 Товар -->
+    <a href="{{ route('product', $review->product->id) }}" class="reviews__card-product">
+        {{ $review->product->title }}
+    </a>
+
+</div>
         @endforeach
       </div>
            <div class="custom-pagination">

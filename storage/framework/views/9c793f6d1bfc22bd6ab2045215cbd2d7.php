@@ -3,15 +3,15 @@
 <?php $__env->startSection('title', 'Профиль'); ?>
 <?php $__env->startSection('content'); ?>
 <div class="container">
-<div class="profile-container" >
+<div class="dashboard" >
 
     
-    <div class="profile-menu" >
+    <div class="dashboard__sidebar" >
         <?php echo $__env->make('profile.sections.menu', ['current_page' => $page], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 
     
-    <div class="profile-content" >
+    <div class="dashboard__content" >
         <?php
             $section = match($page) {
                 'orders'    => 'profile.sections.orders',

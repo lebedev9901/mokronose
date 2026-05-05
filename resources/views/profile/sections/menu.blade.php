@@ -15,7 +15,7 @@ if(auth()->check() && auth()->user()->role === 'admin'){
 @endphp
 
 <nav>
-    <ul class="dashboard__list flex flex-col list-none gap-2">
+    <ul class="dashboard__list list-reset">
         @foreach($menu_items as $item)
             @php
                 $isActive = $item['page'] === $current_page;

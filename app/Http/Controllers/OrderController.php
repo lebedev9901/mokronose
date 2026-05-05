@@ -44,9 +44,34 @@ class OrderController extends Controller
     public function confirm(Request $request, VkService $vk)
     {
         $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
             'delivery_method' => 'required',
-            'payment_method'  => 'required',
+            'payment_method' => 'required',
+
+            'address_id' => 'required_if:delivery_method,courier|exists:addresses,id',
+            'pickup_point' => 'required_if:delivery_method,pickup',
+            'cdek_point' => 'required_if:delivery_method,cdek',
+            'post_address' => 'required_if:delivery_method,post',
         ]);
+
+        if ($request->delivery_method === 'courier') {
+
+            $address = auth()->user()
+                ->addresses()
+                ->where('id', $request->address_id)
+                ->first();
+
+            if (!$address) {
+                abort(403);
+            }
+        }
+
+        auth()->user()->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+        ]);
+            
 
         $cartItems = CartItem::where('user_id', auth()->id())
             ->with('product')
@@ -64,13 +89,47 @@ class OrderController extends Controller
             $total = $cartItems->sum(fn($item) => $item->product->price * $item->qty);
 
             // 1. order
-            $order = Order::create([
+           $orderData = [
                 'user_id' => auth()->id(),
                 'total_price' => $total,
                 'delivery_method' => $request->delivery_method,
                 'payment_method' => $request->payment_method,
                 'status' => 'new',
-            ]);
+            ];
+
+              if ($request->delivery_method === 'courier' && !$request->address_id) {
+
+                $default = auth()->user()
+                    ->addresses()
+                    ->where('is_default', 1)
+                    ->first();
+
+                if ($default) {
+                    $orderData['address_id'] = $default->id;
+                }
+            }
+
+            // 👇 добавляем динамически
+            switch ($request->delivery_method) {
+
+                case 'courier':
+                    $orderData['address_id'] = $request->address_id;
+                    break;
+
+                case 'pickup':
+                    $orderData['pickup_point'] = $request->pickup_point;
+                    break;
+
+                case 'cdek':
+                    $orderData['cdek_point'] = $request->cdek_point;
+                    break;
+
+                case 'post':
+                    $orderData['post_address'] = $request->post_address;
+                    break;
+            }
+
+            $order = Order::create($orderData);
 
             $user = auth()->user();
 
@@ -140,7 +199,7 @@ class OrderController extends Controller
             abort(403);
         }
     
-        $order->load('chat', 'items.product');
+        $order->load('chat', 'items.product','address');
 
         return view('profile.orders.show', compact('order'));
     }

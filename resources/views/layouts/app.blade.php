@@ -49,4 +49,5 @@
         
             @include('partials.footer')
     </body>
+    @stack('scripts')
 </html>

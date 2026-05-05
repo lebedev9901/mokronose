@@ -1,44 +1,45 @@
 
+.dashboard{
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 30px;
+}
+
+.dashboard__sidebar{
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
 .dashboard__list{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.dashboard__list-item{
-    width: calc((100% / 2) - 10px);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
     display: flex;
-    justify-content: center;
-    padding: 30px;
-    border-radius: 18px;
-    position: relative;
-    transition: 0.25s;
+    flex-direction: column;
+    gap: 10px;
+}
+.dashboard__list-item{
+    width: 100%;
 }
 
-.dashboard__list-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,.08);
-}
+
 
 .dashboard__list-link{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px 18px;
+    border-radius: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: 0.2s;
+}
+
+.dashboard__list-link:hover{
+    background: var(--color-accent-soft);
 }
 
 .dashboard__list-link.active{
-    background: var(--color-accent-soft);
-    border-radius: 12px;
-    -webkit-border-radius:;
-    -moz-border-radius:;
-    -ms-border-radius:;
-    -o-border-radius:;
-    padding: 10px;
+    background: var(--color-accent);
+    color: #fff;
 }
 
 .dashboard__list-item:hover {
@@ -55,39 +56,30 @@
 
 
 .dashboard__link-title{
-  font-size: 22px;
-  color: var(--color-text);
-  font-weight: 600;
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.dashboard__link-title{
-  font-size: 22px;
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-.dashboard__list-item::before{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 1.5%;
-    width: 97%;
-    height: 4px;
-    background: var(--color-accent);
-    border-radius: 18px 18px 0 0;
-    -webkit-border-radius: 18px 18px 0 0;
-    -moz-border-radius: 18px 18px 0 0;
-    -ms-border-radius: 18px 18px 0 0;
-    -o-border-radius: 18px 18px 0 0;
+.dashboard__link-descr{
+    font-size: 13px;
+    color: var(--color-text-light);
 }
 
 @media (max-width: 768px){
-  .dashboard__list-item{
-    width: 100%;
-  }
-}
+    .dashboard{
+        grid-template-columns: 1fr;
+    }
 
-.dashboard__icon{
-  font-size: 28px;
-  margin-bottom: 10px;
+    .dashboard__sidebar{
+        position: static;
+    }
+
+    .dashboard__list{
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .dashboard__list-link{
+        min-width: 180px;
+    }
 }

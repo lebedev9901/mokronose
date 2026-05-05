@@ -19,6 +19,10 @@ return new class extends Migration
             $table->text('delivery_method')->nullable();
             $table->text('payment_method')->nullable();
             $table->text('support_comment')->nullable();
+            $table->foreignId('address_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('pickup_point')->nullable();
+            $table->string('cdek_point')->nullable();
+            $table->text('post_address')->nullable();
             $table->timestamps();
         });
     }

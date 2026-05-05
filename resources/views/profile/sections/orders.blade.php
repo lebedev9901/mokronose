@@ -1,31 +1,56 @@
+<div class="orders">
 
-<div class="container">
-
-    <h1>Мои заказы</h1>
+    <h1 class="section-title">Мои заказы</h1>
 
     @forelse($orders as $order)
 
-        <div style="border:1px solid #ccc; padding:15px; margin-bottom:15px">
+        <div class="order-card">
 
-            <h3><a href="{{ route('orders.show', $order->id)}}">Заказ #{{ $order->id }}</a></h3>
+            <div class="order-card__top">
+                <div>
+                    <h3 class="order-id">
+                        Заказ #{{ $order->id }}
+                    </h3>
+                    <span class="order-date">
+                        {{ $order->created_at->format('d.m.Y') }}
+                    </span>
+                </div>
 
-            <p>Статус: {{ $order->status }}</p>
-            <p>Сумма: {{ $order->total_price }} ₽</p>
-            <p>Дата: {{ $order->created_at->format('d.m.Y') }}</p>
+                <span class="order-status status-{{ $order->status }}">
+                    {{ $order->status }}
+                </span>
+            </div>
 
-            @if($order->chat)
-                <a href="{{ route('chat.show', $order->chat->id) }}" class="btn btn-primary">
-                    Открыть чат поддержки
-                </a>
-            @endif
-            
+            <div class="order-card__body">
+                <div class="order-price">
+                    {{ $order->total_price }} ₽
+                </div>
+
+                <div class="order-actions">
+                    <a href="{{ route('orders.show', $order->id)}}" class="btn-outline">
+                        Подробнее
+                    </a>
+
+                    @if($order->chat)
+                        <a href="{{ route('chat.show', $order->chat->id) }}" class="btn-primary">
+                            Чат
+                        </a>
+                    @endif
+                </div>
+            </div>
+
         </div>
-        {{ $orders->links() }}
+
     @empty
 
-        <p>У вас пока нет заказов</p>
+        <div class="empty-block">
+            📦 У вас пока нет заказов
+        </div>
 
     @endforelse
-    
-</div>
 
+    <div class="pagination">
+        {{ $orders->links() }}
+    </div>
+
+</div>

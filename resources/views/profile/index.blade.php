@@ -3,15 +3,15 @@
 @section('title', 'Профиль')
 @section('content')
 <div class="container">
-<div class="profile-container" >
+<div class="dashboard" >
 
     {{-- Меню слева --}}
-    <div class="profile-menu" >
+    <div class="dashboard__sidebar" >
         @include('profile.sections.menu', ['current_page' => $page])
     </div>
 
     {{-- Контент справа --}}
-    <div class="profile-content" >
+    <div class="dashboard__content" >
         @php
             $section = match($page) {
                 'orders'    => 'profile.sections.orders',

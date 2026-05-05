@@ -31,4 +31,9 @@ class Order extends Model
     {
         return $this->hasOne(SupportChat::class, 'order_id', 'id');
     }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
 }
