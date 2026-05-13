@@ -138,7 +138,7 @@ main{
   min-height: 500px;
 }
 
-.support{
+.support-fab{
   position: fixed;
   width: 55px;
   height: 55px;
@@ -156,7 +156,7 @@ main{
   transition: 0.2s;
 }
 
-.support:hover{
+.support-fab:hover{
   transform: scale(1.1);
 }
 
@@ -1745,3 +1745,146 @@ align-items: center;
   height: 1px;
   background: rgba(255,255,255,0.1);
 }
+
+
+
+
+/* PAGE */
+.chat-page{
+    max-width: 800px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #eee;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+}
+
+/* HEADER */
+.chat-header{
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    background: #fafafa;
+}
+
+.chat-header h2{
+    margin: 5px 0 0;
+    font-size: 18px;
+}
+
+.chat-subtitle{
+    font-size: 12px;
+    color: #777;
+}
+
+.back-btn{
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #555;
+}
+
+/* BOX */
+.chat-box{
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* MESSAGE ROW */
+.msg{
+    display: flex;
+}
+
+/* USER RIGHT */
+.msg.user{
+    justify-content: flex-end;
+}
+
+/* SUPPORT LEFT */
+.msg.support{
+    justify-content: flex-start;
+}
+
+/* BUBBLE */
+.bubble{
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* USER STYLE */
+.msg.user .bubble{
+    background: #111;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+/* SUPPORT STYLE */
+.msg.support .bubble{
+    background: #FFD60A;
+    color: #111;
+    border-bottom-left-radius: 4px;
+}
+
+/* TEXT */
+.text{
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* TIME */
+.time{
+    font-size: 10px;
+    opacity: .6;
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* EMPTY */
+.empty{
+    text-align: center;
+    color: #888;
+    margin-top: 30px;
+}
+
+/* FORM */
+.chat-form{
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    border-top: 1px solid #eee;
+    background: #fff;
+}
+
+.chat-form textarea{
+    flex: 1;
+    resize: none;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 50px;
+    outline: none;
+}
+
+.chat-form button{
+    width: 140px;
+    border: none;
+    border-radius: 12px;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+}
+
+.chat-form button:hover{
+    opacity: .85;
+}
+

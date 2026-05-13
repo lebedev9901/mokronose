@@ -36,7 +36,7 @@
        <script src="<?php echo e(asset('assets/js/modal.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/check_auth.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/script.js')); ?>" defer></script>
-    
+  
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     </head>
     <body class="font-sans antialiased">
@@ -49,9 +49,6 @@
         
             <?php echo $__env->make('partials.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </body>
-<<<<<<< HEAD
     <?php echo $__env->yieldPushContent('scripts'); ?>
-=======
->>>>>>> 6c8703de2f5adfd1e5348e4946eaaf01427e01e0
 </html>
 <?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/layouts/app.blade.php ENDPATH**/ ?>

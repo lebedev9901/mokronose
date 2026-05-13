@@ -22,15 +22,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Socialite;
 
-Route::get('/admin/support-chat/{chatId}', SupportChatMessage::class)->name('livewire.support-chat-messages');
-
-
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product');
-// Route::post('/cart/add/{product}', [CartController::class, 'add'])
-    // ->name('cart.add');
+
 Route::post('/cart/add-ajax/{product}', [CartController::class, 'addAjax'])->name('cart.add');
 Route::get('/cart/count', [CartController::class, 'count']);
 
@@ -54,17 +50,11 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name(
 Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('register', [RegisteredUserController::class, 'store']);
 
-// Route::prefix('admin')->group(function () {
-//     Route::view('/', 'admin.dashboard')->name('admin.dashboard');
-//     Route::view('/categories', 'admin.categories')->name('admin.categories');
-//     Route::view('/products', 'admin.products')->name('admin.products');
-// });
+
 Route::get('/vk/redirect', [VkController::class, 'redirect'])->name('vk.redirect');
 Route::get('/vk/callback', [VkController::class, 'callback'])->name('vk.callback');
 
-Route::get('/debug-vk', function () {
-    dd(Socialite::driver('vkontakte'));
-});
+
 Route::middleware(['auth'])->group(function (){
 
     
@@ -107,7 +97,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/order/{order}', [OrderController::class, 'show'])->name('orders.show');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
   
     Route::get('/profile/{page?}', [ProfileController::class, 'index'])->name('profile.page');
 
@@ -131,6 +120,21 @@ Route::post('/addresses/{id}/main', [AddressController::class, 'setMain']);
 
         return response()->json(['success' => true]);
     });
+
+     Route::get('/profile/support', [SupportController::class, 'index'])
+        ->name('support.index');
+
+    Route::get('/profile/support/create', [SupportController::class, 'create'])
+        ->name('support.create');
+
+    Route::post('/profile/support/store', [SupportController::class, 'store'])
+        ->name('support.store');
+
+    Route::get('/profile/support/{chat}', [SupportController::class, 'chat'])
+        ->name('support.chat');
+
+    Route::post('/profile/support/{chat}/send', [SupportController::class, 'send'])
+        ->name('support.send');
 });
 
 require __DIR__.'/auth.php';

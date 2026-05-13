@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('orders', function(Blueprint $table){
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['new', 'cinfirmed', 'canceled'])->default('new');
+            $table->enum('status', ['new', 'confirmed', 'canceled'])->default('new');
             $table->decimal('total_price', 10, 2);
             $table->text('delivery_method')->nullable();
             $table->text('payment_method')->nullable();
             $table->text('support_comment')->nullable();
-            $table->foreignId('address_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('address_id')->nullable()->constrained('addresses')->nullOnDelete();
             $table->string('pickup_point')->nullable();
             $table->string('cdek_point')->nullable();
             $table->text('post_address')->nullable();

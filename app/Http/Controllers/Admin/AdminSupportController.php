@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\SupportChat;
+use Illuminate\Http\Request;
+
+class AdminSupportController extends Controller
+{
+    public function index()
+    {
+        $chats = SupportChat::with([
+                'user',
+                'message'
+            ])
+            ->latest()
+            ->get();
+
+        return view(
+            'admin.support.index',
+            compact('chats')
+        );
+    }
+
+    public function chat(SupportChat $chat)
+    {
+        $chat->load([
+            'user',
+            'message.user'
+        ]);
+
+        $allChats = SupportChat::with([
+                'user',
+                'message'
+            ])
+            ->latest()
+            ->get();
+
+        return view(
+            'admin.support.chat',
+            compact(
+                'chat',
+                'allChats'
+            )
+        );
+    }
+
+    public function send(Request $request, SupportChat $chat)
+    {
+        $request->validate([
+            'message' => 'required'
+        ]);
+
+        $chat->message()->create([
+            'user_id' => auth()->id(),
+            'message' => $request->message,
+            'sender_type' => 'support'
+        ]);
+
+        $chat->update([
+            'status' => 'answered'
+        ]);
+
+        return back();
+    }
+}

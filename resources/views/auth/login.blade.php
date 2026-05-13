@@ -48,4 +48,8 @@
     <a href="/auth/vk">
     Войти через VK
 </a>
+
+    <a href="/register">
+    регитсрация
+</a>
 </x-guest-layout>

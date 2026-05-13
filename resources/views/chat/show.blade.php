@@ -6,36 +6,73 @@
 
 <div class="container">
 
-    <button type="button" onclick="window.history.back()">
-    ← Назад
-</button>
-    <h2>Чат поддержки (заказ #{{ $chat->order_id }})</h2>
+    <div class="chat-page">
 
-    <div class="chat-container" style="max-width:600px; margin:auto;">
-    @foreach($chat->message as $msg)
-        <div style="margin:10px 0; display:flex; {{ $msg->sender_type === 'support' ? 'justify-content:flex-start' : 'justify-content:flex-end' }}">
-            <div style="padding:10px 15px; border-radius:15px; background: {{ $msg->sender_type === 'support' ? '#003566' : '#FFD60A' }}; color:{{ $msg->sender_type === 'support' ? 'white' : 'black' }}">
-                {{ $msg->message }}
-                <div style="font-size:10px; text-align:right; margin-top:5px;">
-                    {{ $msg->created_at->format('d.m.Y H:i') }}
-                </div>
+        {{-- HEADER --}}
+        <div class="chat-header">
+            <button class="back-btn" onclick="window.history.back()">
+                ← Назад
+            </button>
+
+            <h2>Чат поддержки</h2>
+
+            <div class="chat-subtitle">
+                Заказ #{{ $chat->order_id ?? '—' }}
             </div>
         </div>
-    @endforeach
-</div>
 
+        {{-- CHAT BOX --}}
+        <div class="chat-box" id="chatBox">
 
-    <form action="{{ route('chat.send', $chat->id) }}" method="POST">
-        @csrf
+            @forelse($chat->message as $msg)
 
-        <textarea name="message" rows="3" style="width:100%" required></textarea>
+                <div class="msg {{ $msg->sender_type === 'support' ? 'support' : 'user' }}">
 
-        <button type="submit" class="btn btn-primary" style="margin-top:10px">
-            Отправить
-        </button>
+                    <div class="bubble">
 
-    </form>
+                        <div class="text">
+                            {{ $msg->message }}
+                        </div>
+
+                        <div class="time">
+                            {{ $msg->created_at->format('d.m.Y H:i') }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            @empty
+                <div class="empty">
+                    Сообщений пока нет
+                </div>
+            @endforelse
+
+        </div>
+
+        {{-- INPUT --}}
+        <form class="chat-form" action="{{ route('chat.send', $chat->id) }}" method="POST">
+            @csrf
+
+            <textarea name="message" placeholder="Напишите сообщение..." required></textarea>
+
+            <button type="submit">Отправить</button>
+        </form>
+
+    </div>
 
 </div>
 
 @endsection
+
+
+
+
+@push('scripts')
+<script>
+const box = document.getElementById('chatBox');
+if(box){
+    box.scrollTop = box.scrollHeight;
+}
+</script>
+@endpush

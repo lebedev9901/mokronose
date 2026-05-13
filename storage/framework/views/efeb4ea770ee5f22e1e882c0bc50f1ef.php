@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Доставка и оплата'); ?>
 
 <?php $__env->startSection('content'); ?>

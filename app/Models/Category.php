@@ -13,16 +13,19 @@ class Category extends Model
     protected $fillable = [
         'title',
         'parent_id',
+        'slug',
     ];
 
+   // many-to-many с товарами
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class, 'category_product');
     }
 
+    // дерево категорий (self relation)
     public function parent()
     {
-        return $this->belongsToMany(Category::class, 'parent_id');
+        return $this->belongsTo(Category::class, 'parent_id');
     }
 
     public function children()

@@ -16,4 +16,9 @@ class SupportMessage extends Model
     public function chat() {
         return $this->belongsTo(SupportChat::class, 'chat_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -11,7 +11,7 @@ class Product extends Model
     use HasFactory;
 
      protected $table = 'products'; // название таблицы в БД
-    protected $fillable = ['title', 'description', 'price', 'weight', 'rating']; 
+    protected $fillable = ['title', 'stock', 'description', 'price', 'weight', 'rating']; 
 
     public function images()
     {
@@ -20,7 +20,7 @@ class Product extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'category_product');
     }
 
     public function cartItems()
@@ -32,5 +32,6 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+
 
 }

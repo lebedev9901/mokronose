@@ -1,7 +1,10 @@
 <?php $attributes ??= new \Illuminate\View\ComponentAttributeBag;
 
 $__newAttributes = [];
-$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames((['value']));
+$__propNames = \Illuminate\View\ComponentAttributeBag::extractPropNames(([
+    'circular' => true,
+    'size' => 'md',
+]));
 
 foreach ($attributes->all() as $__key => $__value) {
     if (in_array($__key, $__propNames)) {
@@ -16,7 +19,10 @@ $attributes = new \Illuminate\View\ComponentAttributeBag($__newAttributes);
 unset($__propNames);
 unset($__newAttributes);
 
-foreach (array_filter((['value']), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
+foreach (array_filter(([
+    'circular' => true,
+    'size' => 'md',
+]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 }
 
@@ -28,13 +34,16 @@ foreach ($attributes->all() as $__key => $__value) {
 
 unset($__defined_vars, $__key, $__value); ?>
 
-<label <?php echo e($attributes->merge(['class' => 'block font-medium text-sm text-gray-700'])); ?>>
-    <?php echo e($value ?? $slot); ?>
+<img
+    <?php echo e($attributes
+            ->class([
+                'fi-avatar',
+                'fi-circular' => $circular,
+                match ($size) {
+                    'sm', 'md', 'lg' => "fi-size-{$size}",
+                    default => $size,
+                },
+            ])); ?>
 
-<<<<<<<< HEAD:storage/framework/views/5a39a70a2c9c39f544cda7ee54fdcc82.php
 />
 <?php /**PATH C:\Users\AdminPC\Herd\mokronose\vendor\filament\support\resources\views/components/avatar.blade.php ENDPATH**/ ?>
-========
-</label>
-<?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/components/input-label.blade.php ENDPATH**/ ?>
->>>>>>>> 6c8703de2f5adfd1e5348e4946eaaf01427e01e0:storage/framework/views/c63413c1b6a6ba1e3d14158a7aa88c59.php

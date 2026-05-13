@@ -6,39 +6,77 @@
 
 <div class="container">
 
-    <button type="button" onclick="window.history.back()">
-    ← Назад
-</button>
-    <h2>Чат поддержки (заказ #<?php echo e($chat->order_id); ?>)</h2>
+    <div class="chat-page">
 
-    <div class="chat-container" style="max-width:600px; margin:auto;">
-    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $chat->message; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $msg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
-        <div style="margin:10px 0; display:flex; <?php echo e($msg->sender_type === 'support' ? 'justify-content:flex-start' : 'justify-content:flex-end'); ?>">
-            <div style="padding:10px 15px; border-radius:15px; background: <?php echo e($msg->sender_type === 'support' ? '#003566' : '#FFD60A'); ?>; color:<?php echo e($msg->sender_type === 'support' ? 'white' : 'black'); ?>">
-                <?php echo e($msg->message); ?>
+        
+        <div class="chat-header">
+            <button class="back-btn" onclick="window.history.back()">
+                ← Назад
+            </button>
 
-                <div style="font-size:10px; text-align:right; margin-top:5px;">
-                    <?php echo e($msg->created_at->format('d.m.Y H:i')); ?>
+            <h2>Чат поддержки</h2>
 
-                </div>
+            <div class="chat-subtitle">
+                Заказ #<?php echo e($chat->order_id ?? '—'); ?>
+
             </div>
         </div>
-    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
-</div>
 
+        
+        <div class="chat-box" id="chatBox">
 
-    <form action="<?php echo e(route('chat.send', $chat->id)); ?>" method="POST">
-        <?php echo csrf_field(); ?>
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $chat->message; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $msg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoop($loop->index); ?><?php endif; ?>
 
-        <textarea name="message" rows="3" style="width:100%" required></textarea>
+                <div class="msg <?php echo e($msg->sender_type === 'support' ? 'support' : 'user'); ?>">
 
-        <button type="submit" class="btn btn-primary" style="margin-top:10px">
-            Отправить
-        </button>
+                    <div class="bubble">
 
-    </form>
+                        <div class="text">
+                            <?php echo e($msg->message); ?>
+
+                        </div>
+
+                        <div class="time">
+                            <?php echo e($msg->created_at->format('d.m.Y H:i')); ?>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
+                <div class="empty">
+                    Сообщений пока нет
+                </div>
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+        </div>
+
+        
+        <form class="chat-form" action="<?php echo e(route('chat.send', $chat->id)); ?>" method="POST">
+            <?php echo csrf_field(); ?>
+
+            <textarea name="message" placeholder="Напишите сообщение..." required></textarea>
+
+            <button type="submit">Отправить</button>
+        </form>
+
+    </div>
 
 </div>
 
 <?php $__env->stopSection(); ?>
+
+
+
+
+<?php $__env->startPush('scripts'); ?>
+<script>
+const box = document.getElementById('chatBox');
+if(box){
+    box.scrollTop = box.scrollHeight;
+}
+</script>
+<?php $__env->stopPush(); ?>
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/chat/show.blade.php ENDPATH**/ ?>

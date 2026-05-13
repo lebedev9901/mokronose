@@ -56,7 +56,6 @@
 
 
 .dashboard__link-title{
-<<<<<<< HEAD
     font-size: 16px;
     font-weight: 600;
 }
@@ -83,41 +82,4 @@
     .dashboard__list-link{
         min-width: 180px;
     }
-=======
-  font-size: 22px;
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-.dashboard__link-title{
-  font-size: 22px;
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-.dashboard__list-item::before{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 1.5%;
-    width: 97%;
-    height: 4px;
-    background: var(--color-accent);
-    border-radius: 18px 18px 0 0;
-    -webkit-border-radius: 18px 18px 0 0;
-    -moz-border-radius: 18px 18px 0 0;
-    -ms-border-radius: 18px 18px 0 0;
-    -o-border-radius: 18px 18px 0 0;
-}
-
-@media (max-width: 768px){
-  .dashboard__list-item{
-    width: 100%;
-  }
-}
-
-.dashboard__icon{
-  font-size: 28px;
-  margin-bottom: 10px;
->>>>>>> 6c8703de2f5adfd1e5348e4946eaaf01427e01e0
 }

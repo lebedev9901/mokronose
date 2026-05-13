@@ -17,24 +17,42 @@ class ProfileController extends Controller
      * Display the user's profile form.
      */
 
-        public function index(Request $request, $page = 'profile')
+        public function index($page = 'profile')
         {
-            
             $user = auth()->user();
 
             $orders = collect();
+            $chats = collect();
 
-            // Если страница заказов
+            // Заказы
             if ($page === 'orders') {
+
                 $orders = auth()->user()
                     ->orders()
                     ->latest()
-                    ->paginate(10); // ✅ ОБЯЗАТЕЛЬНО
+                    ->paginate(10);
             }
 
-            $page = $page ?? 'profile'; // стартовая страница — profile
+            // Поддержка
+            if ($page === 'support') {
 
-            return view('profile.index', ['page' => $page,'orders' => $orders], compact('user'));
+                $chats = \App\Models\SupportChat::with('message')
+                    ->where('user_id', auth()->id())
+                    ->latest()
+                    ->get();
+            }
+
+            $page = $page ?? 'profile';
+
+            return view(
+                'profile.index',
+                compact(
+                    'user',
+                    'page',
+                    'orders',
+                    'chats'
+                )
+            );
         }
 
     public function edit(Request $request): View
