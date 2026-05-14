@@ -22,3 +22,6 @@ jobs:
             composer install --no-interaction --prefer-dist
             php artisan migrate --force
             php artisan optimize:clear
+            - name: Debug secrets
+            run: |
+                echo "HOST=${{ secrets.VPS_HOST }}"
