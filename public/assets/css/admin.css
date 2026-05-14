@@ -139,13 +139,13 @@ body {
 ========================= */
 
 :root {
-    --bg: #727272;
-    --panel: #141925;
-    --panel-2: #1e293b;
-    --border: #1f2937;
+    --bg: #0f172a;
+    --panel: #2b354b;
+    --panel-2: #48505e;
+    --border: #121418;
 
-    --text: #879e21;
-    --muted: #405777;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
 
     --primary: #2563eb;
     --danger: #ef4444;
