@@ -25,7 +25,7 @@ if(auth()->check() && auth()->user()->role === 'admin'){
                     <a href="{{ route('logout') }}" class="dashboard__list-link {{ $isActive ? 'active' : '' }}"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 @elseif($item['page'] === 'admin')
-                    <a href="/admin" class="dashboard__list-link {{ $isActive ? 'active' : '' }}">
+                    <a href="{{route('admin.dashboard')}}" class="dashboard__list-link {{ $isActive ? 'active' : '' }}">
                 @else
                     @php
 $route = $item['page'] === 'profile'
