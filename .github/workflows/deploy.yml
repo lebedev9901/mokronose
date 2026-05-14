@@ -23,5 +23,4 @@ jobs:
             php artisan migrate --force
             php artisan optimize:clear
             - name: Debug secrets
-            run: |
-                echo "HOST=${{ secrets.VPS_HOST }}"
+            
