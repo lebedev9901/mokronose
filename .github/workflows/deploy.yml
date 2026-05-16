@@ -23,5 +23,8 @@ jobs:
             composer install --no-interaction --prefer-dist
             php artisan migrate --force
             php artisan optimize:clear
+            php artisan storage:link || true
+            chown -R www-data:www-data storage bootstrap/cache
+            chmod -R 775 storage bootstrap/cache
             
             

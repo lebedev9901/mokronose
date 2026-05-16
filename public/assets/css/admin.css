@@ -441,7 +441,7 @@ input, textarea, select {
 }
 
 .message.system{
-    background:#dcfce7;
+    background:#dcfce721;
     align-self:flex-end;
 }
 
@@ -480,7 +480,7 @@ input, textarea, select {
 }
 
 .card {
-    background: #fff;
+    background: #ffffff05;
     border: 1px solid #eee;
     border-radius: 16px;
     padding: 20px;

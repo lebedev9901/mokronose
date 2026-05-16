@@ -17,7 +17,7 @@ class VkService
     public function sendMessage($userId, $message)
     {
         if (!$this->token) {
-            return; // просто ничего не делаем
+            return null; // просто ничего не делаем
         }
         return Http::post('https://api.vk.com/method/messages.send', [
             'user_id' => $userId,

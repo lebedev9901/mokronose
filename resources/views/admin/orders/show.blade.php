@@ -51,7 +51,7 @@
                     </div>
 
                     <div>
-                        x{{ $item->quantity }}
+                        x{{ $item->qty }}
                     </div>
 
                     <div>
