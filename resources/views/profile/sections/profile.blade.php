@@ -61,9 +61,9 @@
             <button class="modal-close" id="closeProfileModal">×</button>
         </div>
 
-        <form id="profileForm">
+        <form method="POST"id="profileForm">
             @csrf
-
+            @method('PATCH')
             <div class="form-grid">
 
                 <input type="text" name="first_name" value="{{ $user->first_name }}" placeholder="Имя">
