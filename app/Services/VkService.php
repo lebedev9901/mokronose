@@ -1,8 +1,8 @@
 <?php 
 namespace App\Services;
 
-use iLluminate\Support\Facades\Auth;
-use League\Uri\Http;
+use iLluminate\Support\Facades\Http;
+
 
 class VkService
 {

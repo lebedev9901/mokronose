@@ -21,7 +21,7 @@ class HomeController extends Controller
         $query->where('rating', '>', 4.5)
             ->orderBy('rating', 'desc');
 
-        $products = $query->take(9)->get();
+        $products = $query->take(6)->get();
 
         // fallback если пусто
         if ($products->isEmpty()) {

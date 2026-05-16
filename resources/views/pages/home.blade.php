@@ -159,7 +159,7 @@
         <h2 class="section-title">Отзывы наших клиентов</h2>
 
         <div class="reviews-grid">
-        @foreach($reviews as $review)
+        @forelse($reviews as $review)
             <article class="review-card">
                 <p class="review-text">
                     {{$review->text}}
@@ -170,7 +170,12 @@
                         <span class="review-rating">⭐ {{$review->rating}}</span>
                 </div>
             </article>
-            @endforeach
+            @empty
+
+                <div class="no-reviews">
+                    Никто не оставил отзыв
+                </div>
+            @endforelse
         </div>
     </div>
 </section>

@@ -59,9 +59,7 @@
     font-size: 14px;
     color: var(--color-text-light);
     margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    
     overflow: hidden;
 }
 
