@@ -72,7 +72,7 @@ class VkAuthController extends Controller
             [
                 'first_name' => $vkUser['first_name'] ?? 'Пользователь',
                 'last_name' => $vkUser['last_name'] ?? null,
-                'email' => $email,
+                'email' => $vkEmail,
                 'password' => bcrypt(Str::random(32)),
                 'vk_id' => $vkId,
             ]

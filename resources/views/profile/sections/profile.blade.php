@@ -44,7 +44,7 @@
             <button class="btn-secondary" disabled>VK привязан</button>
         @endif
 
-        <a href="https://vk.me/your_group" target="_blank" class="btn-secondary">
+        <a href="https://vk.me/mokronose" target="_blank" class="btn-secondary">
             Написать в VK
         </a>
 
