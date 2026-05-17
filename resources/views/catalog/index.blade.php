@@ -57,7 +57,9 @@
                             В корзину
                         </button>
                         </form>
-                            <button class="btn-order product-link">Подробнее</button>
+                           <a href="{{route('product', $product->id)}}" class="btn-accent product__link">
+                                Подробнее
+                            </a>
                         </div>
                 </div>
             </article>

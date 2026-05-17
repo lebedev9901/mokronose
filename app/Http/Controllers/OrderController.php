@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
+use App\Services\VkMessageService;
 use App\Services\VkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -131,17 +132,12 @@ class OrderController extends Controller
 
             $order = Order::create($orderData);
 
-            $user = auth()->user();
+            app(VkMessageService::class)->send(
+                "Новый заказ #{$order->id}\n" .
+                "Клиент: {$order->user->first_name}\n" .
+                "Сумма: {$order->total_price} ₽"
+            );
 
-            if ($user->vk_id) {
-                $vk->sendMessage($user->vk_id, "Ваш заказ №{$order->id} успешно создан!");
-            }
-
-            $user = auth()->user();
-
-            if ($user->vk_id) {
-                $vk->sendMessage($user->vk_id, "Ваш заказ №{$order->id} успешно создан!");
-            }
 
             // 2. order_items
             foreach($cartItems as $item){

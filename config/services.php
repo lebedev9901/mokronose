@@ -39,7 +39,8 @@ return [
         'client_id' => env('VK_CLIENT_ID'),
         'client_secret' => env('VK_CLIENT_SECRET'),
         'redirect' => env('VK_REDIRECT_URI'),
-        'token' => env('VK_TOKEN'),
+        'group_token' => env('VK_GROUP_TOKEN'),
+        'admin_peer_id' => env('VK_ADMIN_PEER_ID'),
     ],
 
 ];

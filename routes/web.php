@@ -65,7 +65,8 @@ Route::middleware(['auth'])->group(function (){
     // Подтверждение оформления
     Route::post('/orders/checkout', [OrderController::class, 'confirm'])->name('order.confirm');
 
-
+    Route::post('/product/{product}/reviews', [ReviewController::class, 'store'])
+    ->name('product.reviews.store');
 });
 
 //  Route::post('/orders', [OrderController::class, 'store'])->name('order.store');

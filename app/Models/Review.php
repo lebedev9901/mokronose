@@ -10,6 +10,13 @@ class Review extends Model
     use HasFactory;
     //
 
+    protected $fillable = [
+        'user_id',
+        'product_id',
+        'rating',
+        'text'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
