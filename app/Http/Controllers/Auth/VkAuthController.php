@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class VkAuthController extends Controller
 {
@@ -84,26 +84,22 @@ class VkAuthController extends Controller
 
     public function sdkLogin(Request $request)
     {
-        $vkId = $request->input('user_id');
-
-        if (!$vkId) {
-            return response()->json([
-                'message' => 'VK user_id not found',
-                'data' => $request->all(),
-            ], 422);
-        }
+        $vkId = $request->user_id;
 
         $user = User::updateOrCreate(
             ['vk_id' => $vkId],
             [
-                'first_name' => 'Пользователь VK',
+                'first_name' => 'VK User',
                 'email' => null,
-                'password' => bcrypt(\Illuminate\Support\Str::random(32)),
+                'password' => bcrypt(Str::random(32)),
             ]
         );
 
-    Auth::login($user, true);
+        Auth::login($user, true);
 
-        return response()->json(['ok' => true]);
+        return response()->json([
+            'ok' => true,
+            'user' => $user,
+        ]);
     }
 }

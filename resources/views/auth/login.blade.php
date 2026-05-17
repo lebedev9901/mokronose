@@ -76,6 +76,16 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify(data)
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            console.log(data);
+
+                            if (data.ok) {
+                                window.location.href = '/';
+                            }
+                        })
                     });
                 })
                 .then(function(response) {
