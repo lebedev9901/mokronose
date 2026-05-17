@@ -83,27 +83,27 @@ class VkAuthController extends Controller
     }
 
     public function sdkLogin(Request $request)
-{
-    $data = $request->all();
+    {
+        $vkId = $request->input('user_id');
 
-    $vkId = $data['user_id'] ?? $data['id'] ?? null;
+        if (!$vkId) {
+            return response()->json([
+                'message' => 'VK user_id not found',
+                'data' => $request->all(),
+            ], 422);
+        }
 
-    if (!$vkId) {
-        abort(422, 'VK user id not found');
+        $user = User::updateOrCreate(
+            ['vk_id' => $vkId],
+            [
+                'first_name' => 'Пользователь VK',
+                'email' => null,
+                'password' => bcrypt(\Illuminate\Support\Str::random(32)),
+            ]
+        );
+
+    Auth::login($user, true);
+
+        return response()->json(['ok' => true]);
     }
-
-    $user = User::updateOrCreate(
-        ['vk_id' => $vkId],
-        [
-            'first_name' => $data['first_name'] ?? 'Пользователь',
-            'last_name' => $data['last_name'] ?? null,
-            'email' => $data['email'] ?? null,
-            'password' => bcrypt(\Illuminate\Support\Str::random(32)),
-        ]
-    );
-
-    \Illuminate\Support\Facades\Auth::login($user, true);
-
-    return response()->json(['ok' => true]);
-}
 }
