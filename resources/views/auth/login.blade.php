@@ -38,6 +38,7 @@
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
 
+<div id="vkid-login"></div>
 <script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
 <script>
     if ('VKIDSDK' in window) {
