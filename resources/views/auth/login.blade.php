@@ -38,9 +38,29 @@
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
 
-            <a href="{{ route('vk.redirect') }}" class="auth-vk-btn">
-                Войти через VK
-            </a>
+            <div id="vkid-login"></div>
+
+<script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
+<script>
+    if ('VKIDSDK' in window) {
+        const VKID = window.VKIDSDK;
+
+        VKID.Config.init({
+            app: 54596619,
+            redirectUrl: 'https://mokronos.ru/vk/callback',
+            responseMode: VKID.ConfigResponseMode.Redirect,
+            source: VKID.ConfigSource.LOWCODE,
+            scope: '',
+        });
+
+        const oneTap = new VKID.OneTap();
+
+        oneTap.render({
+            container: document.getElementById('vkid-login'),
+            showAlternativeLogin: true
+        });
+    }
+</script>
             
             <div class="auth-footer">
                 Нет аккаунта?

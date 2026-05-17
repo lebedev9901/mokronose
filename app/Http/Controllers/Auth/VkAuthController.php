@@ -17,6 +17,7 @@ class VkAuthController extends Controller
         $query = http_build_query([
             'client_id' => config('services.vkontakte.client_id'),
             'redirect_uri' => config('services.vkontakte.redirect'),
+            'scope' => 'email',
             'response_type' => 'code',
             'v' => '5.131',
         ]);
@@ -68,6 +69,7 @@ class VkAuthController extends Controller
             [
                 'first_name' => $vkUser['first_name'] ?? 'Пользователь',
                 'last_name' => $vkUser['last_name'] ?? null,
+                'email' => $email,
                 'password' => bcrypt(Str::random(32)),
             ]
         );
