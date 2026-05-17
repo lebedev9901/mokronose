@@ -47,7 +47,7 @@
 
         VKID.Config.init({
             app: 54596619,
-            redirectUrl: 'https://mokronos.ru/login',
+            redirectUrl: 'https://mokronos.ru/vk/callback',
             responseMode: VKID.ConfigResponseMode.Callback,
             source: VKID.ConfigSource.LOWCODE,
             scope: 'email',
