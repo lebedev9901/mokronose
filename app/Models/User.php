@@ -29,6 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'avatar',
         'role',
+        'vk_id'
     ];
 
      public function getFilamentName(): string
