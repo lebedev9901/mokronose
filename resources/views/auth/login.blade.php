@@ -38,8 +38,6 @@
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
 
-<div id="vkid-login"></div>
-
 <script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
 <script>
     if ('VKIDSDK' in window) {
@@ -73,19 +71,10 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify(data)
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(function(data) {
-                            console.log(data);
-
-                            if (data.ok) {
-                                window.location.href = '/';
-                            }
-                        })
                     });
                 })
                 .then(function(response) {
@@ -94,7 +83,10 @@
                 })
                 .then(function(data) {
                     console.log('Laravel data:', data);
-                    window.location.href = '/';
+
+                    if (data.ok) {
+                        window.location.href = '/';
+                    }
                 })
                 .catch(function(error) {
                     console.error('VK login chain error:', error);
