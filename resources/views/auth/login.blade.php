@@ -91,6 +91,38 @@
                 });
         });
     }
+
+    .on(VKID.WidgetEvents.ERROR, function(error) {
+    console.error('VKID ERROR:', error);
+})
+.on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+    console.log('LOGIN_SUCCESS payload:', payload);
+
+    VKID.Auth.exchangeCode(payload.code, payload.device_id)
+        .then(function (data) {
+            console.log('VK exchange data:', data);
+
+            return fetch('{{ route('vk.sdk-login') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(data)
+            });
+        })
+        .then(function(response) {
+            console.log('Laravel response:', response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('Laravel data:', data);
+            window.location.href = '/';
+        })
+        .catch(function(error) {
+            console.error('VK login chain error:', error);
+        });
+});
 </script>
             
             <div class="auth-footer">
