@@ -90,10 +90,11 @@ class VkAuthController extends Controller
         $user = User::updateOrCreate(
             ['vk_id' => $vkId],
             [
-                'first_name' => 'VK User',
-                'last_name' => 'VK',
-                'middle_name' => null,
-                'email' => null,
+                'first_name' => $request->input('first_name', 'VK User'),
+                'last_name' => $request->input('last_name'),
+                'middle_name' => $request->input('middle_name'),
+                'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
                 'password' => bcrypt(Str::random(32)),
             ]
         );

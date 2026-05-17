@@ -308,17 +308,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 <label class="radio-item">
                     <input type="radio"
                            name="pickup_point"
-                           value="Воронеж, Ленина 10">
+                           value="Подольск, п. Железнодорожный, 28">
 
-                    Воронеж, Ленина 10
+                    Подольск, п. Железнодорожный, 28
                 </label>
 
                 <label class="radio-item">
                     <input type="radio"
                            name="pickup_point"
-                           value="Воронеж, Московский проспект 5">
+                           value="Москва, ул. Братеевская 16к3">
 
-                    Воронеж, Московский проспект 5
+                    Москва, ул. Братеевская 16к3
                 </label>
 
             </div>
