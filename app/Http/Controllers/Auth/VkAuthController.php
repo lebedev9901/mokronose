@@ -85,14 +85,28 @@ class VkAuthController extends Controller
 
     public function sdkLogin(Request $request)
     {
-        $vkId = $request->user_id;
+        $vkId = $request->input('user_id');
+        $accessToken = $request->input('access_token');
+
+        $vkUser = null;
+
+        if ($accessToken) {
+            $response = Http::get('https://api.vk.com/method/users.get', [
+                'access_token' => $accessToken,
+                'user_ids' => $vkId,
+                'fields' => 'photo_200',
+                'v' => '5.131',
+            ])->json();
+
+            $vkUser = $response['response'][0] ?? null;
+        }
 
         $user = User::updateOrCreate(
             ['vk_id' => $vkId],
             [
-                'first_name' => $request->input('first_name', 'VK User'),
-                'last_name' => $request->input('last_name'),
-                'middle_name' => $request->input('middle_name'),
+                'first_name' => $vkUser['first_name'] ?? 'VK User',
+                'last_name' => $vkUser['last_name'] ?? null,
+                'middle_name' => null,
                 'email' => $request->input('email'),
                 'phone' => $request->input('phone'),
                 'password' => bcrypt(Str::random(32)),

@@ -38,7 +38,7 @@
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
 
-<div id="vkid-login"></div>
+<div id="vkid-login" class="auth-vk-btn"></div>
 <script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
 <script>
     if ('VKIDSDK' in window) {
@@ -49,7 +49,7 @@
             redirectUrl: 'https://mokronos.ru/vk/callback',
             responseMode: VKID.ConfigResponseMode.Callback,
             source: VKID.ConfigSource.LOWCODE,
-            scope: 'email',
+            scope: 'email phone',
         });
 
         const oneTap = new VKID.OneTap();
@@ -75,7 +75,12 @@
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify(data)
+                        body: JSON.stringify({
+                            user_id: data.user_id,
+                            email: data.email ?? null,
+                            phone: data.phone ?? null,
+                            access_token: data.access_token
+                        })
                     });
                 })
                 .then(function(response) {
