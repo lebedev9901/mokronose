@@ -81,4 +81,29 @@ class VkAuthController extends Controller
 
         return redirect('/');
     }
+
+    public function sdkLogin(Request $request)
+{
+    $data = $request->all();
+
+    $vkId = $data['user_id'] ?? $data['id'] ?? null;
+
+    if (!$vkId) {
+        abort(422, 'VK user id not found');
+    }
+
+    $user = User::updateOrCreate(
+        ['vk_id' => $vkId],
+        [
+            'first_name' => $data['first_name'] ?? 'Пользователь',
+            'last_name' => $data['last_name'] ?? null,
+            'email' => $data['email'] ?? null,
+            'password' => bcrypt(\Illuminate\Support\Str::random(32)),
+        ]
+    );
+
+    \Illuminate\Support\Facades\Auth::login($user, true);
+
+    return response()->json(['ok' => true]);
+}
 }

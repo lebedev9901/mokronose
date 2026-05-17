@@ -38,7 +38,7 @@
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
 
-            <div id="vkid-login"></div>
+            <div id="vkid-login" class="auth-vk-btn"></div>
 
 <script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
 <script>
@@ -47,10 +47,10 @@
 
         VKID.Config.init({
             app: 54596619,
-            redirectUrl: 'https://mokronos.ru/vk/callback',
-            responseMode: VKID.ConfigResponseMode.Redirect,
+            redirectUrl: 'https://mokronos.ru/login',
+            responseMode: VKID.ConfigResponseMode.Callback,
             source: VKID.ConfigSource.LOWCODE,
-            scope: '',
+            scope: 'email',
         });
 
         const oneTap = new VKID.OneTap();
@@ -58,6 +58,20 @@
         oneTap.render({
             container: document.getElementById('vkid-login'),
             showAlternativeLogin: true
+        })
+        .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+            VKID.Auth.exchangeCode(payload.code, payload.device_id)
+                .then(function (data) {
+                    fetch('{{ route('vk.sdk-login') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(() => window.location.href = '/');
+                });
         });
     }
 </script>
