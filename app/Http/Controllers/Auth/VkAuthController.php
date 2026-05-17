@@ -13,7 +13,7 @@ class VkAuthController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('vkontakte')->scopes(['email'])->redirect();
+        return Socialite::driver('vkontakte')->stateless()->scopes(['email'])->redirect();
     }
 
     public function callback()
