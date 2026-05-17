@@ -18,7 +18,7 @@ class VkAuthController extends Controller
 
     public function callback()
     {
-        $vkUser = Socialite::driver('vkontakte')->user();
+        $vkUser = Socialite::driver('vkontakte')->stateless()->user();
 
         $user = User::updateOrCreate(
             ['vk_id' => $vkUser->getId()],
