@@ -4,7 +4,7 @@ use App\Filament\Pages\SupportChatMessage;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\auth\VkAuthController;
+use App\Http\Controllers\Auth\VkAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
@@ -51,8 +51,8 @@ Route::get('register', [RegisteredUserController::class, 'create'])->name('regis
 Route::post('register', [RegisteredUserController::class, 'store']);
 
 
-Route::get('/vk/redirect', [VkController::class, 'redirect'])->name('vk.redirect');
-Route::get('/vk/callback', [VkController::class, 'callback'])->name('vk.callback');
+Route::get('/vk/redirect', [VkAuthController::class, 'redirect'])->name('vk.redirect');
+Route::get('/vk/callback', [VkAuthController::class, 'callback'])->name('vk.callback');
 
 
 Route::middleware(['auth'])->group(function (){

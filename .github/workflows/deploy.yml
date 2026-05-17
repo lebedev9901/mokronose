@@ -26,5 +26,6 @@ jobs:
             php artisan storage:link || true
             chown -R www-data:www-data storage bootstrap/cache
             chmod -R 775 storage bootstrap/cache
+            npm run build
             
             

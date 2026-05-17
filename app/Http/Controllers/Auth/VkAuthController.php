@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -13,7 +13,7 @@ class VkAuthController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('vkontakte')->redirect();
+        return Socialite::driver('vkontakte')->scopes(['email'])->redirect();
     }
 
     public function callback()
@@ -23,7 +23,7 @@ class VkAuthController extends Controller
         $user = User::updateOrCreate(
             ['vk_id' => $vkUser->getId()],
             [
-                'name' => $vkUser->getName(),
+                'first_name' => $vkUser->getName() ?: 'Пользователь VK',
                 'email' => $vkUser->getEmail() ?? null,
                 'password' => bcrypt(uniqid()),
             ]
