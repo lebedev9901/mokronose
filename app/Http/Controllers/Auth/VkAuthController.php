@@ -28,7 +28,6 @@ class VkAuthController extends Controller
     public function callback()
     {
 
-        dd(request()->all());
 
         if (request()->has('error')) {
             return redirect('/login')->withErrors([
