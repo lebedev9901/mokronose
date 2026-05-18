@@ -38,67 +38,82 @@
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
 
-<div id="vkid-login" class="auth-vk-btn"></div>
-<script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
+<div id="vkid-login"></div>
+
+<script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
+
 <script>
-    if ('VKIDSDK' in window) {
-        const VKID = window.VKIDSDK;
+if ('VKIDSDK' in window) {
 
-        VKID.Config.init({
-            app: 54596619,
-            redirectUrl: 'https://mokronos.ru/vk/callback',
-            responseMode: VKID.ConfigResponseMode.Callback,
-            source: VKID.ConfigSource.LOWCODE,
-            scope: 'email phone',
-        });
+    const VKID = window.VKIDSDK;
 
-        const oneTap = new VKID.OneTap();
+    VKID.Config.init({
+        app: 54596619,
+        redirectUrl: 'https://mokronos.ru/vk/callback',
+        responseMode: VKID.ConfigResponseMode.Callback,
+        source: VKID.ConfigSource.LOWCODE,
+        scope: 'email phone',
+    });
 
-        oneTap.render({
-            container: document.getElementById('vkid-login'),
-            showAlternativeLogin: true
-        })
-        .on(VKID.WidgetEvents.ERROR, function(error) {
-            console.error('VKID ERROR:', error);
-        })
-        .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-            console.log('LOGIN_SUCCESS payload:', payload);
+    const oneTap = new VKID.OneTap();
 
-            VKID.Auth.exchangeCode(payload.code, payload.device_id)
-                .then(function (data) {
-                    console.log('VK exchange data:', data);
+    oneTap.render({
+        container: document.getElementById('vkid-login'),
+        showAlternativeLogin: true,
+        styles: {
+            borderRadius: 16,
+            width: 320
+        },
+        oauthList: [
+            'mail_ru',
+            'ok_ru'
+        ]
+    })
+    .on(VKID.WidgetEvents.ERROR, function(error) {
+        console.error('VK ERROR:', error);
+    })
+    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
 
-                    return fetch('{{ route('vk.sdk-login') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            user_id: data.user_id,
-                            email: data.email ?? null,
-                            phone: data.phone ?? null,
-                            access_token: data.access_token
-                        })
-                    });
-                })
-                .then(function(response) {
-                    console.log('Laravel response:', response.status);
-                    return response.json();
-                })
-                .then(function(data) {
-                    console.log('Laravel data:', data);
+        const code = payload.code;
+        const deviceId = payload.device_id;
 
-                    if (data.ok) {
-                        window.location.href = '/';
-                    }
-                })
-                .catch(function(error) {
-                    console.error('VK login chain error:', error);
+        VKID.Auth.exchangeCode(code, deviceId)
+            .then(function(data) {
+
+                console.log('VK DATA:', data);
+
+                return fetch('{{ route('vk.sdk-login') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        user_id: data.user_id,
+                        access_token: data.access_token,
+                        email: data.email,
+                        phone: data.phone
+                    })
                 });
-        });
-    }
+
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data);
+
+                if (data.ok) {
+                    window.location.href = '/';
+                }
+
+            })
+            .catch(function(error) {
+                console.error('VK LOGIN ERROR:', error);
+            });
+
+    });
+}
 </script>
             
             <div class="auth-footer">
