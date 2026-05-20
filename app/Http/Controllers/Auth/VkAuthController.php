@@ -85,40 +85,72 @@ class VkAuthController extends Controller
     }
 
     public function sdkLogin(Request $request)
-    {
-        $vkId = $request->input('user_id');
-        $accessToken = $request->input('access_token');
+{
+    $vkId = (string) $request->input('user_id');
+    $accessToken = $request->input('access_token');
 
-        $vkUser = null;
+    if (!$vkId) {
+        return response()->json([
+            'ok' => false,
+            'message' => 'VK ID не получен',
+        ], 422);
+    }
 
-        if ($accessToken) {
-            $response = Http::get('https://api.vk.com/method/users.get', [
-                'access_token' => $accessToken,
-                'user_ids' => $vkId,
-                'fields' => 'photo_200',
-                'v' => '5.131',
-            ])->json();
+    $vkUser = null;
 
-            $vkUser = $response['response'][0] ?? null;
+    if ($accessToken) {
+        $response = Http::get('https://api.vk.com/method/users.get', [
+            'access_token' => $accessToken,
+            'user_ids' => $vkId,
+            'fields' => 'photo_200',
+            'v' => '5.131',
+        ])->json();
+
+        $vkUser = $response['response'][0] ?? null;
+    }
+
+    // 1. Если пользователь уже вошёл — привязываем VK ID
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        $vkAlreadyLinked = User::where('vk_id', $vkId)
+            ->where('id', '!=', $user->id)
+            ->exists();
+
+        if ($vkAlreadyLinked) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Этот VK ID уже привязан к другому аккаунту',
+            ], 409);
         }
 
-        $user = User::updateOrCreate(
-            ['vk_id' => $vkId],
-            [
-                'first_name' => $vkUser['first_name'] ?? 'VK User',
-                'last_name' => $vkUser['last_name'] ?? null,
-                'middle_name' => null,
-                'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
-                'password' => bcrypt(Str::random(32)),
-            ]
-        );
+        $user->update([
+            'vk_id' => $vkId,
+            'phone' => $user->phone ?: $request->input('phone'),
+        ]);
 
+        return response()->json([
+            'ok' => true,
+            'message' => 'VK ID привязан',
+        ]);
+    }
+
+    // 2. Если пользователь не вошёл — ищем аккаунт с таким VK ID
+    $user = User::where('vk_id', $vkId)->first();
+
+    if ($user) {
         Auth::login($user, true);
 
         return response()->json([
             'ok' => true,
-            'user' => $user,
+            'message' => 'Вход выполнен',
         ]);
     }
+
+    // 3. Если VK ID не привязан — не создаём дубль
+    return response()->json([
+        'ok' => false,
+        'message' => 'VK ID не привязан. Сначала войдите обычным способом и привяжите VK в профиле.',
+    ], 404);
+}
 }
