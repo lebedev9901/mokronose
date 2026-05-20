@@ -37,14 +37,18 @@
 
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
+            
+            <div class="auth-footer">
+                Нет аккаунта?
+                <a href="{{ route('register') }}">Зарегистрироваться</a>
+            </div>
 
-<div id="vkid-login"></div>
+                        <div id="vkid-login"></div>
 
 <script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
 
 <script>
 if ('VKIDSDK' in window) {
-
     const VKID = window.VKIDSDK;
 
     VKID.Config.init({
@@ -71,16 +75,15 @@ if ('VKIDSDK' in window) {
     })
     .on(VKID.WidgetEvents.ERROR, function(error) {
         console.error('VK ERROR:', error);
+        alert('Ошибка VK ID');
     })
     .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
-
         const code = payload.code;
         const deviceId = payload.device_id;
 
         VKID.Auth.exchangeCode(code, deviceId)
             .then(function(data) {
-
-                console.log('VK DATA:', data);
+                console.log('VK EXCHANGE DATA:', data);
 
                 return fetch('{{ route('vk.sdk-login') }}', {
                     method: 'POST',
@@ -90,36 +93,31 @@ if ('VKIDSDK' in window) {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        user_id: data.user_id,
+                        user_id: data.user_id || data.user?.id || data.id,
                         access_token: data.access_token,
-                        email: data.email,
-                        phone: data.phone
+                        email: data.email || data.user?.email || null,
+                        phone: data.phone || data.user?.phone || null
                     })
                 });
-
             })
-            .then(response => response.json())
-            .then(data => {
+            .then(async function(response) {
+                const data = await response.json();
 
-                console.log(data);
+                console.log('SERVER RESPONSE:', data);
 
                 if (data.ok) {
                     window.location.href = '/';
+                } else {
+                    alert(data.message || 'Ошибка входа через VK ID');
                 }
-
             })
             .catch(function(error) {
                 console.error('VK LOGIN ERROR:', error);
+                alert('Ошибка входа через VK ID');
             });
-
     });
 }
-</script>
-            
-            <div class="auth-footer">
-                Нет аккаунта?
-                <a href="{{ route('register') }}">Зарегистрироваться</a>
-            </div>
+                    </script>
         </div>
     </div>
 </x-guest-layout>
