@@ -9,7 +9,6 @@ use App\Models\OrderItem;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
 use App\Services\VkMessageService;
-use App\Services\VkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +41,7 @@ class OrderController extends Controller
     }
 
 
-    public function confirm(Request $request, VkService $vk)
+    public function confirm(Request $request)
     {
         $request->validate([
             'name' => 'required',
