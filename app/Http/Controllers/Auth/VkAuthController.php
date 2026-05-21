@@ -35,6 +35,9 @@ class VkAuthController extends Controller
 
     public function sdkLogin(Request $request)
     {
+        return response()->json([
+            'request_all' => $request->all(),
+        ]);
         $vkId = (string) $request->input('user_id');
         $accessToken = $request->input('access_token');
 
