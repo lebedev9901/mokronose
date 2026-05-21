@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 
 class VkAuthController extends Controller
 {
@@ -38,19 +37,44 @@ class VkAuthController extends Controller
     private function getUserData(Request $request): array
     {
         $payload = $this->decodeIdToken($request->input('id_token'));
+        $profileUser = $request->input('profile.user', []);
 
         return [
-            'vk_id' => (string) $request->input('user_id'),
-            'first_name' => $payload['given_name']
+            'vk_id' => (string) (
+                $request->input('user_id')
+                ?? data_get($profileUser, 'user_id')
+                ?? $payload['sub']
+                ?? ''
+            ),
+
+            'first_name' => data_get($profileUser, 'first_name')
+                ?? $payload['given_name']
                 ?? $payload['first_name']
                 ?? 'Пользователь',
-            'last_name' => $payload['family_name']
+
+            'last_name' => data_get($profileUser, 'last_name')
+                ?? $payload['family_name']
                 ?? $payload['last_name']
                 ?? '',
-            'middle_name' => $payload['middle_name'] ?? null,
-            'email' => $request->input('email') ?? ($payload['email'] ?? null),
-            'phone' => $request->input('phone') ?? ($payload['phone_number'] ?? null),
-            'avatar' => $payload['picture'] ?? $payload['photo_200'] ?? null,
+
+            'middle_name' => data_get($profileUser, 'middle_name')
+                ?? $payload['middle_name']
+                ?? null,
+
+            'email' => data_get($profileUser, 'email')
+                ?? $request->input('email')
+                ?? $payload['email']
+                ?? null,
+
+            'phone' => data_get($profileUser, 'phone')
+                ?? $request->input('phone')
+                ?? $payload['phone_number']
+                ?? null,
+
+            'avatar' => data_get($profileUser, 'avatar')
+                ?? $payload['picture']
+                ?? $payload['photo_200']
+                ?? null,
         ];
     }
 
@@ -62,7 +86,6 @@ class VkAuthController extends Controller
             return response()->json([
                 'ok' => false,
                 'message' => 'VK ID не получен',
-                'request' => $request->all(),
             ], 422);
         }
 
@@ -103,8 +126,7 @@ class VkAuthController extends Controller
 
         return response()->json([
             'ok' => true,
-            'user' => $user,
-            'vk_data' => $data,
+            'redirect' => route('dashboard'),
         ]);
     }
 
@@ -145,8 +167,6 @@ class VkAuthController extends Controller
         return response()->json([
             'ok' => true,
             'message' => 'VK привязан',
-            'user' => $user,
-            'vk_data' => $data,
         ]);
     }
 }
