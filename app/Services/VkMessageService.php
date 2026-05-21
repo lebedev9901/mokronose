@@ -14,8 +14,8 @@ class VkMessageService
         }
 
         $response = Http::asForm()->post('https://api.vk.com/method/messages.send', [
-            'access_token' => config('services.vk.community_token'),
-            'v' => config('services.vk.api_version', '5.131'),
+            'access_token' => config('services.vkontakte.community_token'),
+            'v' => config('services.vkontake.api_version', '5.131'),
             'user_id' => $vkUserId,
             'random_id' => random_int(1, PHP_INT_MAX),
             'message' => $message,
