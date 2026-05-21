@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -123,6 +124,8 @@ class VkAuthController extends Controller
         }
 
         Auth::login($user, true);
+
+        CartController::mergeGuestCart();
 
         return response()->json([
             'ok' => true,

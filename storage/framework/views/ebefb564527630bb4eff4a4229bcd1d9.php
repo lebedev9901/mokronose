@@ -34,8 +34,7 @@
         <!-- Scripts -->
        <script src="<?php echo e(asset('assets/js/catalog.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/cart-page.js')); ?>" defer></script>
-       <script src="<?php echo e(asset('assets/js/modal.js')); ?>" defer></script>
-       <script src="<?php echo e(asset('assets/js/check_auth.js')); ?>" defer></script>
+       <script src="<?php echo e(asset('assets/js/cart.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/script.js')); ?>" defer></script>
   
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -36,7 +38,29 @@ class CatalogController extends Controller
         }
 
         $products = $query->latest()->paginate(9)->withQueryString();
+            
+        $sessionId = session()->getId();
+        $userId = auth()->id();
 
-        return view('catalog.index', compact('products', 'categories'));
+        $cart = Cart::where(function ($q) use ($userId, $sessionId) {
+            if ($userId) {
+                $q->where('user_id', $userId);
+            } else {
+                $q->where('session_id', $sessionId);
+            }
+        })->first();
+
+        $cartQuantities = $cart
+            ? $cart->items()->pluck('qty', 'product_id')
+            : collect();
+
+        $cartCount = $cartQuantities->sum();
+
+        return view('catalog.index', compact(
+            'products',
+            'categories',
+            'cartQuantities',
+            'cartCount'
+        ));
     }
 }

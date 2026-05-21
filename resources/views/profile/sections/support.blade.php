@@ -34,7 +34,7 @@
                         </div>
 
                         <div class="support-status {{ $chat->status }}">
-                            {{ strtoupper($chat->status) }}
+                            {{ strtoupper($chat->status_label) }}
                         </div>
 
                     </div>

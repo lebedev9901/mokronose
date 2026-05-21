@@ -34,8 +34,7 @@
         <!-- Scripts -->
        <script src="{{asset('assets/js/catalog.js')}}" defer></script>
        <script src="{{asset('assets/js/cart-page.js')}}" defer></script>
-       <script src="{{asset('assets/js/modal.js')}}" defer></script>
-       <script src="{{asset('assets/js/check_auth.js')}}" defer></script>
+       <script src="{{asset('assets/js/cart.js')}}" defer></script>
        <script src="{{asset('assets/js/script.js')}}" defer></script>
   
         <meta name="csrf-token" content="{{ csrf_token() }}">

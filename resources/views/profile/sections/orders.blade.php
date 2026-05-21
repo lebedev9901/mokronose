@@ -17,7 +17,7 @@
                 </div>
 
                 <span class="order-status status-{{ $order->status }}">
-                    {{ $order->status }}
+                    {{ $order->status_label }}
                 </span>
             </div>
 

@@ -66,16 +66,43 @@
                     </div>
 
                     <div class="product-actions"  data-id="{{$product->id}}">
-                        <div class="cart-qty-controls" style="display:none;">
-                        <button class="qty-minus">−</button>
-                        <span class="qty-number">1</span>
-                        <button class="qty-plus">+</button>
-                    </div>
+                        
                          <form>
                         @csrf
-                        <button type="button" class="btn product-btn add-to-cart " data-id="{{ $product->id }}">
-                            В корзину
-                        </button>
+
+                        @php 
+                            $cartQty = $cartQuantities[$product->id] ?? 0;
+                        @endphp
+
+                        <div
+                            class="product-cart-control"
+                            data-product="{{ $product->id }}"
+                        >
+                            <button
+                                type="button"
+                                class="btn product-btn add-to-cart"
+                                data-id="{{ $product->id }}"
+                                style="{{ $cartQty > 0 ? 'display:none;' : '' }}"
+                            >
+                                В корзину
+                            </button>
+
+                            <div class="cart-qty-control {{ $cartQty > 0 ? '' : 'hidden' }}">
+                                
+                                <button type="button" class="qty-btn qty-minus">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ $cartQty > 0 ? $cartQty : 1 }}
+                                </span>
+
+                                <button type="button" class="qty-btn qty-plus">
+                                    +
+                                </button>
+
+                            </div>
+                        </div>
                         </form>
                            <a href="{{route('product', $product->id)}}" class="btn-accent product__link">
                                 Подробнее
@@ -112,3 +139,4 @@
 
     </div>
 @endsection
+

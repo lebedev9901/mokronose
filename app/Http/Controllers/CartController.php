@@ -92,79 +92,132 @@ class CartController extends Controller
 
     public static function mergeGuestCart()
     {
-        if(!Auth::check()) return;
-
-        $userCart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-        $guestCart = Cart::where('session_id', session()->getId())->first();
-
-        if ($guestCart) {
-            foreach ($guestCart->items as $item) {
-                $existingItem = CartItem::where('cart_id', $userCart->id)
-                    ->where('product_id', $item->product_id)
-                    ->first();
-
-                if ($existingItem) {
-                    $existingItem->increment('qty', $item->qty);
-                } else {
-                    $item->cart_id = $userCart->id;
-                    $item->user_id = Auth::id();
-                    $item->session_id = null;
-                    $item->save();
-                }
-            }
-            $guestCart->delete();
+        if (!Auth::check()) {
+            return;
         }
+
+        $sessionId = session()->getId();
+
+        $userCart = Cart::firstOrCreate([
+            'user_id' => Auth::id(),
+        ]);
+
+        $guestCart = Cart::where('session_id', $sessionId)->first();
+
+        if (!$guestCart) {
+            return;
+        }
+
+        foreach ($guestCart->items as $item) {
+            $existingItem = CartItem::where('cart_id', $userCart->id)
+                ->where('product_id', $item->product_id)
+                ->first();
+
+            if ($existingItem) {
+                $existingItem->increment('qty', $item->qty);
+                $item->delete();
+            } else {
+                $item->update([
+                    'cart_id' => $userCart->id,
+                    'user_id' => Auth::id(),
+                    'session_id' => null,
+                ]);
+            }
+        }
+
+        $guestCart->delete();
     }
 
-    public function addAjax(Product $product)
+    public function ajaxAdd(Product $product)
+    {
+        $cart = Cart::firstOrCreate([
+            'user_id' => auth()->id(),
+        ]);
+
+        $item = CartItem::firstOrCreate(
+            [
+                'cart_id' => $cart->id,
+                'product_id' => $product->id,
+            ],
+            [
+                'user_id' => auth()->id(),
+                'qty' => 0,
+            ]
+        );
+
+        $item->increment('qty');
+
+        return response()->json([
+            'ok' => true,
+            'qty' => $item->fresh()->qty,
+            'cart_count' => CartItem::where('cart_id', $cart->id)->sum('qty'),
+        ]);
+    }
+
+    public function ajaxIncrease(Product $product)
+    {
+        $cart = Cart::firstOrCreate([
+            'user_id' => auth()->id(),
+        ]);
+
+        $item = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $product->id)
+            ->firstOrFail();
+
+        $item->increment('qty');
+
+        return response()->json([
+            'ok' => true,
+            'qty' => $item->fresh()->qty,
+            'cart_count' => CartItem::where('cart_id', $cart->id)->sum('qty'),
+        ]);
+    } 
+
+   public function ajaxDecrease(Product $product)
+    {
+        $cart = Cart::firstOrCreate([
+            'user_id' => auth()->id(),
+        ]);
+
+        $item = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $product->id)
+            ->firstOrFail();
+
+        if ($item->qty <= 1) {
+            $item->delete();
+
+            return response()->json([
+                'ok' => true,
+                'qty' => 0,
+                'cart_count' => CartItem::where('cart_id', $cart->id)->sum('qty'),
+            ]);
+        }
+
+        $item->decrement('qty');
+
+        return response()->json([
+            'ok' => true,
+            'qty' => $item->fresh()->qty,
+            'cart_count' => CartItem::where('cart_id', $cart->id)->sum('qty'),
+        ]);
+    }
+
+    public function count()
     {
         $sessionId = session()->getId();
         $userId = Auth::id();
 
-        $cart = Cart::firstOrCreate(
-            $userId ? ['user_id' => $userId] : ['session_id' => $sessionId],
-            ['user_id' => $userId ?: null, 'session_id' => $userId ? null : $sessionId],
-        );
+        $cart = Cart::where(function($q) use ($userId, $sessionId){
+            if($userId){
+                $q->where('user_id', $userId);
+            } else {
+                $q->where('session_id', $sessionId);
+            }
+        })->first();
 
-        $cartItem = $cart->items()->where('product_id', $product->id)->first();
+        $count = $cart ? $cart->items()->sum('qty') : 0;
 
-        if($cartItem ){
-            $cartItem->increment('qty');
-        }else{
-            CartItem::create([
-                'cart_id' => $cart->id,
-                'user_id' => $userId ?: null,
-                'session_id' => $userId ? null : $sessionId,
-                'product_id' => $product->id,
-                'qty' => 1
-            ]);
-        }
-
-        $count = $cart->items()->sum('qty');
-
-        return response()->json([
-            'success' => true,
-            'count' => $count 
-        ]);
-
+        return response()->json(['count' => $count]);
     }
-
-    public function count()
-{
-    $sessionId = session()->getId();
-    $userId = Auth::id();
-
-    $cart = Cart::where(function($q) use ($userId, $sessionId){
-        if($userId){
-            $q->where('user_id', $userId);
-        } else {
-            $q->where('session_id', $sessionId);
-        }
-    })->first();
-
-    $count = $cart ? $cart->items()->sum('qty') : 0;
-
-    return response()->json(['count' => $count]);
-}
 
 }

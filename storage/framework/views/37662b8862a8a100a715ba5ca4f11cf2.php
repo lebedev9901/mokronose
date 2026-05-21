@@ -69,16 +69,44 @@
                     </div>
 
                     <div class="product-actions"  data-id="<?php echo e($product->id); ?>">
-                        <div class="cart-qty-controls" style="display:none;">
-                        <button class="qty-minus">−</button>
-                        <span class="qty-number">1</span>
-                        <button class="qty-plus">+</button>
-                    </div>
+                        
                          <form>
                         <?php echo csrf_field(); ?>
-                        <button type="button" class="btn product-btn add-to-cart " data-id="<?php echo e($product->id); ?>">
-                            В корзину
-                        </button>
+
+                        <?php 
+                            $cartQty = $cartQuantities[$product->id] ?? 0;
+                        ?>
+
+                        <div
+                            class="product-cart-control"
+                            data-product="<?php echo e($product->id); ?>"
+                        >
+                            <button
+                                type="button"
+                                class="btn product-btn add-to-cart"
+                                data-id="<?php echo e($product->id); ?>"
+                                style="<?php echo e($cartQty > 0 ? 'display:none;' : ''); ?>"
+                            >
+                                В корзину
+                            </button>
+
+                            <div class="cart-qty-control <?php echo e($cartQty > 0 ? '' : 'hidden'); ?>">
+                                
+                                <button type="button" class="qty-btn qty-minus">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    <?php echo e($cartQty > 0 ? $cartQty : 1); ?>
+
+                                </span>
+
+                                <button type="button" class="qty-btn qty-plus">
+                                    +
+                                </button>
+
+                            </div>
+                        </div>
                         </form>
                            <a href="<?php echo e(route('product', $product->id)); ?>" class="btn-accent product__link">
                                 Подробнее
@@ -115,4 +143,6 @@
 
     </div>
 <?php $__env->stopSection(); ?>
+
+
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/catalog/index.blade.php ENDPATH**/ ?>
