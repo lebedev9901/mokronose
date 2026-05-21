@@ -17,7 +17,18 @@
         <label>Название</label>
         <input type="text"
                name="title"
-               value="{{ $category->title }}">
+               value="{{ old('title', $category->title) }} required">
+
+        <label>Родительская категория</label>
+    <select name="parent_id">
+        <option value="">Без родителя — основная категория</option>
+
+        @foreach($categories->whereNull('parent_id') as $parent)
+            <option value="{{ $parent->id }}" @selected(old('parent_id', $category->parent_id) == $parent->id)>
+                {{ $parent->title }}
+            </option>
+        @endforeach
+    </select>
     </div>
 
     <button class="btn btn-primary">

@@ -5,19 +5,39 @@
 @section('content')
     <div class="container">
         <h2 class="section-title">Каталог лакомств</h2>
-        <div class="catalog-filters flex">
-    <a href="{{ route('catalog') }}"
-       class="{{ request('category') ? '' : 'active' }}">
-        Все
-    </a>
+        <div class="catalog-filters">
+            <div class="catalog-main-categories">
+                <a href="{{ route('catalog') }}"
+                class="catalog-filter-main {{ request('category') ? '' : 'is-active' }}">
+                    Все товары
+                </a>
 
-    @foreach($categories as $category)
-        <a href="{{ route('catalog', ['category' => $category->id]) }}"
-           class="{{ request('category') == $category->id ? 'active' : '' }}">
-            {{ $category->title }}
-        </a>
-    @endforeach
-</div>
+                @foreach($categories as $category)
+                    <a href="{{ route('catalog', ['category' => $category->id]) }}"
+                    class="catalog-filter-main {{ request('category') == $category->id ? 'is-active' : '' }}">
+                        {{ $category->title }}
+                    </a>
+                @endforeach
+            </div>
+
+            @foreach($categories as $category)
+                @if(
+                    request('category') == $category->id ||
+                    $category->children->pluck('id')->contains((int) request('category'))
+                )
+                    @if($category->children->isNotEmpty())
+                        <div class="catalog-subcategory-row">
+                            @foreach($category->children as $child)
+                                <a href="{{ route('catalog', ['category' => $child->id]) }}"
+                                class="catalog-filter-child {{ request('category') == $child->id ? 'is-active' : '' }}">
+                                    {{ $child->title }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                @endif
+            @endforeach
+        </div>
         <div class="catalog-grid">
               @foreach ($products as $product)
             <article class="product-card" >

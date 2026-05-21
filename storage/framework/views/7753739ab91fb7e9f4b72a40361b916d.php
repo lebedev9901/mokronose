@@ -10,24 +10,30 @@
                         <h1 class="hero__title">
                             Натуральные лакомства для собак
                         </h1>
-                        <ul class="list-reset flex hero__subtitle">
-                            <li class="hero__subtitle-item">
-                                100% мясо
-                            </li>
-                            <li class="hero__subtitle-item">
-                                без химии 
-                            </li>
-                            <li class="hero__subtitle-item">
-                                ручная сушка
-                            </li>
-                        </ul>
-                        
-                        <a href="<?php echo e(route('catalog')); ?>" class="hero__btn ">
-                            Перейти в каталог
-                        </a>
-                        <p class="hero__note">
-                            * Все товары сертифицированы. Актуальную информацию читайте в описании товара
-                        </p>
+                        <div class="hero__bottom">
+                            <ul class="list-reset flex hero__subtitle">
+                                <li class="hero__subtitle-item">
+                                    100% мясо
+                                </li>
+                                <li class="hero__subtitle-item">
+                                    без химии 
+                                </li>
+                                <li class="hero__subtitle-item">
+                                    ручная сушка
+                                </li>
+                            </ul>
+                            
+                            <a href="<?php echo e(route('catalog')); ?>" class="hero__btn ">
+                                Перейти в каталог
+                            </a>
+                            <p class="hero__subdesc">
+                                Сделай первый заказ для совего любимца со скидкой 10%, с любовью МокоНос!
+                            </p>
+                            <p class="hero__note">
+                                * Все товары сертифицированы. Актуальную информацию читайте в описании товара
+                            </p>
+                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -91,8 +97,8 @@
                     <?php if($preview): ?>
                         <img src="<?php echo e(asset('storage/' . $preview->image)); ?>">
                     <?php endif; ?>
-                <h3><?php echo e($product->title); ?></h3>
-                <p class="product__desc">
+                <h3 class="product-title"><?php echo e($product->title); ?></h3>
+                <p class="product-desc">
                     <?php echo e($product->description); ?>
 
                 </p>
@@ -160,20 +166,51 @@
         <h2 class="section-title">Отзывы наших клиентов</h2>
 
         <div class="reviews-grid">
-        <?php $__empty_1 = true; $__currentLoopData = $reviews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $review): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-            <article class="review-card">
-                <p class="review-text">
-                    <?php echo e($review->text); ?>
-
-                </p>
-                <div class="review-author">
-                        <strong class="review-name"><?php echo e($review->user->name); ?></strong>
-                        <span class="reviews-product"><?php echo e($review->product->title); ?></span>
+            <?php $__empty_1 = true; $__currentLoopData = $reviews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $review): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <article class="review-card">
+                    <div class="review-card-top">
                         <span class="review-rating">⭐ <?php echo e($review->rating); ?></span>
-                </div>
-            </article>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <span class="review-date"><?php echo e($review->created_at->format('d.m.Y')); ?></span>
+                    </div>
 
+                    <p class="review-text">
+                        <?php echo e($review->text); ?>
+
+                    </p>
+
+                    <?php if($review->images->count()): ?>
+                        <div class="review-images">
+                            <?php $__currentLoopData = $review->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <a href="<?php echo e(asset('storage/' . $image->path)); ?>" target="_blank">
+                                    <img src="<?php echo e(asset('storage/' . $image->path)); ?>" alt="Фото отзыва">
+                                </a>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="review-author">
+                        <div class="review-avatar">
+                            <?php if($review->user?->avatar): ?>
+                                <img src="<?php echo e($review->user->avatar); ?>" alt="<?php echo e($review->user?->name); ?>">
+                            <?php else: ?>
+                                <span><?php echo e(mb_substr($review->user?->name ?? 'П', 0, 1)); ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="review-right">
+                            <strong class="review-name">
+                                <?php echo e($review->user?->first_name ?? $review->user?->name ?? 'Пользователь'); ?>
+
+                            </strong>
+
+                            <a href="<?php echo e(route('product', $review->product)); ?>" class="reviews-product">
+                                <?php echo e($review->product->title); ?>
+
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="no-reviews">
                     Никто не оставил отзыв
                 </div>

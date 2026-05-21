@@ -10,24 +10,30 @@
                         <h1 class="hero__title">
                             Натуральные лакомства для собак
                         </h1>
-                        <ul class="list-reset flex hero__subtitle">
-                            <li class="hero__subtitle-item">
-                                100% мясо
-                            </li>
-                            <li class="hero__subtitle-item">
-                                без химии 
-                            </li>
-                            <li class="hero__subtitle-item">
-                                ручная сушка
-                            </li>
-                        </ul>
-                        
-                        <a href="{{route('catalog')}}" class="hero__btn ">
-                            Перейти в каталог
-                        </a>
-                        <p class="hero__note">
-                            * Все товары сертифицированы. Актуальную информацию читайте в описании товара
-                        </p>
+                        <div class="hero__bottom">
+                            <ul class="list-reset flex hero__subtitle">
+                                <li class="hero__subtitle-item">
+                                    100% мясо
+                                </li>
+                                <li class="hero__subtitle-item">
+                                    без химии 
+                                </li>
+                                <li class="hero__subtitle-item">
+                                    ручная сушка
+                                </li>
+                            </ul>
+                            
+                            <a href="{{route('catalog')}}" class="hero__btn ">
+                                Перейти в каталог
+                            </a>
+                            <p class="hero__subdesc">
+                                Сделай первый заказ для совего любимца со скидкой 10%, с любовью МокоНос!
+                            </p>
+                            <p class="hero__note">
+                                * Все товары сертифицированы. Актуальную информацию читайте в описании товара
+                            </p>
+                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -91,8 +97,8 @@
                     @if ($preview)
                         <img src="{{ asset('storage/' . $preview->image) }}">
                     @endif
-                <h3>{{$product->title}}</h3>
-                <p class="product__desc">
+                <h3 class="product-title">{{$product->title}}</h3>
+                <p class="product-desc">
                     {{$product->description}}
                 </p>
 
@@ -159,19 +165,48 @@
         <h2 class="section-title">Отзывы наших клиентов</h2>
 
         <div class="reviews-grid">
-        @forelse($reviews as $review)
-            <article class="review-card">
-                <p class="review-text">
-                    {{$review->text}}
-                </p>
-                <div class="review-author">
-                        <strong class="review-name">{{$review->user->name}}</strong>
-                        <span class="reviews-product">{{$review->product->title}}</span>
-                        <span class="review-rating">⭐ {{$review->rating}}</span>
-                </div>
-            </article>
-            @empty
+            @forelse($reviews as $review)
+                <article class="review-card">
+                    <div class="review-card-top">
+                        <span class="review-rating">⭐ {{ $review->rating }}</span>
+                        <span class="review-date">{{ $review->created_at->format('d.m.Y') }}</span>
+                    </div>
 
+                    <p class="review-text">
+                        {{ $review->text }}
+                    </p>
+
+                    @if($review->images->count())
+                        <div class="review-images">
+                            @foreach($review->images as $image)
+                                <a href="{{ asset('storage/' . $image->path) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $image->path) }}" alt="Фото отзыва">
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="review-author">
+                        <div class="review-avatar">
+                            @if($review->user?->avatar)
+                                <img src="{{ $review->user->avatar }}" alt="{{ $review->user?->name }}">
+                            @else
+                                <span>{{ mb_substr($review->user?->name ?? 'П', 0, 1) }}</span>
+                            @endif
+                        </div>
+
+                        <div class="review-right">
+                            <strong class="review-name">
+                                {{ $review->user?->first_name ?? $review->user?->name ?? 'Пользователь' }}
+                            </strong>
+
+                            <a href="{{ route('product', $review->product) }}" class="reviews-product">
+                                {{ $review->product->title }}
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            @empty
                 <div class="no-reviews">
                     Никто не оставил отзыв
                 </div>

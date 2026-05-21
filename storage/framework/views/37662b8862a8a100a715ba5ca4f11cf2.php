@@ -5,20 +5,41 @@
 <?php $__env->startSection('content'); ?>
     <div class="container">
         <h2 class="section-title">Каталог лакомств</h2>
-        <div class="catalog-filters flex">
-    <a href="<?php echo e(route('catalog')); ?>"
-       class="<?php echo e(request('category') ? '' : 'active'); ?>">
-        Все
-    </a>
+        <div class="catalog-filters">
+            <div class="catalog-main-categories">
+                <a href="<?php echo e(route('catalog')); ?>"
+                class="catalog-filter-main <?php echo e(request('category') ? '' : 'is-active'); ?>">
+                    Все товары
+                </a>
 
-    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <a href="<?php echo e(route('catalog', ['category' => $category->id])); ?>"
-           class="<?php echo e(request('category') == $category->id ? 'active' : ''); ?>">
-            <?php echo e($category->title); ?>
+                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e(route('catalog', ['category' => $category->id])); ?>"
+                    class="catalog-filter-main <?php echo e(request('category') == $category->id ? 'is-active' : ''); ?>">
+                        <?php echo e($category->title); ?>
 
-        </a>
-    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-</div>
+                    </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+
+            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(
+                    request('category') == $category->id ||
+                    $category->children->pluck('id')->contains((int) request('category'))
+                ): ?>
+                    <?php if($category->children->isNotEmpty()): ?>
+                        <div class="catalog-subcategory-row">
+                            <?php $__currentLoopData = $category->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <a href="<?php echo e(route('catalog', ['category' => $child->id])); ?>"
+                                class="catalog-filter-child <?php echo e(request('category') == $child->id ? 'is-active' : ''); ?>">
+                                    <?php echo e($child->title); ?>
+
+                                </a>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
         <div class="catalog-grid">
               <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <article class="product-card" >

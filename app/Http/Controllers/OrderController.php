@@ -168,7 +168,7 @@ class OrderController extends Controller
             abort(403);
         }
 
-        $order->load('chat', 'items.product');
+        $order->load('chat.message', 'items.product.images', 'address');
 
         return view('profile.orders.show', compact('order'));
     }

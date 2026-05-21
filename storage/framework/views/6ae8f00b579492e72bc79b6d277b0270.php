@@ -1,76 +1,79 @@
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <div class="container">
     <div class="product-page">
         <div class="product-page__grid">
             <div class="product-gallery">
 
-            @php
+            <?php
                 $preview = $product->images->where('is_preview', true)->first()
                     ?? $product->images->first();
-            @endphp
+            ?>
 
-            @if ($preview)
+            <?php if($preview): ?>
 
                 <div class="product-main-image-wrapper">
                     <img
                         id="mainProductImage"
-                        src="{{ asset('storage/' . $preview->image) }}"
+                        src="<?php echo e(asset('storage/' . $preview->image)); ?>"
                         class="product-main-img"
                     >
                 </div>
 
-                @if($product->images->count() > 1)
+                <?php if($product->images->count() > 1): ?>
 
                     <div class="product-thumbs">
 
-                        @foreach($product->images as $image)
+                        <?php $__currentLoopData = $product->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                             <img
-                                src="{{ asset('storage/' . $image->image) }}"
-                                class="product-thumb {{ $preview->id === $image->id ? 'active' : '' }}"
+                                src="<?php echo e(asset('storage/' . $image->image)); ?>"
+                                class="product-thumb <?php echo e($preview->id === $image->id ? 'active' : ''); ?>"
                                 onclick="changeProductImage(this)"
                             >
 
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     </div>
 
-                @endif
+                <?php endif; ?>
 
-            @endif
+            <?php endif; ?>
 
         </div>
             <div class="product-info">
 
-                <h1 class="product-title">{{ $product->title }}</h1>
+                <h1 class="product-title"><?php echo e($product->title); ?></h1>
 
-                @if($product->categories->isNotEmpty())
+                <?php if($product->categories->isNotEmpty()): ?>
                     <div class="product-card-categories">
-                        @foreach($product->categories as $category)
-                            <a href="{{ route('catalog', ['category' => $category->id]) }}" class="product-card-category">
-                                {{ $category->title }}
+                        <?php $__currentLoopData = $product->categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <a href="<?php echo e(route('catalog', ['category' => $category->id])); ?>" class="product-card-category">
+                                <?php echo e($category->title); ?>
+
                             </a>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
-                @endif
+                <?php endif; ?>
 
                 <div class="product-rating">
-                    ⭐ {{ $product->rating ?? '4.8' }}
+                    ⭐ <?php echo e($product->rating ?? '4.8'); ?>
+
                 </div>
 
                 <p class="product-desc">
-                    {{ $product->description }}
+                    <?php echo e($product->description); ?>
+
                 </p>
 
                 <div class="product-price">
-                    {{ $product->price }} ₽
+                    <?php echo e($product->price); ?> ₽
                 </div>
 
                 <form>
-                        @csrf
-                        <button type="button" class="btn product-btn add-to-cart" data-id="{{ $product->id }}">
+                        <?php echo csrf_field(); ?>
+                        <button type="button" class="btn product-btn add-to-cart" data-id="<?php echo e($product->id); ?>">
                             В корзину
                         </button>
                 </form>
@@ -80,12 +83,12 @@
                 </div>
             </div>
         </div>
-        @auth
+        <?php if(auth()->guard()->check()): ?>
         <form method="POST"
-      action="{{ route('product.reviews.store', $product) }}"
+      action="<?php echo e(route('product.reviews.store', $product)); ?>"
       enctype="multipart/form-data"
       class="review-form">
-    @csrf
+    <?php echo csrf_field(); ?>
 
     <label>Оценка</label>
     <select name="rating" required>
@@ -109,80 +112,85 @@
 
     <button type="submit" class="btn">Оставить отзыв</button>
 </form>
-        @else
+        <?php else: ?>
         <p>
             Чтобы оставить отзыв, 
-            <a href="{{ route('vk.sdk-login') }}">войдите через VK</a>
+            <a href="<?php echo e(route('vk.sdk-login')); ?>">войдите через VK</a>
             или авторизуйтесь.
         </p>
-        @endauth
+        <?php endif; ?>
         <div class="product-reviews">
 
             <h2 class="section-title">Отзывы о товаре</h2>
 
-            @if($product->reviews->count())
+            <?php if($product->reviews->count()): ?>
                 <div class="reviews-grid">
 
-                    @foreach($product->reviews as $review)
+                    <?php $__currentLoopData = $product->reviews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $review): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="review-card">
 
                             <div class="review-rating">
-                                ⭐ {{ $review->rating }}
+                                ⭐ <?php echo e($review->rating); ?>
+
                             </div>
 
                             <p class="review-text">
-                                {{ $review->text }}
+                                <?php echo e($review->text); ?>
+
                             </p>
 
-                            @if($review->images->count())
+                            <?php if($review->images->count()): ?>
                                 <div class="review-images">
-                                    @foreach($review->images as $image)
-                                        <a href="{{ asset('storage/' . $image->path) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $image->path) }}" alt="Фото отзыва">
+                                    <?php $__currentLoopData = $review->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <a href="<?php echo e(asset('storage/' . $image->path)); ?>" target="_blank">
+                                            <img src="<?php echo e(asset('storage/' . $image->path)); ?>" alt="Фото отзыва">
                                         </a>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <div class="review-author">
                                 <div class="review-avatar">
 
-                                    @if($review->user?->avatar)
+                                    <?php if($review->user?->avatar): ?>
 
                                         <img
                                             
-                                            src="{{ $review->user->avatar ?? '/img/default-avatar.png' }}" 
-                                            alt="{{ $review->user?->first_name ?? $review->user?->name }}"
+                                            src="<?php echo e($review->user->avatar ?? '/img/default-avatar.png'); ?>" 
+                                            alt="<?php echo e($review->user?->first_name ?? $review->user?->name); ?>"
                                             class="review-avatar-img"
                                         >
 
-                                    @else
+                                    <?php else: ?>
 
                                         <span>
-                                            {{ mb_substr($review->user?->first_name ?? $review->user?->name ?? 'П', 0, 1) }}
+                                            <?php echo e(mb_substr($review->user?->first_name ?? $review->user?->name ?? 'П', 0, 1)); ?>
+
                                         </span>
 
-                                    @endif
+                                    <?php endif; ?>
 
                                 </div>
 
                                 <div>
                                     <div class="review-name">
-                                        {{ $review->user?->first_name ?? $review->user?->name ?? 'Пользователь' }}
+                                        <?php echo e($review->user?->first_name ?? $review->user?->name ?? 'Пользователь'); ?>
+
                                     </div>
                                     <div class="review-date">
-                                        {{ $review->created_at->format('d.m.Y') }}
+                                        <?php echo e($review->created_at->format('d.m.Y')); ?>
+
                                     </div>
                                 </div>
                             </div>
 
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                 </div>
-            @else
+            <?php else: ?>
                 <p class="no-reviews">Пока нет отзывов. Будьте первым!</p>
-            @endif
+            <?php endif; ?>
 
         </div>
     </div>
@@ -219,4 +227,6 @@ document.addEventListener('change', function (event) {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/product/show.blade.php ENDPATH**/ ?>

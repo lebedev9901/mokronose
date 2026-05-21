@@ -16,7 +16,7 @@ class ProductController extends Controller
     {
         
         // // Подгружаем категории и изображения для продукта
-        $product->load('categories', 'images');
+        $product->load('categories', 'images', 'reviews.user', 'reviews.images');
         // // dd($product);
         return view('product.show', compact('product'));
     }

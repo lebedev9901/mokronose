@@ -10,26 +10,33 @@ class CatalogController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::all();
+        $categories = Category::with('children')
+            ->whereNull('parent_id')
+            ->orderBy('title')
+            ->get();
 
-        $query = Product::with('categories');
+        $query = Product::with(['images', 'categories.parent']);
 
-        // 🔍 поиск
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        // 🏷 фильтр по категории
         if ($request->filled('category')) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->category);
-            });
+            $category = Category::with('children')->find($request->category);
+
+            if ($category) {
+                $ids = collect([$category->id])
+                    ->merge($category->children->pluck('id'))
+                    ->toArray();
+
+                $query->whereHas('categories', function ($q) use ($ids) {
+                    $q->whereIn('categories.id', $ids);
+                });
+            }
         }
 
         $products = $query->latest()->paginate(9)->withQueryString();
 
         return view('catalog.index', compact('products', 'categories'));
     }
-
-    
 }
