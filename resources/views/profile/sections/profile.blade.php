@@ -37,9 +37,7 @@
         </button>
 
         @if(!$user->vk_id)
-            <a href="{{ route('vk.sdk-login') }}" class="btn-primary">
-                Привязать VK
-            </a>
+            <div id="vkid-profile-link" class="btn-primary"></div>
         @else
             <button class="btn-secondary" disabled>VK привязан</button>
         @endif
@@ -153,4 +151,56 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+</script>
+
+<script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
+<script>
+if ('VKIDSDK' in window) {
+    const VKID = window.VKIDSDK;
+
+    VKID.Config.init({
+        app: 54596619,
+        redirectUrl: 'https://mokronos.ru/vk/callback',
+        responseMode: VKID.ConfigResponseMode.Callback,
+        source: VKID.ConfigSource.LOWCODE,
+        scope: 'email phone',
+    });
+
+    const oneTap = new VKID.OneTap();
+
+    oneTap.render({
+        container: document.getElementById('vkid-profile-link'),
+        showAlternativeLogin: true
+    })
+    .on(VKID.WidgetEvents.ERROR, function(error) {
+        console.error('VK ERROR:', error);
+    })
+    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
+        VKID.Auth.exchangeCode(payload.code, payload.device_id)
+            .then(function(data) {
+                return fetch('{{ route('vk.sdk-login') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        user_id: data.user_id,
+                        access_token: data.access_token,
+                        email: data.email,
+                        phone: data.phone
+                    })
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Ошибка VK');
+                }
+            });
+    });
+}
 </script>
