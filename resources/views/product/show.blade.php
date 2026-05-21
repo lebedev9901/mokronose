@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title', $product->name . ' — Мокронос')
+
+@section('description', Str::limit(strip_tags($product->description), 160))
+
 @section('content')
 <div class="container">
     <div class="product-page">

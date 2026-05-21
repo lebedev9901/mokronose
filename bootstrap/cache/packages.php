@@ -73,4 +73,11 @@
       0 => 'SocialiteProviders\\Manager\\ServiceProvider',
     ),
   ),
+  'spatie/laravel-sitemap' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Sitemap\\SitemapServiceProvider',
+    ),
+  ),
 );

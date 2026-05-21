@@ -4,6 +4,7 @@
 
 @section('content')
 
+@section('description', 'Товары для животных в интернет-магазине Мокронос.')
 <div class="hero">
                 <div class="container">
                     <div class="hero__contain flex">

@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 
-@section('title', 'Каталог')
+@section('title', 'Каталог товаров — Мокронос')
+
+@section('description', 'Каталог товаров для животных в интернет-магазине Мокронос.')
 @section('content')
     <div class="container">
         <h2 class="section-title">Каталог лакомств</h2>
