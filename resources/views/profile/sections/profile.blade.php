@@ -178,7 +178,7 @@ if ('VKIDSDK' in window) {
     .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
         VKID.Auth.exchangeCode(payload.code, payload.device_id)
             .then(function(data) {
-                return fetch('{{ route('vk.sdk-login') }}', {
+                return fetch('{{ route('vk.link') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

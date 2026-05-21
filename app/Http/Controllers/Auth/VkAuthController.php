@@ -29,6 +29,20 @@ class VkAuthController extends Controller
         ], 422);
     }
 
+    $response = Http::get('https://api.vk.com/method/users.get', [
+    'access_token' => $accessToken,
+    'user_ids' => $vkId,
+    'fields' => 'photo_200,contacts',
+    'v' => '5.131',
+])->json();
+
+return response()->json([
+    'vk_id' => $vkId,
+    'email_from_sdk' => $request->input('email'),
+    'phone_from_sdk' => $request->input('phone'),
+    'vk_api_response' => $response,
+]);
+
     $vkUser = null;
 
     if ($accessToken) {
@@ -73,6 +87,40 @@ class VkAuthController extends Controller
     return response()->json([
         'ok' => true,
         'user' => $user,
+    ]);
+}
+
+public function link(Request $request)
+{
+    $vkId = (string) $request->input('user_id');
+
+    if (!$vkId) {
+        return response()->json([
+            'ok' => false,
+            'message' => 'VK ID не получен',
+        ], 422);
+    }
+
+    $exists = User::where('vk_id', $vkId)
+        ->where('id', '!=', Auth::id())
+        ->exists();
+
+    if ($exists) {
+        return response()->json([
+            'ok' => false,
+            'message' => 'Этот VK уже привязан к другому пользователю',
+        ], 409);
+    }
+
+    $user = Auth::user();
+
+    $user->update([
+        'vk_id' => $vkId,
+    ]);
+
+    return response()->json([
+        'ok' => true,
+        'message' => 'VK привязан',
     ]);
 }
 }

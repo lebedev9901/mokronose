@@ -55,6 +55,9 @@ Route::post('register', [RegisteredUserController::class, 'store']);
 Route::get('/vk/callback', [VkAuthController::class, 'callback'])->name('vk.callback');
 Route::post('/vk/sdk-login', [VkAuthController::class, 'sdkLogin'])->name('vk.sdk-login');
 
+Route::post('/vk/link', [VkAuthController::class, 'link'])
+    ->middleware('auth')
+    ->name('vk.link');
 
 Route::middleware(['auth'])->group(function (){
 
