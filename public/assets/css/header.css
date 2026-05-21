@@ -839,3 +839,16 @@
 }
 
 }
+
+
+@media (max-width: 320px) {
+    .header__links{
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .header__enter{
+      flex-direction: column;
+      text-align: center;
+    }
+}

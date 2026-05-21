@@ -296,3 +296,13 @@
     font-weight: 700;
 }
 
+@media (max-width: 320px) {
+    .product-actions{
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .product-btn{
+        width: 100%;
+    }
+}

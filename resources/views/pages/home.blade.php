@@ -107,9 +107,11 @@
                     <span class="price">{{$product->price}}</span>
                 </div>
 
-                <div class="product__actions">
-                     <form>
+                <div class="product-actions"  data-id="{{$product->id}}">
+                        
+                         <form>
                         @csrf
+
                         @php 
                             $cartQty = $cartQuantities[$product->id] ?? 0;
                         @endphp
@@ -142,12 +144,12 @@
                                 </button>
 
                             </div>
-                    </form>    
-                    <a href="{{route('product', $product->id)}}" class="btn-accent product__link">
-                        Подробнее
-                    </a>
-                   
-                </div>
+                        </div>
+                        </form>
+                           <a href="{{route('product', $product->id)}}" class="btn-accent product__link">
+                                Подробнее
+                            </a>
+                        </div>
               
                  
             </article>

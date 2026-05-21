@@ -943,3 +943,9 @@
         grid-column: 2;
     }
 }
+
+@media (max-width: 320px) {
+  .profile-card{
+    padding: 10px;
+  }
+}

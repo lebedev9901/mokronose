@@ -1,0 +1,135 @@
+:root {
+  --color-bg: #FAF7F2;        /* основной фон (теплый, не серый) */
+  --color-surface: #FFFFFF;   /* карточки */
+  --color-primary: #8B5A2B;   /* основной (мясной / коричневый) */
+  --color-primary-hover: #6F451F;
+
+  --color-accent: #E8A96B;    /* вкусный акцент (лакомства) */
+  --color-accent-soft: #F3D2B3;
+
+  --color-text: #2B2B2B;
+  --color-text-light: #6B6B6B;
+
+  --color-border: #E5DED5;
+}
+
+
+
+.hero__contain{
+    min-height: 75vh;
+    background: 
+      linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
+      url("../img/hero.jpg") center / cover no-repeat;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 40px;
+    border-radius: 20px;
+    position: relative;
+}
+
+.hero__bottom{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+
+  width: 100%;
+}
+
+.hero__title{
+  font-size: 48px;
+  max-width: 800px;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.2;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.hero__subtitle{
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero__subtitle-item{
+  background: rgba(255,255,255,.12);
+  padding: 14px 20px;
+  min-width: 180px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.hero__subtitle-item:hover{
+  background: rgba(255,255,255,.2);
+  transform: translateY(-3px);
+}
+
+.hero__btn{
+  font-size: 20px;
+  padding: 16px 32px;
+  border-radius: 14px;
+  background: var(--color-accent);
+  color: white;
+  font-weight: 500;
+  border: none;
+  margin-top: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: 0.2s;
+  text-align: center;
+}
+
+.hero__btn:hover{
+  background: #d89355;
+  transform: translateY(-2px);
+}
+
+.hero__note, .hero__subdesc{
+  color: white;
+  background-color: #00000027;
+  padding: 15px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+}
+
+.hero__title,
+.hero__subtitle,
+.hero__btn{
+  animation: fadeUp 0.8s ease forwards;
+}
+
+@keyframes fadeUp{
+  from{
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+@media (max-width:320px) {
+    .hero__title{
+        font-size: 30px;
+    }
+
+    .hero__btn{
+        font-size: 14px;
+    }
+}

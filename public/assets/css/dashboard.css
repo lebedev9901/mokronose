@@ -83,3 +83,20 @@
         min-width: 180px;
     }
 }
+
+@media (max-width:320px){
+    
+    .dashboard__list{
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .dashboard__link-descr{
+        display: none;
+    }
+
+    .dashboard__link-title{
+        font-size: 12px;
+        width: fit-content;
+    }
+}

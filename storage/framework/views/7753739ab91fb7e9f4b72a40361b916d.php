@@ -108,9 +108,11 @@
                     <span class="price"><?php echo e($product->price); ?></span>
                 </div>
 
-                <div class="product__actions">
-                     <form>
+                <div class="product-actions"  data-id="<?php echo e($product->id); ?>">
+                        
+                         <form>
                         <?php echo csrf_field(); ?>
+
                         <?php 
                             $cartQty = $cartQuantities[$product->id] ?? 0;
                         ?>
@@ -144,12 +146,12 @@
                                 </button>
 
                             </div>
-                    </form>    
-                    <a href="<?php echo e(route('product', $product->id)); ?>" class="btn-accent product__link">
-                        Подробнее
-                    </a>
-                   
-                </div>
+                        </div>
+                        </form>
+                           <a href="<?php echo e(route('product', $product->id)); ?>" class="btn-accent product__link">
+                                Подробнее
+                            </a>
+                        </div>
               
                  
             </article>
