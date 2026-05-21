@@ -81,10 +81,10 @@ if ('VKIDSDK' in window) {
         const code = payload.code;
         const deviceId = payload.device_id;
 
-        VKID.Auth.exchangeCode(code, deviceId)
-            .then(function(data) {
-                console.log('VK EXCHANGE DATA:', data);
-
+        VKID.Auth.exchangeCode(payload.code, payload.device_id)
+    .then(function (data) {
+        return VKID.Auth.userInfo(data.access_token)
+            .then(function (profile) {
                 return fetch('{{ route('vk.sdk-login') }}', {
                     method: 'POST',
                     headers: {
@@ -93,29 +93,29 @@ if ('VKIDSDK' in window) {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        user_id: data.user_id || data.user?.id || data.id,
+                        user_id: data.user_id,
                         access_token: data.access_token,
                         id_token: data.id_token,
                         email: data.email,
-                        phone: data.phone 
+                        phone: data.phone,
+                        profile: profile
                     })
                 });
-            })
-            .then(async function(response) {
-                const data = await response.json();
-
-                console.log('SERVER RESPONSE:', data);
-
-                if (data.ok) {
-                    window.location.href = '/';
-                } else {
-                    consle.log(data.message || 'Ошибка входа через VK ID');
-                }
-            })
-            .catch(function(error) {
-                console.error('VK LOGIN ERROR:', error);
-                console.log('Ошибка входа через VK ID');
             });
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+
+        if (data.ok) {
+            window.location.href = '/';
+        } else {
+            alert(data.message || 'Ошибка VK');
+        }
+    })
+    .catch(error => {
+        console.error('VK LOGIN ERROR:', error);
+    });
     });
 }
                     </script>
