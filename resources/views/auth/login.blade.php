@@ -95,8 +95,9 @@ if ('VKIDSDK' in window) {
                     body: JSON.stringify({
                         user_id: data.user_id || data.user?.id || data.id,
                         access_token: data.access_token,
-                        email: data.email || data.user?.email || null,
-                        phone: data.phone || data.user?.phone || null
+                        id_token: data.id_token,
+                        email: data.email,
+                        phone: data.phone 
                     })
                 });
             })
