@@ -25,11 +25,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $oldSessionId = $request->session()->getId();
+
         $request->authenticate();
 
-        $request->session()->regenerate();
+        CartController::mergeGuestCart($oldSessionId);
 
-        CartController::mergeGuestCart();
+        $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

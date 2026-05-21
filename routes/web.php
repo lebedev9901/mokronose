@@ -28,8 +28,8 @@ Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product');
 
 Route::post('/cart/add/{product}', [CartController::class, 'ajaxAdd'])->name('cart.ajax.add');
-    Route::post('/cart/increase/{product}', [CartController::class, 'ajaxIncrease'])->name('cart.ajax.increase');
-    Route::post('/cart/decrease/{product}', [CartController::class, 'ajaxDecrease'])->name('cart.ajax.decrease');
+Route::post('/cart/increase/{product}', [CartController::class, 'ajaxIncrease'])->name('cart.ajax.increase');
+Route::post('/cart/decrease/{product}', [CartController::class, 'ajaxDecrease'])->name('cart.ajax.decrease');
 Route::get('/cart/count', [CartController::class, 'count']);
 
 

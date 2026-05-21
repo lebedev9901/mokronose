@@ -50,7 +50,6 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        CartController::mergeGuestCart();
 
         RateLimiter::clear($this->throttleKey());
     }
