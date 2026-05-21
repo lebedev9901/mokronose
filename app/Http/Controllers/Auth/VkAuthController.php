@@ -30,14 +30,12 @@ class VkAuthController extends Controller
             'v' => '5.131',
         ])->json();
 
-        return $response['response'][0] ?? null;
+        return $response;
     }
 
     public function sdkLogin(Request $request)
     {
-        return response()->json([
-            'request_all' => $request->all(),
-        ]);
+
         $vkId = (string) $request->input('user_id');
         $accessToken = $request->input('access_token');
 
@@ -49,6 +47,10 @@ class VkAuthController extends Controller
         }
 
         $vkUser = $this->getVkUser($accessToken, $vkId);
+            return response()->json([
+                'request' => $request->all(),
+                'vkUser' => $vkUser,
+            ]);
 
         $email = $request->input('email');
         $phone = $request->input('phone') ?? ($vkUser['mobile_phone'] ?? null);
