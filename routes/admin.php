@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminSupportController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,7 +33,7 @@ Route::middleware(['admin'])->group(function () {
     Route::post('/products/images/{image}/preview', [ProductController::class, 'setPreview'])
         ->name('admin.products.image.preview');
 
-
+    Route::resource('subcategories', SubcategoryController::class);
 
     Route::get('/categories', [CategoryController::class, 'index'])
         ->name('admin.categories');
