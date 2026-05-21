@@ -132,12 +132,7 @@ class OrderController extends Controller
 
             $order = Order::create($orderData);
 
-            app(VkMessageService::class)->send(
-                "Новый заказ #{$order->id}\n" .
-                "Клиент: {$order->user->first_name}\n" .
-                "Сумма: {$order->total_price} ₽"
-            );
-
+  
 
             // 2. order_items
             foreach($cartItems as $item){
@@ -162,9 +157,23 @@ class OrderController extends Controller
                 'message' => 'Заказ создан и передан в поддержку',
             ]);
 
+
+
             // 3. очистка корзины в БД
             CartItem::where('user_id', auth()->id())->delete();
         });
+
+        $user = auth()->user();
+
+        if ($user->vk_id) {
+            app(VkMessageService::class)->sendToUser(
+                $user->vk_id,
+                "Здравствуйте, {$user->first_name}!\n\n" .
+                "Ваш заказ №{$order->id} успешно оформлен и передан в поддержку.\n" .
+                "Сумма заказа: {$order->total_price} ₽\n\n" .
+                "Мы свяжемся с вами в ближайшее время."
+            );
+        }
 
         
         return redirect()->route('order.confirm')->with('success', 'Заказ оформлен');

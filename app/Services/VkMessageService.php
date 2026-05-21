@@ -3,27 +3,31 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class VkMessageService
 {
-    /**
-     * Create a new class instance.
-     */
-    public function send(string $message): void
+    public function sendToUser(string|int $vkUserId, string $message): bool
     {
-        $token = config('services.vk.group_token');
-        $peerId = config('services.vk.admin_peer_id');
-
-        if (!$token || !$peerId) {
-            return;
+        if (!$vkUserId) {
+            return false;
         }
 
-        Http::asForm()->post('https://api.vk.com/method/messages.send', [
-            'access_token' => $token,
-            'v' => '5.199',
-            'peer_id' => $peerId,
-            'message' => $message,
+        $response = Http::asForm()->post('https://api.vk.com/method/messages.send', [
+            'access_token' => config('services.vk.community_token'),
+            'v' => config('services.vk.api_version', '5.131'),
+            'user_id' => $vkUserId,
             'random_id' => random_int(1, PHP_INT_MAX),
+            'message' => $message,
         ]);
+
+        $data = $response->json();
+
+        if (isset($data['error'])) {
+            Log::warning('VK message send error', $data);
+            return false;
+        }
+
+        return true;
     }
 }

@@ -41,6 +41,8 @@ return [
         'redirect' => env('VK_REDIRECT_URI'),
         'group_token' => env('VK_GROUP_TOKEN'),
         'admin_peer_id' => env('VK_ADMIN_PEER_ID'),
+        'community_token' => env('VK_TOKEN'),
+        'api_version' => env('VK_API_VERSION', '5.131'),
     ],
 
 ];
