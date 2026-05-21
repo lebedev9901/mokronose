@@ -118,7 +118,7 @@ class VkAuthController extends Controller
                 'middle_name' => $user->middle_name ?: $data['middle_name'],
                 'email' => $user->email ?: $data['email'],
                 'phone' => $user->phone ?: $data['phone'],
-                'avatar' => $user->avatar ?: $data['avatar'],
+                'avatar' => $data['avatar'],
             ]);
         }
 
@@ -161,7 +161,7 @@ class VkAuthController extends Controller
             'middle_name' => $user->middle_name ?: $data['middle_name'],
             'email' => $user->email ?: $data['email'],
             'phone' => $user->phone ?: $data['phone'],
-            'avatar' => $user->avatar ?: $data['avatar'],
+            'avatar' => $data['avatar'],
         ]);
 
         return response()->json([
