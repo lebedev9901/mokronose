@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Cart;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -23,17 +26,27 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+ public function store(LoginRequest $request): RedirectResponse
     {
-        $oldSessionId = $request->session()->getId();
+        $guestCartId = Cart::where('session_id', $request->session()->getId())
+        ->whereNull('user_id')
+        ->value('id');
 
+    $user = User::where('email', $request->input('email'))->first();
+
+    if (! $user || ! Hash::check($request->input('password'), $user->password)) {
         $request->authenticate();
+    }
 
-        CartController::mergeGuestCart($oldSessionId);
+    if ($guestCartId) {
+        CartController::mergeGuestCartBeforeLogin($guestCartId, $user->id);
+    }
 
-        $request->session()->regenerate();
+    $request->authenticate();
 
-        return redirect()->intended(route('profile.index'));
+    $request->session()->regenerate();
+
+    return redirect()->intended(route('profile.index'));
     }
 
     /**
