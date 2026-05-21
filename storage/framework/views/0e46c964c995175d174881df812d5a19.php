@@ -69,7 +69,7 @@
                         Статус:
 
                         <span class="<?php echo e($chat->status); ?>">
-                            <?php echo e(strtoupper($chat->status)); ?>
+                            <?php echo e(strtoupper($chat->status_label)); ?>
 
                         </span>
 

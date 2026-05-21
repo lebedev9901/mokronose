@@ -66,7 +66,7 @@
                         Статус:
 
                         <span class="{{ $chat->status }}">
-                            {{ strtoupper($chat->status) }}
+                            {{ strtoupper($chat->status_label) }}
                         </span>
 
                     </div>

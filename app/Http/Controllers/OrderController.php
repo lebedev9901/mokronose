@@ -117,6 +117,7 @@ class OrderController extends Controller
                 'order_id' => $order->id,
                 'user_id' => auth()->id(),
                 'status' => 'open',
+                'subject' => 'Заказ #' . $order->id,
             ]);
 
             SupportMessage::create([

@@ -12,14 +12,18 @@ class SupportController extends Controller
     public function confirmOrder(Order $order)
     {
         $order->update([
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
-        SupportMessage::create([
-            'chat_id' => $order->chat->id,
-            'sender_type' => 'support',
-            'message' => 'Заказ подтверждён поддержкой',
-        ]);
+        if ($order->chat) {
+            SupportMessage::create([
+                'chat_id' => $order->chat->id,
+                'sender_type' => 'support',
+                'message' => 'Заказ подтверждён поддержкой',
+            ]);
+        }
+
+        return back()->with('success', 'Заказ подтверждён');
     }
 
     public function index()
@@ -29,32 +33,21 @@ class SupportController extends Controller
             ->latest()
             ->get();
 
-        return view(
-            'profile.sections.support',
-            compact('chats')
-        );
+        return view('profile.sections.support', compact('chats'));
     }
 
     public function chat(SupportChat $chat)
     {
         abort_if($chat->user_id !== auth()->id(), 403);
 
-        $chat->load([
-            'message.user'
-        ]);
+        $chat->load('message.user');
 
         $allChats = SupportChat::with('message')
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
 
-        return view(
-            'profile.support.chat',
-            compact(
-                'chat',
-                'allChats'
-            )
-        );
+        return view('profile.support.chat', compact('chat', 'allChats'));
     }
 
     public function create()
@@ -66,25 +59,22 @@ class SupportController extends Controller
     {
         $request->validate([
             'subject' => 'required|max:255',
-            'message' => 'required'
+            'message' => 'required',
         ]);
 
         $chat = SupportChat::create([
             'user_id' => auth()->id(),
             'subject' => $request->subject,
-            'status' => 'open'
+            'status' => 'open',
         ]);
 
         $chat->message()->create([
             'user_id' => auth()->id(),
             'message' => $request->message,
-            'sender_type' => 'user'
+            'sender_type' => 'user',
         ]);
 
-        return redirect()->route(
-            'support.chat',
-            $chat->id
-        );
+        return redirect()->route('support.chat', $chat->id);
     }
 
     public function send(Request $request, SupportChat $chat)
@@ -92,17 +82,17 @@ class SupportController extends Controller
         abort_if($chat->user_id !== auth()->id(), 403);
 
         $request->validate([
-            'message' => 'required'
+            'message' => 'required',
         ]);
 
         $chat->message()->create([
             'user_id' => auth()->id(),
             'message' => $request->message,
-            'sender_type' => 'user'
+            'sender_type' => 'user',
         ]);
 
         $chat->update([
-            'status' => 'waiting'
+            'status' => 'waiting',
         ]);
 
         return back();

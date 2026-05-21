@@ -11,6 +11,7 @@ class SupportChat extends Model
         'order_id',
         'user_id',
         'status',
+        'subject'
     ];
 
     public function message()
@@ -26,6 +27,17 @@ class SupportChat extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'open' => 'Открыт',
+            'waiting' => 'Ожидает ответа поддержки',
+            'answered' => 'Есть ответ поддержки',
+            'closed' => 'Закрыт',
+            default => 'Неизвестно',
+        };
     }
 
 }
