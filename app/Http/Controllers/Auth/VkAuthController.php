@@ -17,35 +17,12 @@ class VkAuthController extends Controller
         ]);
     }
 
-    public function sdkLogin(Request $request)
-{
-    $vkId = (string) $request->input('user_id');
-    $accessToken = $request->input('access_token');
+    private function getVkUser(?string $accessToken, string $vkId): ?array
+    {
+        if (!$accessToken) {
+            return null;
+        }
 
-    if (!$vkId) {
-        return response()->json([
-            'ok' => false,
-            'message' => 'VK ID не получен',
-        ], 422);
-    }
-
-    $response = Http::get('https://api.vk.com/method/users.get', [
-    'access_token' => $accessToken,
-    'user_ids' => $vkId,
-    'fields' => 'photo_200,contacts',
-    'v' => '5.131',
-])->json();
-
-return response()->json([
-    'vk_id' => $vkId,
-    'email_from_sdk' => $request->input('email'),
-    'phone_from_sdk' => $request->input('phone'),
-    'vk_api_response' => $response,
-]);
-
-    $vkUser = null;
-
-    if ($accessToken) {
         $response = Http::get('https://api.vk.com/method/users.get', [
             'access_token' => $accessToken,
             'user_ids' => $vkId,
@@ -53,74 +30,97 @@ return response()->json([
             'v' => '5.131',
         ])->json();
 
-        $vkUser = $response['response'][0] ?? null;
+        return $response['response'][0] ?? null;
     }
 
-    $email = $request->input('email');
-    $phone = $request->input('phone') ?? ($vkUser['mobile_phone'] ?? null);
+    public function sdkLogin(Request $request)
+    {
+        $vkId = (string) $request->input('user_id');
+        $accessToken = $request->input('access_token');
 
-    $user = User::where('vk_id', $vkId)->first();
+        if (!$vkId) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'VK ID не получен',
+            ], 422);
+        }
 
-    if (!$user) {
-        $user = User::create([
-            'vk_id' => $vkId,
-            'first_name' => $vkUser['first_name'] ?? 'Пользователь',
-            'last_name' => $vkUser['last_name'] ?? '',
-            'middle_name' => null,
-            'email' => $email,
-            'phone' => $phone,
-            'avatar' => $vkUser['photo_200'] ?? null,
-            'password' => bcrypt(str()->random(32)),
+        $vkUser = $this->getVkUser($accessToken, $vkId);
+
+        $email = $request->input('email');
+        $phone = $request->input('phone') ?? ($vkUser['mobile_phone'] ?? null);
+
+        $user = User::where('vk_id', $vkId)->first();
+
+        if (!$user) {
+            $user = User::create([
+                'vk_id' => $vkId,
+                'first_name' => $vkUser['first_name'] ?? 'Пользователь',
+                'last_name' => $vkUser['last_name'] ?? '',
+                'middle_name' => null,
+                'email' => $email,
+                'phone' => $phone,
+                'avatar' => $vkUser['photo_200'] ?? null,
+                'password' => bcrypt(str()->random(32)),
+            ]);
+        } else {
+            $user->update([
+                'first_name' => $vkUser['first_name'] ?? $user->first_name,
+                'last_name' => $vkUser['last_name'] ?? $user->last_name,
+                'email' => $user->email ?: $email,
+                'phone' => $user->phone ?: $phone,
+                'avatar' => $vkUser['photo_200'] ?? $user->avatar,
+            ]);
+        }
+
+        Auth::login($user, true);
+
+        return response()->json([
+            'ok' => true,
+            'user' => $user,
         ]);
-    } else {
+    }
+
+    public function link(Request $request)
+    {
+        $vkId = (string) $request->input('user_id');
+        $accessToken = $request->input('access_token');
+
+        if (!$vkId) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'VK ID не получен',
+            ], 422);
+        }
+
+        $exists = User::where('vk_id', $vkId)
+            ->where('id', '!=', Auth::id())
+            ->exists();
+
+        if ($exists) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Этот VK уже привязан к другому пользователю',
+            ], 409);
+        }
+
+        $vkUser = $this->getVkUser($accessToken, $vkId);
+
+        $user = Auth::user();
+
         $user->update([
-            'first_name' => $vkUser['first_name'] ?? $user->first_name,
-            'last_name' => $vkUser['last_name'] ?? $user->last_name,
-            'email' => $user->email ?: $email,
-            'phone' => $user->phone ?: $phone,
-            'avatar' => $vkUser['photo_200'] ?? $user->avatar,
+            'vk_id' => $vkId,
+            'first_name' => $user->first_name ?: ($vkUser['first_name'] ?? null),
+            'last_name' => $user->last_name ?: ($vkUser['last_name'] ?? null),
+            'phone' => $user->phone ?: ($request->input('phone') ?? ($vkUser['mobile_phone'] ?? null)),
+            'email' => $user->email ?: $request->input('email'),
+            'avatar' => $user->avatar ?: ($vkUser['photo_200'] ?? null),
+        ]);
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'VK привязан',
+            'user' => $user,
         ]);
     }
-
-    Auth::login($user, true);
-
-    return response()->json([
-        'ok' => true,
-        'user' => $user,
-    ]);
-}
-
-public function link(Request $request)
-{
-    $vkId = (string) $request->input('user_id');
-
-    if (!$vkId) {
-        return response()->json([
-            'ok' => false,
-            'message' => 'VK ID не получен',
-        ], 422);
-    }
-
-    $exists = User::where('vk_id', $vkId)
-        ->where('id', '!=', Auth::id())
-        ->exists();
-
-    if ($exists) {
-        return response()->json([
-            'ok' => false,
-            'message' => 'Этот VK уже привязан к другому пользователю',
-        ], 409);
-    }
-
-    $user = Auth::user();
-
-    $user->update([
-        'vk_id' => $vkId,
-    ]);
-
-    return response()->json([
-        'ok' => true,
-        'message' => 'VK привязан',
-    ]);
-}
 }
