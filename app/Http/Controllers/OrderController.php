@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -10,16 +9,11 @@ use App\Models\SupportChat;
 use App\Models\SupportMessage;
 use App\Services\VkMessageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    //
-    
-
-
-    public function create ()
+    public function create()
     {
         return view('orders.create');
     }
@@ -31,7 +25,7 @@ class OrderController extends Controller
             ->whereHas('product')
             ->get();
 
-        if($cartItems->isEmpty()){
+        if ($cartItems->isEmpty()) {
             return redirect()->route('cart')->with('error', 'Корзина пуста');
         }
 
@@ -40,8 +34,7 @@ class OrderController extends Controller
         return view('orders.checkout', compact('cartItems', 'total'));
     }
 
-
-    public function confirm(Request $request)
+    public function confirm(Request $request, VkMessageService $vk)
     {
         $request->validate([
             'name' => 'required',
@@ -56,7 +49,6 @@ class OrderController extends Controller
         ]);
 
         if ($request->delivery_method === 'courier') {
-
             $address = auth()->user()
                 ->addresses()
                 ->where('id', $request->address_id)
@@ -71,25 +63,20 @@ class OrderController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
         ]);
-            
 
         $cartItems = CartItem::where('user_id', auth()->id())
             ->with('product')
+            ->whereHas('product')
             ->get();
 
-        if($cartItems->isEmpty()){
+        if ($cartItems->isEmpty()) {
             return redirect()->route('cart')->with('error', 'Корзина пуста');
         }
 
-        DB::transaction(function () use ($cartItems, $request, $vk)
-        {
-
-        
-
+        $order = DB::transaction(function () use ($cartItems, $request) {
             $total = $cartItems->sum(fn($item) => $item->product->price * $item->qty);
 
-            // 1. order
-           $orderData = [
+            $orderData = [
                 'user_id' => auth()->id(),
                 'total_price' => $total,
                 'delivery_method' => $request->delivery_method,
@@ -97,21 +84,7 @@ class OrderController extends Controller
                 'status' => 'new',
             ];
 
-              if ($request->delivery_method === 'courier' && !$request->address_id) {
-
-                $default = auth()->user()
-                    ->addresses()
-                    ->where('is_default', 1)
-                    ->first();
-
-                if ($default) {
-                    $orderData['address_id'] = $default->id;
-                }
-            }
-
-            // 👇 добавляем динамически
             switch ($request->delivery_method) {
-
                 case 'courier':
                     $orderData['address_id'] = $request->address_id;
                     break;
@@ -131,10 +104,7 @@ class OrderController extends Controller
 
             $order = Order::create($orderData);
 
-  
-
-            // 2. order_items
-            foreach($cartItems as $item){
+            foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
@@ -156,16 +126,15 @@ class OrderController extends Controller
                 'message' => 'Заказ создан и передан в поддержку',
             ]);
 
-
-
-            // 3. очистка корзины в БД
             CartItem::where('user_id', auth()->id())->delete();
+
+            return $order;
         });
 
         $user = auth()->user();
 
         if ($user->vk_id) {
-            app(VkMessageService::class)->sendToUser(
+            $vk->sendToUser(
                 $user->vk_id,
                 "Здравствуйте, {$user->first_name}!\n\n" .
                 "Ваш заказ №{$order->id} успешно оформлен и передан в поддержку.\n" .
@@ -174,41 +143,31 @@ class OrderController extends Controller
             );
         }
 
-        
         return redirect()->route('order.confirm')->with('success', 'Заказ оформлен');
     }
-    
+
     public function success()
     {
         return view('orders.confirm');
     }
 
-    //   public function index()
-    // {
-    //     $orders = Order::where('user_id', auth()->id())
-    //         ->with('chat') // ВАЖНО
-    //         ->latest()
-    //         ->get();
-
-    //     return view('profile.orders', compact('orders'));
-    // }
-
     public function index()
     {
         $orders = auth()->user()
-        ->orders()
-        ->with('chat')
-        ->latest();
+            ->orders()
+            ->with('chat')
+            ->latest()
+            ->get();
 
         return view('profile.orders', compact('orders'));
     }
 
     public function show(Order $order)
     {
-        if($order->user_id !== auth()->id()){
+        if ($order->user_id !== auth()->id()) {
             abort(403);
         }
-    
+
         $order->load('chat', 'items.product');
 
         return view('profile.orders.show', compact('order'));
