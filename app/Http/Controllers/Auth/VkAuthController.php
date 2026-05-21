@@ -78,6 +78,7 @@ class VkAuthController extends Controller
         return response()->json([
             'ok' => true,
             'user' => $user,
+            'vkUser' => $vkUser,
         ]);
     }
 
