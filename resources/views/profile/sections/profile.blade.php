@@ -37,7 +37,7 @@
         </button>
 
         @if(!$user->vk_id)
-            <a href="{{ route('vk.redirect') }}" class="btn-primary">
+            <a href="{{ route('vk.sdk-login') }}" class="btn-primary">
                 Привязать VK
             </a>
         @else

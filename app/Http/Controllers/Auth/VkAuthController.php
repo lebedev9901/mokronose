@@ -78,30 +78,21 @@ class VkAuthController extends Controller
         /**
          * 2. Пользователь не авторизован — ищем существующий аккаунт по VK ID
          */
-        $user = User::where('vk_id', $vkId)->first();
+        $user = User::create([
+            'vk_id' => $vkId,
+            'first_name' => $vkUser['first_name'] ?? 'Пользователь',
+            'last_name' => $vkUser['last_name'] ?? '',
+            'middle_name' => null,
+            'email' => $email,
+            'phone' => $phone,
+            'password' => bcrypt(str()->random(32)),
+        ]);
 
-        if ($user) {
-            $user->update([
-                'first_name' => $user->first_name ?: ($vkUser['first_name'] ?? $user->first_name),
-                'last_name' => $user->last_name ?: ($vkUser['last_name'] ?? $user->last_name),
-                'email' => $user->email ?: $email,
-                'phone' => $user->phone ?: $phone,
-            ]);
+        Auth::login($user, true);
 
-            Auth::login($user, true);
-
-            return response()->json([
-                'ok' => true,
-                'message' => 'Вход выполнен',
-            ]);
-        }
-
-        /**
-         * 3. VK ID не привязан — НЕ создаём нового пользователя
-         */
         return response()->json([
-            'ok' => false,
-            'message' => 'VK ID не привязан. Сначала войдите обычным способом и привяжите VK ID в профиле.',
-        ], 404);
+            'ok' => true,
+            'message' => 'Аккаунт создан через VK',
+        ]);
     }
 }

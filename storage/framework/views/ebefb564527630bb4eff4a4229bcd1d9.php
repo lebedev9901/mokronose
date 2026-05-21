@@ -4,8 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-
+        <meta name="yandex-verification" content="93a14333f280d765" >
         <title><?php echo e(config('app.name', 'Мокронос')); ?></title>
+        
 
         
         <link rel="stylesheet" href="<?php echo e(asset('assets/css/normalize.css')); ?> ">

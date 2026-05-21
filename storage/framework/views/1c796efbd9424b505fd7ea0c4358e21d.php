@@ -103,68 +103,87 @@
 
                 <button type="submit" class="auth-btn">Войти</button>
             </form>
-
-<script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
-<script>
-    if ('VKIDSDK' in window) {
-        const VKID = window.VKIDSDK;
-
-        VKID.Config.init({
-            app: 54596619,
-            redirectUrl: 'https://mokronos.ru/vk/callback',
-            responseMode: VKID.ConfigResponseMode.Callback,
-            source: VKID.ConfigSource.LOWCODE,
-            scope: 'email',
-        });
-
-        const oneTap = new VKID.OneTap();
-
-        oneTap.render({
-            container: document.getElementById('vkid-login'),
-            showAlternativeLogin: true
-        })
-        .on(VKID.WidgetEvents.ERROR, function(error) {
-            console.error('VKID ERROR:', error);
-        })
-        .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-            console.log('LOGIN_SUCCESS payload:', payload);
-
-            VKID.Auth.exchangeCode(payload.code, payload.device_id)
-                .then(function (data) {
-                    console.log('VK exchange data:', data);
-
-                    return fetch('<?php echo e(route('vk.sdk-login')); ?>', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
-                        },
-                        body: JSON.stringify(data)
-                    });
-                })
-                .then(function(response) {
-                    console.log('Laravel response:', response.status);
-                    return response.json();
-                })
-                .then(function(data) {
-                    console.log('Laravel data:', data);
-
-                    if (data.ok) {
-                        window.location.href = '/';
-                    }
-                })
-                .catch(function(error) {
-                    console.error('VK login chain error:', error);
-                });
-        });
-    }
-</script>
             
             <div class="auth-footer">
                 Нет аккаунта?
                 <a href="<?php echo e(route('register')); ?>">Зарегистрироваться</a>
             </div>
+
+                        <div id="vkid-login"></div>
+
+<script src="https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js"></script>
+
+<script>
+if ('VKIDSDK' in window) {
+    const VKID = window.VKIDSDK;
+
+    VKID.Config.init({
+        app: 54596619,
+        redirectUrl: 'https://mokronos.test/vk/callback',
+        responseMode: VKID.ConfigResponseMode.Callback,
+        source: VKID.ConfigSource.LOWCODE,
+        scope: 'email phone',
+    });
+
+    const oneTap = new VKID.OneTap();
+
+    oneTap.render({
+        container: document.getElementById('vkid-login'),
+        showAlternativeLogin: true,
+        styles: {
+            borderRadius: 16,
+            width: 320
+        },
+        oauthList: [
+            'mail_ru',
+            'ok_ru'
+        ]
+    })
+    .on(VKID.WidgetEvents.ERROR, function(error) {
+        console.error('VK ERROR:', error);
+        console.log('Ошибка VK ID');
+    })
+    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
+        const code = payload.code;
+        const deviceId = payload.device_id;
+
+        VKID.Auth.exchangeCode(code, deviceId)
+            .then(function(data) {
+                console.log('VK EXCHANGE DATA:', data);
+
+                return fetch('<?php echo e(route('vk.sdk-login')); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
+                    },
+                    body: JSON.stringify({
+                        user_id: data.user_id || data.user?.id || data.id,
+                        access_token: data.access_token,
+                        email: data.email || data.user?.email || null,
+                        phone: data.phone || data.user?.phone || null
+                    })
+                });
+            })
+            .then(async function(response) {
+                const data = await response.json();
+
+                console.log('SERVER RESPONSE:', data);
+
+                if (data.ok) {
+                    window.location.href = '/';
+                } else {
+                    consle.log(data.message || 'Ошибка входа через VK ID');
+                }
+            })
+            .catch(function(error) {
+                console.error('VK LOGIN ERROR:', error);
+                console.log('Ошибка входа через VK ID');
+            });
+    });
+}
+                    </script>
         </div>
     </div>
  <?php echo $__env->renderComponent(); ?>
@@ -176,4 +195,5 @@
 <?php if (isset($__componentOriginal69dc84650370d1d4dc1b42d016d7226b)): ?>
 <?php $component = $__componentOriginal69dc84650370d1d4dc1b42d016d7226b; ?>
 <?php unset($__componentOriginal69dc84650370d1d4dc1b42d016d7226b); ?>
-<?php endif; ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/auth/login.blade.php ENDPATH**/ ?>
+<?php endif; ?>
+<?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/auth/login.blade.php ENDPATH**/ ?>

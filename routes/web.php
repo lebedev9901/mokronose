@@ -51,7 +51,7 @@ Route::get('register', [RegisteredUserController::class, 'create'])->name('regis
 Route::post('register', [RegisteredUserController::class, 'store']);
 
 
-Route::get('/vk/redirect', [VkAuthController::class, 'redirect'])->name('vk.redirect');
+
 Route::get('/vk/callback', [VkAuthController::class, 'callback'])->name('vk.callback');
 Route::post('/vk/sdk-login', [VkAuthController::class, 'sdkLogin'])->name('vk.sdk-login');
 

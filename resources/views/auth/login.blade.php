@@ -75,7 +75,7 @@ if ('VKIDSDK' in window) {
     })
     .on(VKID.WidgetEvents.ERROR, function(error) {
         console.error('VK ERROR:', error);
-        alert('Ошибка VK ID');
+        console.log('Ошибка VK ID');
     })
     .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
         const code = payload.code;
@@ -108,12 +108,12 @@ if ('VKIDSDK' in window) {
                 if (data.ok) {
                     window.location.href = '/';
                 } else {
-                    alert(data.message || 'Ошибка входа через VK ID');
+                    consle.log(data.message || 'Ошибка входа через VK ID');
                 }
             })
             .catch(function(error) {
                 console.error('VK LOGIN ERROR:', error);
-                alert('Ошибка входа через VK ID');
+                console.log('Ошибка входа через VK ID');
             });
     });
 }
