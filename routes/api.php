@@ -382,3 +382,4 @@ Route::get('/categories', function () {
 
 Route::post('/auth/vk/mobile', [VkAuthController::class, 'mobileLogin']);
 Route::get('/vk/mobile-callback', [VkAuthController::class, 'mobileCallback']);
+Route::get('/vk/callback', [VkAuthController::class, 'callback']);
