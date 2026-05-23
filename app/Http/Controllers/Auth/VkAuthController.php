@@ -10,8 +10,11 @@ use Illuminate\Support\Facades\Auth;
 
 class VkAuthController extends Controller
 {
-    public function callback()
+    public function callback(Request $request)
     {
+        if ($request->input('state') === 'mobile') {
+            return $this->mobileCallback($request);
+        }
         return redirect('/login')->withErrors([
             'vk' => 'VK callback используется только для SDK. Повторите вход через кнопку VK ID.',
         ]);
