@@ -27,7 +27,7 @@
                             @endauth
                         </li>
                     </ul>
-                    <a class="footer__desing" href="https://mokronos.ru/downloads/mokronose.apk">Мобильное приложение</a>
+                    <a class="footer__desing" href="https://mokronos.ru/download/mokronose.apk">Мобильное приложение</a>
                     <a class="footer__desing" href="https://vk.com/lebedew136">{ } LebedevDev</a>
                     <div class="copyrite flex">
                         <h4 class="copyrite__title">МокроНос</h4>
