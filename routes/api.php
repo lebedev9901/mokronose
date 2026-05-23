@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\VkAuthController;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -378,3 +379,6 @@ Route::get('/categories', function () {
         ->with('children')
         ->get();
 });
+
+Route::post('/auth/vk/mobile', [VkAuthController::class, 'mobileLogin']);
+Route::get('/vk/mobile-callback', [VkAuthController::class, 'mobileCallback']);
