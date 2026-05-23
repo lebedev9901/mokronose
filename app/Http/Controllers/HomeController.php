@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\VkReview;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -29,11 +30,15 @@ class HomeController extends Controller
         }
 
         $reviews = Review::with(['user', 'product'])
-            ->latest()
-            ->take(6)
-            ->get();
+           ->latest()
+            ->paginate(9);
 
-        return view('pages.home', compact('products', 'reviews'));
+        $vkReviews = VkReview::latest('vk_created_at')
+    ->take(6)
+    ->get();
+
+
+        return view('pages.home', compact('products', 'reviews', 'vkReviews'));
     }
 
 }

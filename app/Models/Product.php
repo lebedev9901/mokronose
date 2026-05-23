@@ -23,11 +23,6 @@ class Product extends Model
         return $this->belongsToMany(Category::class, 'category_product');
     }
 
-    public function subcategory()
-    {
-        return $this->belongsTo(Subcategory::class);
-    }
-
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
@@ -38,5 +33,8 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
-
+    public function vkReviews()
+    {
+        return $this->hasMany(VkReview::class);
+    }
 }

@@ -1441,3 +1441,53 @@ main{
 .review-right{
   width: 80%;
 }
+
+.vk-home-reviews {
+    padding: 80px 0;
+    background: #f8f8f8;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-header h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.section-header p {
+    color: #777;
+}
+
+.vk-home-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.vk-home-review-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid #ececec;
+    transition: .2s ease;
+}
+
+.vk-home-review-card:hover {
+    transform: translateY(-3px);
+}
+
+.vk-home-review-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-size: 14px;
+    color: #666;
+}
+
+.vk-home-review-card p {
+    line-height: 1.6;
+    color: #222;
+}

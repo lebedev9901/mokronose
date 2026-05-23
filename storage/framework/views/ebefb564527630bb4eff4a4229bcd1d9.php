@@ -5,10 +5,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
         <meta name="yandex-verification" content="93a14333f280d765" >
-        <title><?php echo e(config('app.name', 'Мокронос')); ?></title>
-        
-
-        
+        <title><?php echo $__env->yieldContent('title', 'Мокронос — зоомагазин'); ?></title>
+        <meta name="description" content="<?php echo $__env->yieldContent('description', 'Интернет-магазин товаров для животных. Корма, игрушки, аксессуары и товары для питомцев.'); ?>">
+        <meta name="keywords" content="зоомагазин, товары для животных, корм для собак, корм для кошек, аксессуары для животных">
+        <meta name="robots" content="index, follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="canonical" href="<?php echo e(url()->current()); ?>">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="<?php echo $__env->yieldContent('title', 'Мокронос — зоомагазин'); ?>">
+        <meta property="og:description" content="<?php echo $__env->yieldContent('description', 'Интернет-магазин товаров для животных.'); ?>">
+        <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+        <meta property="og:image" content="<?php echo e(asset('images/og-image.jpg')); ?>">
+        <meta property="og:site_name" content="Мокронос">       
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="<?php echo $__env->yieldContent('title', 'Мокронос — зоомагазин'); ?>">
+        <meta name="twitter:description" content="<?php echo $__env->yieldContent('description', 'Интернет-магазин товаров для животных.'); ?>">
+        <meta name="twitter:image" content="<?php echo e(asset('images/og-image.jpg')); ?>">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
         <link rel="stylesheet" href="<?php echo e(asset('assets/css/normalize.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/advantages.css')); ?> ">

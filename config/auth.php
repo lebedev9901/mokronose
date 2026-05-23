@@ -41,10 +41,10 @@ return [
             'provider' => 'users',
         ],
 
-        'filament' => [
-            'driver' => 'session',
+        'sanctum' => [
+            'driver' => 'sanctum',
             'provider' => 'users',
-        ]
+        ],
     ],
 
     /*

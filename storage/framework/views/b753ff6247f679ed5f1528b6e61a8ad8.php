@@ -35,7 +35,7 @@
                     </a>
 
                     <?php if($order->chat): ?>
-                        <a href="<?php echo e(route('chat.show', $order->chat->id)); ?>" class="btn-primary">
+                        <a href="<?php echo e(route('support.chat', $order->chat->id)); ?>" class="btn-primary">
                             Чат
                         </a>
                     <?php endif; ?>

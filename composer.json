@@ -10,10 +10,12 @@
         "blade-ui-kit/blade-icons": "*",
         "doctrine/dbal": "^4.4",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.3",
         "laravel/socialite": "^5.26",
         "laravel/tinker": "^2.10.1",
         "socialiteproviders/vkontakte": "^5.1",
-        "spatie/laravel-sitemap": "^8.0"
+        "spatie/laravel-sitemap": "^8.0",
+        "vkcom/vk-php-sdk": "^5.131"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

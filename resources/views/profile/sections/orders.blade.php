@@ -32,7 +32,7 @@
                     </a>
 
                     @if($order->chat)
-                        <a href="{{ route('chat.show', $order->chat->id) }}" class="btn-primary">
+                        <a href="{{ route('support.chat', $order->chat->id) }}" class="btn-primary">
                             Чат
                         </a>
                     @endif

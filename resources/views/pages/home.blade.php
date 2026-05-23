@@ -246,6 +246,7 @@
         </div>
     </div>
 </section>
+
 <section class="faq">
     <div class="container">
         <h2 class="section-title">Часто задаваемые вопросы</h2>
