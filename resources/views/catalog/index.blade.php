@@ -43,15 +43,18 @@
         <div class="catalog-grid">
               @foreach ($products as $product)
             <article class="product-card" >
-                <div class="product-image" >
-                   @php
+                <div class="product-image">
+                    @php
                         $preview = $product->images->where('is_preview', true)->first()
                             ?? $product->images->first();
                     @endphp
 
-                    @if ($preview)
-                        <img src="{{ asset('storage/' . $preview->image) }}">
-                    @endif
+                    <img
+                        src="{{ $preview
+                            ? asset('storage/' . $preview->image)
+                            : asset('assets/img/no-image.png') }}"
+                        alt="{{ $product->title }}"
+                    >
                 </div>
 
                 <div class="product-info">

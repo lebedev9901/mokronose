@@ -89,26 +89,35 @@
 
         <div class="products__contain">
             @foreach($products as $product)
-            <article class="product__card">
-                @php
+            <article class="product-card" >
+                <div class="product-image" >
+                   @php
                         $preview = $product->images->where('is_preview', true)->first()
                             ?? $product->images->first();
                     @endphp
 
-                    @if ($preview)
-                        <img src="{{ asset('storage/' . $preview->image) }}">
-                    @endif
-                <h3 class="product-title">{{$product->title}}</h3>
-                <p class="product-desc">
-                    {{$product->description}}
-                </p>
-
-                <div class="product__meta">
-                    <span>{{$product->width}}</span>
-                    <span class="price">{{$product->price}}</span>
+                    <img
+                        src="{{ $preview
+                            ? asset('storage/' . $preview->image)
+                            : asset('assets/img/no-image.png') }}"
+                        alt="{{ $product->title }}"
+                    >
                 </div>
 
-                <div class="product-actions"  data-id="{{$product->id}}">
+                <div class="product-info">
+                    <a href="{{ route('product', $product->id)}}" class="product-title">{{ $product->title }}</a>
+                    <p class="product-desc">
+                        {{ $product->description }}
+                    </p>
+                    <div class="product-rating">
+                    <span class="rating_text">⭐{{$product->rating}}</span>
+                    </div>
+                    <div class="product-meta">
+                        <span class="product-weight">{{ $product->weight }}</span>
+                        <span class="product-price">{{ $product->price}}₽</span>
+                    </div>
+
+                    <div class="product-actions"  data-id="{{$product->id}}">
                         
                          <form>
                         @csrf
@@ -151,8 +160,7 @@
                                 Подробнее
                             </a>
                         </div>
-              
-                 
+                </div>
             </article>
             @endforeach
         </div>

@@ -942,6 +942,48 @@
     .order-item-total {
         grid-column: 2;
     }
+
+    .order-actions{
+      justify-content: space-between;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .order-actions a{
+      width: 100%;
+      text-align: center;
+    }
+}
+
+@media (max-width: 768px){
+  .support-chat-page{
+    flex-direction: column;
+    height: auto;
+  }
+
+  .support-sidebar{
+    width: 100%;
+    height: 300px;
+  }
+
+ 
+}
+
+@media (max-width: 500px){
+  .order-card{
+    display: flex;
+    flex-direction: column;
+  }
+  .order-card__top{
+    flex-direction: column;
+  }
+
+  .order-card__body{
+    flex-direction: column;
+  }
+  .order-actions{
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 320px) {

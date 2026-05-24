@@ -75,9 +75,10 @@
     }
 
     .dashboard__list{
-        flex-direction: row;
+        flex-direction: column;
         overflow-x: auto;
     }
+
 
     .dashboard__list-link{
         min-width: 180px;

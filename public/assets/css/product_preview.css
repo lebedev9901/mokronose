@@ -15,7 +15,12 @@
 
 /* product_preview */
 
-
+.products__contain{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
 
 .product__card {
     width: calc(100% / 3 - 20px);
@@ -147,13 +152,7 @@ align-items: center;
     padding: 80px 0;
 }
 
-.products__contain {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    flex-direction: row;
-}
+
 
 .product__card {
     width: calc(100% / 3 - 20px);
@@ -293,4 +292,6 @@ align-items: center;
     .product__card{
         width: 100%;
     }
+
+    
 }

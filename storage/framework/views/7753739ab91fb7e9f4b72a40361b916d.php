@@ -89,27 +89,36 @@
 
         <div class="products__contain">
             <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <article class="product__card">
-                <?php
+            <article class="product-card" >
+                <div class="product-image" >
+                   <?php
                         $preview = $product->images->where('is_preview', true)->first()
                             ?? $product->images->first();
                     ?>
 
-                    <?php if($preview): ?>
-                        <img src="<?php echo e(asset('storage/' . $preview->image)); ?>">
-                    <?php endif; ?>
-                <h3 class="product-title"><?php echo e($product->title); ?></h3>
-                <p class="product-desc">
-                    <?php echo e($product->description); ?>
-
-                </p>
-
-                <div class="product__meta">
-                    <span><?php echo e($product->width); ?></span>
-                    <span class="price"><?php echo e($product->price); ?></span>
+                    <img
+                        src="<?php echo e($preview
+                            ? asset('storage/' . $preview->image)
+                            : asset('assets/img/no-image.png')); ?>"
+                        alt="<?php echo e($product->title); ?>"
+                    >
                 </div>
 
-                <div class="product-actions"  data-id="<?php echo e($product->id); ?>">
+                <div class="product-info">
+                    <a href="<?php echo e(route('product', $product->id)); ?>" class="product-title"><?php echo e($product->title); ?></a>
+                    <p class="product-desc">
+                        <?php echo e($product->description); ?>
+
+                    </p>
+                    <div class="product-rating">
+                    <span class="rating_text">⭐<?php echo e($product->rating); ?></span>
+                    </div>
+                    <div class="product-meta">
+                        <span class="product-weight"><?php echo e($product->weight); ?></span>
+                        <span class="product-price"><?php echo e($product->price); ?>₽</span>
+                    </div>
+
+                    <div class="product-actions"  data-id="<?php echo e($product->id); ?>">
                         
                          <form>
                         <?php echo csrf_field(); ?>
@@ -153,8 +162,7 @@
                                 Подробнее
                             </a>
                         </div>
-              
-                 
+                </div>
             </article>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>

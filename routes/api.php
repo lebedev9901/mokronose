@@ -32,6 +32,7 @@ Route::get('/products', function () {
             return [
                 'id' => $product->id,
                 'title' => $product->title,
+                'description' => $product->description,
                 'price' => $product->price,
                 'rating' => $product->rating,
                 'category_id' => $product->category_id,
@@ -75,6 +76,7 @@ Route::middleware('auth:sanctum')->get('/cart', function (Request $request) {
                 'product_id' => $item->product_id,
                 'qty' => $item->qty,
                 'title' => $item->product->title,
+                'decription' => $item->product->description,
                 'price' => $item->product->price,
                 'image_url' => $image
                     ? url('/api/product-image/' . basename($image->image))
