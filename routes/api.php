@@ -25,7 +25,6 @@ Route::get('/products', function () {
         ->where('is_active', true)
         ->with('images')
         ->latest()
-        ->take(20)
         ->get()
         ->map(function ($product) {
             $image = $product->images->first();
