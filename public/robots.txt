@@ -7,4 +7,4 @@ Disallow: /register
 Disallow: /cart
 Disallow: /checkout
 
-Sitemap: https://mokronose.ru/sitemap.xml
+Sitemap: https://mokronos.ru/sitemap.xml
