@@ -11,7 +11,24 @@ class Product extends Model
     use HasFactory;
 
      protected $table = 'products'; // название таблицы в БД
-    protected $fillable = ['title', 'stock', 'description', 'price', 'weight', 'rating']; 
+    protected $fillable = [
+        'title', 
+        'stock', 
+        'description', 
+        'price', 
+        'weight', 
+        'rating',
+        'proteins',
+        'fats',
+        'carbohydrates',
+        'energy_value',
+        'shelf_life',
+        'composition',
+        'storage_conditions',
+        'recommendations',
+        'age_group',
+        'breed_size',
+        ]; 
 
     public function images()
     {
@@ -36,5 +53,9 @@ class Product extends Model
     public function vkReviews()
     {
         return $this->hasMany(VkReview::class);
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

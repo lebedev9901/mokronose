@@ -88,6 +88,36 @@
     </div>
 
 </div>
+
+
+<section class="profile-favorites">
+    <h2>❤️ Избранные товары</h2>
+
+    <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+        <div class="profile-favorite-card">
+            <?php
+                $preview = $product->images->where('is_preview', true)->first()
+                    ?? $product->images->first();
+            ?>
+
+          
+                <img src="<?php echo e($preview
+                            ? asset('storage/' . $preview->image)
+                            : asset('assets/img/no-image.png')); ?>"
+                        alt="<?php echo e($product->title); ?>">
+            
+
+            <div>
+                <h3><a href="<?php echo e(route('product', $product->id)); ?>"><?php echo e($product->title); ?></a></h3>
+                <p><?php echo e($product->price); ?> ₽</p>
+            </div>
+        </div>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+        <p>В избранном пока нет товаров.</p>
+    <?php endif; ?>
+</section>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 

@@ -7,8 +7,10 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VkAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -142,6 +144,28 @@ Route::post('/addresses/{id}/main', [AddressController::class, 'setMain']);
 
     Route::post('/profile/support/{chat}/send', [SupportController::class, 'send'])
         ->name('support.send');
+
+    Route::get('/profile/pet', function () {
+        return view('profile.pet');
+    })->name('pets.page');
+
+    Route::get('/profile/pet/list', [PetController::class, 'index'])
+        ->name('pets.index');
+
+    Route::post('/profile/pet', [PetController::class, 'store'])
+        ->name('pets.store');
+
+    Route::delete('/profile/pet/{pet}', [PetController::class, 'destroy'])
+        ->name('pets.destroy');
+
+    Route::put('/profile/pet/{pet}', [PetController::class, 'update'])
+        ->name('pets.update');
+
+        Route::get('/profile/favorites', [FavoriteController::class, 'index'])
+    ->name('favorites.index');
+
+Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])
+    ->name('favorites.toggle');
 });
 
 require __DIR__.'/auth.php';

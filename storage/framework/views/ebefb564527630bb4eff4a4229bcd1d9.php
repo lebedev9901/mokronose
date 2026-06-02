@@ -46,6 +46,7 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/aboute.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/pay.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/order__check.css')); ?> ">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/news.css')); ?> ">
         <!-- Scripts -->
        <script src="<?php echo e(asset('assets/js/catalog.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/cart-page.js')); ?>" defer></script>

@@ -33,6 +33,12 @@ class ProfileController extends Controller
                     ->paginate(10);
             }
 
+            $products = auth()->user()
+            ->favoriteProducts()
+            ->with('images')
+            ->latest('favorites.created_at')
+            ->get();
+
             // Поддержка
             if ($page === 'support') {
 
@@ -50,7 +56,8 @@ class ProfileController extends Controller
                     'user',
                     'page',
                     'orders',
-                    'chats'
+                    'chats',
+                    'products'
                 )
             );
         }

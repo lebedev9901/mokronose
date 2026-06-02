@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminSupportController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
@@ -84,4 +85,23 @@ Route::post('/orders/{id}/confirm', [AdminOrderController::class, 'confirm'])
 
         Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
-    });
+
+
+        Route::get('/admin/news', [NewsController::class, 'index'])
+    ->name('admin.news');
+
+Route::get('/admin/news/create', [NewsController::class, 'create'])
+    ->name('admin.news.create');
+
+Route::post('/admin/news', [NewsController::class, 'store'])
+    ->name('admin.news.store');
+
+Route::get('/admin/news/{news}/edit', [NewsController::class, 'edit'])
+    ->name('admin.news.edit');
+
+Route::put('/admin/news/{news}', [NewsController::class, 'update'])
+    ->name('admin.news.update');
+
+Route::delete('/admin/news/{news}', [NewsController::class, 'destroy'])
+    ->name('admin.news.destroy');
+});

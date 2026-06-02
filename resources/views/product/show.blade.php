@@ -7,6 +7,7 @@
 @section('content')
 <div class="container">
     <div class="product-page">
+        
         <div class="product-page__grid">
             <div class="product-gallery">
 
@@ -58,6 +59,7 @@
 
 </div>
             <div class="product-info">
+                
 
                 <h1 class="product-title">{{ $product->title }}</h1>
 
@@ -82,19 +84,123 @@
                 <div class="product-price">
                     {{ $product->price }} ₽
                 </div>
-
+                
                 <form>
                         @csrf
                         <button type="button" class="btn product-btn add-to-cart" data-id="{{ $product->id }}">
                             В корзину
                         </button>
+
+                        @auth
+                @php
+                    $isFavorite = in_array($product->id, $favoriteIds ?? []);
+                @endphp
+                    <button 
+                        type="button"
+                        class="btn favorite__btn {{ $isFavorite ? 'is-active' : '' }}"
+                        data-product-id="{{ $product->id }}"
+                        onclick="toggleFavorite(this)"
+                    >
+                        {{ $isFavorite ? 'В избранном' : 'В избранное' }}
+                    </button>
+                @endauth
                 </form>
+                
+                
+
                 <div class="product-benefits">
                     <div>🐶 100% натуральный состав</div>
                     <div>🚚 Быстрая доставка</div>
                 </div>
             </div>
         </div>
+        <div class="product-specs">
+
+                    <h3>Характеристики</h3>
+
+                    <div class="product-spec-row">
+                        <span>Подходит для</span>
+
+                        <strong>
+                            @php
+                                $ages = [
+                                    'all' => 'Все возрасты',
+                                    'puppy' => 'Щенки',
+                                    'junior' => 'Юниоры',
+                                    'adult' => 'Взрослые',
+                                ];
+
+                                $breeds = [
+                                    'all' => 'Все породы',
+                                    'small' => 'Мелкие породы',
+                                    'medium' => 'Средние породы',
+                                    'large' => 'Крупные породы',
+                                ];
+                            @endphp
+
+                            {{ $ages[$product->age_group ?? 'all'] ?? 'Все возрасты' }}
+                            /
+                            {{ $breeds[$product->breed_size ?? 'all'] ?? 'Все породы' }}
+                        </strong>
+                    </div>
+
+                    @if($product->proteins)
+                        <div class="product-spec-row">
+                            <span>Белки</span>
+                            <strong>{{ $product->proteins }}</strong>
+                        </div>
+                    @endif
+
+                    @if($product->fats)
+                        <div class="product-spec-row">
+                            <span>Жиры</span>
+                            <strong>{{ $product->fats }}</strong>
+                        </div>
+                    @endif
+
+                    @if($product->carbohydrates)
+                        <div class="product-spec-row">
+                            <span>Углеводы</span>
+                            <strong>{{ $product->carbohydrates }}</strong>
+                        </div>
+                    @endif
+
+                    @if($product->energy_value)
+                        <div class="product-spec-row">
+                            <span>Энергоценность</span>
+                            <strong>{{ $product->energy_value }}</strong>
+                        </div>
+                    @endif
+
+                    @if($product->shelf_life)
+                        <div class="product-spec-row">
+                            <span>Срок годности</span>
+                            <strong>{{ $product->shelf_life }}</strong>
+                        </div>
+                    @endif
+
+                </div>
+
+                @if($product->composition)
+                <div class="product-info-block">
+                    <h3>Состав</h3>
+                    <p>{{ $product->composition }}</p>
+                </div>
+                @endif
+
+                @if($product->storage_conditions)
+                <div class="product-info-block">
+                    <h3>Условия хранения</h3>
+                    <p>{{ $product->storage_conditions }}</p>
+                </div>
+                @endif
+
+                @if($product->recommendations)
+                <div class="product-info-block">
+                    <h3>Рекомендации по кормлению</h3>
+                    <p>{{ $product->recommendations }}</p>
+                </div>
+                @endif
         @auth
         <form method="POST"
       action="{{ route('product.reviews.store', $product) }}"
@@ -234,5 +340,23 @@ document.addEventListener('change', function (event) {
         reader.readAsDataURL(file);
     });
 });
+
+
+function toggleFavorite(button) {
+    const productId = button.dataset.productId;
+
+    fetch(`/favorites/${productId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        button.textContent = data.is_favorite ? 'В избранном' : 'В избранное';
+        button.classList.toggle('is-active', data.is_favorite);
+    });
+}
 </script>
 @endsection

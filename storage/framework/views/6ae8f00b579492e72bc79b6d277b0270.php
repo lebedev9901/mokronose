@@ -7,6 +7,7 @@
 <?php $__env->startSection('content'); ?>
 <div class="container">
     <div class="product-page">
+        
         <div class="product-page__grid">
             <div class="product-gallery">
 
@@ -58,6 +59,7 @@
 
 </div>
             <div class="product-info">
+                
 
                 <h1 class="product-title"><?php echo e($product->title); ?></h1>
 
@@ -85,19 +87,126 @@
                 <div class="product-price">
                     <?php echo e($product->price); ?> ₽
                 </div>
-
+                
                 <form>
                         <?php echo csrf_field(); ?>
                         <button type="button" class="btn product-btn add-to-cart" data-id="<?php echo e($product->id); ?>">
                             В корзину
                         </button>
+
+                        <?php if(auth()->guard()->check()): ?>
+                <?php
+                    $isFavorite = in_array($product->id, $favoriteIds ?? []);
+                ?>
+                    <button 
+                        type="button"
+                        class="btn favorite__btn <?php echo e($isFavorite ? 'is-active' : ''); ?>"
+                        data-product-id="<?php echo e($product->id); ?>"
+                        onclick="toggleFavorite(this)"
+                    >
+                        <?php echo e($isFavorite ? 'В избранном' : 'В избранное'); ?>
+
+                    </button>
+                <?php endif; ?>
                 </form>
+                
+                
+
                 <div class="product-benefits">
                     <div>🐶 100% натуральный состав</div>
                     <div>🚚 Быстрая доставка</div>
                 </div>
             </div>
         </div>
+        <div class="product-specs">
+
+                    <h3>Характеристики</h3>
+
+                    <div class="product-spec-row">
+                        <span>Подходит для</span>
+
+                        <strong>
+                            <?php
+                                $ages = [
+                                    'all' => 'Все возрасты',
+                                    'puppy' => 'Щенки',
+                                    'junior' => 'Юниоры',
+                                    'adult' => 'Взрослые',
+                                ];
+
+                                $breeds = [
+                                    'all' => 'Все породы',
+                                    'small' => 'Мелкие породы',
+                                    'medium' => 'Средние породы',
+                                    'large' => 'Крупные породы',
+                                ];
+                            ?>
+
+                            <?php echo e($ages[$product->age_group ?? 'all'] ?? 'Все возрасты'); ?>
+
+                            /
+                            <?php echo e($breeds[$product->breed_size ?? 'all'] ?? 'Все породы'); ?>
+
+                        </strong>
+                    </div>
+
+                    <?php if($product->proteins): ?>
+                        <div class="product-spec-row">
+                            <span>Белки</span>
+                            <strong><?php echo e($product->proteins); ?></strong>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if($product->fats): ?>
+                        <div class="product-spec-row">
+                            <span>Жиры</span>
+                            <strong><?php echo e($product->fats); ?></strong>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if($product->carbohydrates): ?>
+                        <div class="product-spec-row">
+                            <span>Углеводы</span>
+                            <strong><?php echo e($product->carbohydrates); ?></strong>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if($product->energy_value): ?>
+                        <div class="product-spec-row">
+                            <span>Энергоценность</span>
+                            <strong><?php echo e($product->energy_value); ?></strong>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if($product->shelf_life): ?>
+                        <div class="product-spec-row">
+                            <span>Срок годности</span>
+                            <strong><?php echo e($product->shelf_life); ?></strong>
+                        </div>
+                    <?php endif; ?>
+
+                </div>
+
+                <?php if($product->composition): ?>
+                <div class="product-info-block">
+                    <h3>Состав</h3>
+                    <p><?php echo e($product->composition); ?></p>
+                </div>
+                <?php endif; ?>
+
+                <?php if($product->storage_conditions): ?>
+                <div class="product-info-block">
+                    <h3>Условия хранения</h3>
+                    <p><?php echo e($product->storage_conditions); ?></p>
+                </div>
+                <?php endif; ?>
+
+                <?php if($product->recommendations): ?>
+                <div class="product-info-block">
+                    <h3>Рекомендации по кормлению</h3>
+                    <p><?php echo e($product->recommendations); ?></p>
+                </div>
+                <?php endif; ?>
         <?php if(auth()->guard()->check()): ?>
         <form method="POST"
       action="<?php echo e(route('product.reviews.store', $product)); ?>"
@@ -242,6 +351,24 @@ document.addEventListener('change', function (event) {
         reader.readAsDataURL(file);
     });
 });
+
+
+function toggleFavorite(button) {
+    const productId = button.dataset.productId;
+
+    fetch(`/favorites/${productId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        button.textContent = data.is_favorite ? 'В избранном' : 'В избранное';
+        button.classList.toggle('is-active', data.is_favorite);
+    });
+}
 </script>
 <?php $__env->stopSection(); ?>
 

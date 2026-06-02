@@ -44,12 +44,22 @@ class ProductController extends Controller
             'price' => $request->price,
             'stock' => $request->stock ?? 0,
             'is_active' => 1,
+            'proteins' => $request->proteins,
+            'fats' => $request->fats,
+            'carbohydrates' => $request->carbohydrates,
+            'energy_value' => $request->energy_value,
+            'shelf_life' => $request->shelf_life,
+            'composition' => $request->composition,
+            'storage_conditions' => $request->storage_conditions,
+            'recommendations' => $request->recommendations,
+            'age_group' => $request->age_group,
+            'breed_size' => $request->breed_size,
             
         ]);
         if ($request->has('categories')) {
             $product->categories()->sync($request->categories ?? []);
         }
-        $previewIndex = (int) $request->preview_index ?? 0;
+        $previewIndex = (int) ($request->preview_index ?? 0);
 
         if ($request->hasFile('images')) {
 
@@ -93,6 +103,16 @@ class ProductController extends Controller
             'weight' => $request->weight,
             'price' => $request->price,
             'stock' => $request->stock ?? 0,
+            'proteins' => $request->proteins,
+            'fats' => $request->fats,
+            'carbohydrates' => $request->carbohydrates,
+            'energy_value' => $request->energy_value,
+            'shelf_life' => $request->shelf_life,
+            'composition' => $request->composition,
+            'storage_conditions' => $request->storage_conditions,
+            'recommendations' => $request->recommendations,
+            'age_group' => $request->age_group,
+            'breed_size' => $request->breed_size,
             
         ]);
         $product->categories()->sync($request->categories ?? []);

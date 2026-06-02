@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\News;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\VkReview;
@@ -34,11 +35,21 @@ class HomeController extends Controller
             ->paginate(9);
 
         $vkReviews = VkReview::latest('vk_created_at')
-    ->take(6)
-    ->get();
+            ->take(6)
+            ->get();
+
+        $news = News::where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            })
+            ->orderBy('sort_order')
+            ->latest()
+            ->take(6)
+            ->get();
 
 
-        return view('pages.home', compact('products', 'reviews', 'vkReviews'));
+        return view('pages.home', compact('products', 'reviews', 'vkReviews', 'news'));
     }
 
 }

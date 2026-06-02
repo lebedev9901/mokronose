@@ -47,6 +47,10 @@
                 Чаты
             </a>
 
+            <a href="{{route('admin.news')}}" class="{{ request()->is('admin/news*') ? 'active' : '' }}">
+                Новости 
+            </a>
+
 
         </nav>
 

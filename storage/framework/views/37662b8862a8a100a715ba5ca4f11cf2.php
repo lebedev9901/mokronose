@@ -45,6 +45,20 @@
         <div class="catalog-grid">
               <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <article class="product-card" >
+                <?php if(auth()->guard()->check()): ?>
+                <?php
+                    $isFavorite = in_array($product->id, $favoriteIds ?? []);
+                ?>
+                    <button
+                        type="button"
+                        class="favorite-btn <?php echo e($isFavorite ? 'is-active' : ''); ?>"
+                        data-product-id="<?php echo e($product->id); ?>"
+                        onclick="toggleFavorite(this)"
+                    >
+                        <?php echo e($isFavorite ? '❤️' : '♡'); ?>
+
+                    </button>
+                <?php endif; ?>
                 <div class="product-image">
                     <?php
                         $preview = $product->images->where('is_preview', true)->first()
@@ -147,6 +161,26 @@
 </div>
 
     </div>
+
+
+    <script>
+function toggleFavorite(button) {
+    const productId = button.dataset.productId;
+
+    fetch(`/favorites/${productId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        button.textContent = data.is_favorite ? '❤️' : '♡';
+        button.classList.toggle('is-active', data.is_favorite);
+    });
+}
+</script>
 <?php $__env->stopSection(); ?>
 
 

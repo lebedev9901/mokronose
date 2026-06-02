@@ -5,6 +5,63 @@
 <?php $__env->startSection('content'); ?>
 
 <?php $__env->startSection('description', 'Товары для животных в интернет-магазине Мокронос.'); ?>
+<?php if($news->isNotEmpty()): ?>
+<section class="home-news">
+<div class="container">
+    <div class="home-news__header">
+        <h2>Новости МокроНос</h2>
+        <p>Акции, обновления и полезная информация для владельцев собак</p>
+    </div>
+
+    <div class="home-news__slider">
+        <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <article class="home-news-card">
+
+    <img
+        src="<?php echo e(asset('storage/' . $item->image)); ?>"
+        alt="<?php echo e($item->title); ?>"
+        class="home-news-card__image"
+    >
+
+    <div class="home-news-card__overlay"></div>
+
+    <div class="home-news-card__content">
+
+        <h3><?php echo e($item->title); ?></h3>
+
+        <p>
+            <?php echo e(Str::limit($item->description, 90)); ?>
+
+        </p>
+
+        <div class="home-news-card__buttons">
+
+            <?php if($item->button_text && $item->button_url): ?>
+                <a href="<?php echo e($item->button_url); ?>">
+                    <?php echo e($item->button_text); ?>
+
+                </a>
+            <?php endif; ?>
+
+        </div>
+
+    </div>
+<script>
+document.querySelectorAll('.home-news__slider').forEach(slider => {
+    slider.addEventListener('wheel', function(e) {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            slider.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+});
+</script>
+</article>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
+</div>
+</section>
+<?php endif; ?>
 <div class="hero">
                 <div class="container">
                     <div class="hero__contain flex">
@@ -23,6 +80,14 @@
                                     ручная сушка
                                 </li>
                             </ul>
+                            <div class="hero__image">
+                                <img src="<?php echo e(asset('assets/img/hero_img1.jpg')); ?>" alt="hero1">
+                                <img src="<?php echo e(asset('assets/img/hero_img2.jpg')); ?>" alt="hero2">
+                                <img src="<?php echo e(asset('assets/img/hero_img3.jpg')); ?>" alt="hero3">
+                                <img src="<?php echo e(asset('assets/img/hero_img4.jpg')); ?>" alt="hero4">
+                                <img src="<?php echo e(asset('assets/img/hero_img5.jpg')); ?>" alt="hero5">
+                                <img src="<?php echo e(asset('assets/img/hero_img6.jpg')); ?>" alt="hero6">
+                            </div>
                             
                             <a href="<?php echo e(route('catalog')); ?>" class="hero__btn ">
                                 Перейти в каталог

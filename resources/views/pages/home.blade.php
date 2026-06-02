@@ -5,6 +5,61 @@
 @section('content')
 
 @section('description', 'Товары для животных в интернет-магазине Мокронос.')
+@if($news->isNotEmpty())
+<section class="home-news">
+<div class="container">
+    <div class="home-news__header">
+        <h2>Новости МокроНос</h2>
+        <p>Акции, обновления и полезная информация для владельцев собак</p>
+    </div>
+
+    <div class="home-news__slider">
+        @foreach($news as $item)
+            <article class="home-news-card">
+
+    <img
+        src="{{ asset('storage/' . $item->image) }}"
+        alt="{{ $item->title }}"
+        class="home-news-card__image"
+    >
+
+    <div class="home-news-card__overlay"></div>
+
+    <div class="home-news-card__content">
+
+        <h3>{{ $item->title }}</h3>
+
+        <p>
+            {{ Str::limit($item->description, 90) }}
+        </p>
+
+        <div class="home-news-card__buttons">
+
+            @if($item->button_text && $item->button_url)
+                <a href="{{ $item->button_url }}">
+                    {{ $item->button_text }}
+                </a>
+            @endif
+
+        </div>
+
+    </div>
+<script>
+document.querySelectorAll('.home-news__slider').forEach(slider => {
+    slider.addEventListener('wheel', function(e) {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            slider.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+});
+</script>
+</article>
+        @endforeach
+    </div>
+</div>
+</section>
+@endif
 <div class="hero">
                 <div class="container">
                     <div class="hero__contain flex">
@@ -23,6 +78,14 @@
                                     ручная сушка
                                 </li>
                             </ul>
+                            <div class="hero__image">
+                                <img src="{{asset('assets/img/hero_img1.jpg')}}" alt="hero1">
+                                <img src="{{asset('assets/img/hero_img2.jpg')}}" alt="hero2">
+                                <img src="{{asset('assets/img/hero_img3.jpg')}}" alt="hero3">
+                                <img src="{{asset('assets/img/hero_img4.jpg')}}" alt="hero4">
+                                <img src="{{asset('assets/img/hero_img5.jpg')}}" alt="hero5">
+                                <img src="{{asset('assets/img/hero_img6.jpg')}}" alt="hero6">
+                            </div>
                             
                             <a href="{{route('catalog')}}" class="hero__btn ">
                                 Перейти в каталог

@@ -84,6 +84,36 @@
     </div>
 
 </div>
+
+
+<section class="profile-favorites">
+    <h2>❤️ Избранные товары</h2>
+
+    @forelse($products as $product)
+        <div class="profile-favorite-card">
+            @php
+                $preview = $product->images->where('is_preview', true)->first()
+                    ?? $product->images->first();
+            @endphp
+
+          
+                <img src="{{ $preview
+                            ? asset('storage/' . $preview->image)
+                            : asset('assets/img/no-image.png') }}"
+                        alt="{{ $product->title }}">
+            
+
+            <div>
+                <h3><a href="{{route('product', $product->id)}}">{{ $product->title }}</a></h3>
+                <p>{{ $product->price }} ₽</p>
+            </div>
+        </div>
+    @empty
+        <p>В избранном пока нет товаров.</p>
+    @endforelse
+</section>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 

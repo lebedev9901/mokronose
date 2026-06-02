@@ -1,24 +1,24 @@
-@extends('admin.layouts.app')
 
-@section('title', 'Создать товар')
 
-@section('content')
+<?php $__env->startSection('title', 'Создать товар'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <h1>Создать товар</h1>
 
-<form action="{{ route('admin.products.store') }}"
+<form action="<?php echo e(route('admin.products.store')); ?>"
       method="POST"
       enctype="multipart/form-data">
 
-    @csrf
+    <?php echo csrf_field(); ?>
 
-    {{-- Название --}}
+    
     <div>
         <label>Название</label>
         <input type="text" name="title" required>
     </div>
 
-    {{-- Описание --}}
+    
     <div>
         <label>Описание</label>
         <textarea name="description"></textarea>
@@ -76,6 +76,7 @@
             <option value="puppy">Щенок</option>
             <option value="junior">Юниор</option>
             <option value="adult">Взрослый</option>
+            <option value="senior">Пожилой</option>
         </select>
     </div>
 
@@ -87,22 +88,23 @@
             <option value="small">Мелкие</option>
             <option value="medium">Средние</option>
             <option value="large">Крупные</option>
+            <option value="giant">Гигантские</option>
         </select>
     </div>
 
-    {{-- Вес --}}
+    
     <div>
         <label>Вес (кг)</label>
         <input type="number" step="0.01" name="weight" required>
     </div>
 
-    {{-- Цена --}}
+    
     <div>
         <label>Цена</label>
         <input type="number" step="0.01" name="price" required>
     </div>
 
-    {{-- Склад --}}
+    
     <div>
         <label>Остаток</label>
         <input type="number" name="stock" value="0">
@@ -111,22 +113,23 @@
     <div>
     <label>Категории</label>
 
-    @foreach($categories as $category)
+    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <label style="display:block;">
             <input
                 type="checkbox"
                 name="categories[]"
-                value="{{ $category->id }}"
+                value="<?php echo e($category->id); ?>"
             >
-            {{ $category->title }}
+            <?php echo e($category->title); ?>
+
         </label>
-    @endforeach
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
 
 </select>
 
 
-    {{-- выбор превью --}}
+    
     <div>
         <label>Фото товара</label>
 
@@ -213,4 +216,5 @@ document
     });
 
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/admin/products/create.blade.php ENDPATH**/ ?>

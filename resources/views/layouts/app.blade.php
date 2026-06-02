@@ -46,6 +46,7 @@
     <link rel="stylesheet" href="{{asset('assets/css/aboute.css')}} ">
     <link rel="stylesheet" href="{{asset('assets/css/pay.css')}} ">
     <link rel="stylesheet" href="{{asset('assets/css/order__check.css')}} ">
+    <link rel="stylesheet" href="{{asset('assets/css/news.css')}} ">
         <!-- Scripts -->
        <script src="{{asset('assets/js/catalog.js')}}" defer></script>
        <script src="{{asset('assets/js/cart-page.js')}}" defer></script>

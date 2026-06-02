@@ -37,6 +37,10 @@ class CatalogController extends Controller
             }
         }
 
+        $favoriteIds = auth()->check()
+            ? auth()->user()->favoriteProducts()->pluck('products.id')->toArray()
+            : [];
+
         $products = $query->latest()->paginate(9)->withQueryString();
             
         $sessionId = session()->getId();
@@ -60,7 +64,8 @@ class CatalogController extends Controller
             'products',
             'categories',
             'cartQuantities',
-            'cartCount'
+            'cartCount',
+            'favoriteIds'
         ));
     }
 }

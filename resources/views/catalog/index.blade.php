@@ -43,6 +43,19 @@
         <div class="catalog-grid">
               @foreach ($products as $product)
             <article class="product-card" >
+                @auth
+                @php
+                    $isFavorite = in_array($product->id, $favoriteIds ?? []);
+                @endphp
+                    <button
+                        type="button"
+                        class="favorite-btn {{ $isFavorite ? 'is-active' : '' }}"
+                        data-product-id="{{ $product->id }}"
+                        onclick="toggleFavorite(this)"
+                    >
+                        {{ $isFavorite ? '❤️' : '♡' }}
+                    </button>
+                @endauth
                 <div class="product-image">
                     @php
                         $preview = $product->images->where('is_preview', true)->first()
@@ -143,5 +156,25 @@
 </div>
 
     </div>
+
+
+    <script>
+function toggleFavorite(button) {
+    const productId = button.dataset.productId;
+
+    fetch(`/favorites/${productId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        button.textContent = data.is_favorite ? '❤️' : '♡';
+        button.classList.toggle('is-active', data.is_favorite);
+    });
+}
+</script>
 @endsection
 
