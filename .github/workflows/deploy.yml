@@ -27,6 +27,5 @@ jobs:
             chown -R www-data:www-data storage bootstrap/cache
             chmod -R 775 storage bootstrap/cache
             npm run build
-            php artisan vk:sync-reviews
             
             

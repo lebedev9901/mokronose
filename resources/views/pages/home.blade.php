@@ -78,15 +78,44 @@ document.querySelectorAll('.home-news__slider').forEach(slider => {
                                     ручная сушка
                                 </li>
                             </ul>
-                            <div class="hero__image">
-                                <img src="{{asset('assets/img/hero_img1.jpg')}}" alt="hero1">
-                                <img src="{{asset('assets/img/hero_img2.jpg')}}" alt="hero2">
-                                <img src="{{asset('assets/img/hero_img3.jpg')}}" alt="hero3">
-                                <img src="{{asset('assets/img/hero_img4.jpg')}}" alt="hero4">
-                                <img src="{{asset('assets/img/hero_img5.jpg')}}" alt="hero5">
-                                <img src="{{asset('assets/img/hero_img6.jpg')}}" alt="hero6">
+                            <div class="swiper heroSwiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('assets/img/hero_img1.jpg') }}" alt="">
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('assets/img/hero_img2.jpg') }}" alt="">
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('assets/img/hero_img3.jpg') }}" alt="">
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('assets/img/hero_img4.jpg') }}" alt="">
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('assets/img/hero_img5.jpg') }}" alt="">
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('assets/img/hero_img6.jpg') }}" alt="">
+                                    </div>
+                                </div>
                             </div>
-                            
+                            <script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    new Swiper('.heroSwiper', {
+                                        loop: true,
+                                        centeredSlides: true,
+                                        slidesPerView: 2,
+                                        centeredSlidesBounds: true,
+                                        spaceBetween: 16,
+                                        speed: 600,
+                                        autoplay: {
+                                            delay: 3000,
+                                            disableOnInteraction: false,
+                                        },
+                                    });
+                                });
+                                </script>
                             <a href="{{route('catalog')}}" class="hero__btn ">
                                 Перейти в каталог
                             </a>
@@ -97,7 +126,7 @@ document.querySelectorAll('.home-news__slider').forEach(slider => {
                                 * Все товары сертифицированы. Актуальную информацию читайте в описании товара
                             </p>
                         </div>
-                       
+
                     </div>
                 </div>
             </div>

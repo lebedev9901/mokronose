@@ -77,7 +77,7 @@
                     ⭐ {{ $product->rating ?? '4.8' }}
                 </div>
 
-                <p class="product-desc">
+                <p class="product-desc-show">
                     {{ $product->description }}
                 </p>
 

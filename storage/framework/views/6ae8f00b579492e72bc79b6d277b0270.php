@@ -79,7 +79,7 @@
 
                 </div>
 
-                <p class="product-desc">
+                <p class="product-desc-show">
                     <?php echo e($product->description); ?>
 
                 </p>

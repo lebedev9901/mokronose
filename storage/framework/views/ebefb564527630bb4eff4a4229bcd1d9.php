@@ -24,6 +24,7 @@
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
         <link rel="stylesheet" href="<?php echo e(asset('assets/css/normalize.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?> ">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/advantages.css')); ?> ">
@@ -52,7 +53,7 @@
        <script src="<?php echo e(asset('assets/js/cart-page.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/cart.js')); ?>" defer></script>
        <script src="<?php echo e(asset('assets/js/script.js')); ?>" defer></script>
-  
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     </head>
     <body class="font-sans antialiased">
