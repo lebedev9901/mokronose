@@ -114,13 +114,36 @@ document.querySelectorAll('.home-news__slider').forEach(slider => {
                                             disableOnInteraction: false,
                                         },
                                     });
+
+                                    new Swiper('.heroSwiper', {
+                                        loop: true,
+                                        centeredSlides: true,
+                                        spaceBetween: 16,
+                                        speed: 600,
+                                        autoplay: {
+                                            delay: 3000,
+                                            disableOnInteraction: false,
+                                        },
+                                        breakpoints: {
+                                            0: {
+                                                slidesPerView: 1,
+                                                centeredSlides: false,
+                                                spaceBetween: 0,
+                                            },
+                                            769: {
+                                                slidesPerView: 'auto',
+                                                centeredSlides: true,
+                                                spaceBetween: 16,
+                                            }
+                                        }
+                                    });
                                 });
                                 </script>
                             <a href="{{route('catalog')}}" class="hero__btn ">
                                 Перейти в каталог
                             </a>
                             <p class="hero__subdesc">
-                                Сделай первый заказ для совего любимца со скидкой 10%, с любовью МокоНос!
+                                Сделай первый заказ для совего любимца со скидкой 10%, с любовью МокроНос!
                             </p>
                             <p class="hero__note">
                                 * Все товары сертифицированы. Актуальную информацию читайте в описании товара

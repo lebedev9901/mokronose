@@ -31,7 +31,7 @@
                     <a class="footer__desing" href="https://vk.com/lebedew136">{ } LebedevDev</a>
                     <div class="copyrite flex">
                         <h4 class="copyrite__title">МокроНос</h4>
-                        <p class="copyrite__descr">лакоства для собак</p>
+                        <p class="copyrite__descr">лакомства для собак</p>
                         <p class="copyrite__date">
                             {{date('Y')}}
                         </p>

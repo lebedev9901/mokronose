@@ -116,6 +116,29 @@ document.querySelectorAll('.home-news__slider').forEach(slider => {
                                             disableOnInteraction: false,
                                         },
                                     });
+
+                                    new Swiper('.heroSwiper', {
+                                        loop: true,
+                                        centeredSlides: true,
+                                        spaceBetween: 16,
+                                        speed: 600,
+                                        autoplay: {
+                                            delay: 3000,
+                                            disableOnInteraction: false,
+                                        },
+                                        breakpoints: {
+                                            0: {
+                                                slidesPerView: 1,
+                                                centeredSlides: false,
+                                                spaceBetween: 0,
+                                            },
+                                            769: {
+                                                slidesPerView: 'auto',
+                                                centeredSlides: true,
+                                                spaceBetween: 16,
+                                            }
+                                        }
+                                    });
                                 });
                                 </script>
                             <a href="<?php echo e(route('catalog')); ?>" class="hero__btn ">
