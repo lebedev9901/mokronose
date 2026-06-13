@@ -18,6 +18,11 @@ class Order extends Model
         'pickup_point',
         'cdek_point',
         'post_address',
+        'promocode_id',
+        'promocode_code',
+        'total_before_discount',
+        'discount_amount',
+        'total_after_discount',
     ];
 
     public function items()

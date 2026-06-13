@@ -5,154 +5,112 @@
 @section('content')
 
 @section('description', 'Товары для животных в интернет-магазине Мокронос.')
-@if($news->isNotEmpty())
-<section class="home-news">
-<div class="container">
-    <div class="home-news__header">
-        <h2>Новости МокроНос</h2>
-        <p>Акции, обновления и полезная информация для владельцев собак</p>
-    </div>
 
-    <div class="home-news__slider">
-        @foreach($news as $item)
-            <article class="home-news-card">
+<section class="hero-new">
+    <div class="container">
+        <div class="hero-new__card">
+            <div class="hero-new__content">
+                <span class="hero-new__label">натуральные лакомства</span>
+                <span class="hero-new__label">собственное производство</span>
+                <span class="hero-new__label">100% мяса</span>
+                <span class="hero-new__label">ручная сушка</span>
+                <span class="hero-new__label">без химии</span>
 
-    <img
-        src="{{ asset('storage/' . $item->image) }}"
-        alt="{{ $item->title }}"
-        class="home-news-card__image"
-    >
+                <h1 class="hero-new__title">
+                    Лакомства для собак ручной работы
+                </h1>
 
-    <div class="home-news-card__overlay"></div>
+                <p class="hero-new__text">
+                    Сделай первый заказ со скидкой 10% по
+                    промокоду: <strong>MOKRONOS10</strong>
+                </p>
 
-    <div class="home-news-card__content">
-
-        <h3>{{ $item->title }}</h3>
-
-        <p>
-            {{ Str::limit($item->description, 90) }}
-        </p>
-
-        <div class="home-news-card__buttons">
-
-            @if($item->button_text && $item->button_url)
-                <a href="{{ $item->button_url }}">
-                    {{ $item->button_text }}
+                <a href="{{ route('catalog') }}" class="hero-new__btn">
+                    Заказать лакомство
                 </a>
-            @endif
 
-        </div>
+                <p class="hero-new__note">
+                    С любовью, МокроНос
+                </p>
+            </div>
 
-    </div>
-<script>
-document.querySelectorAll('.home-news__slider').forEach(slider => {
-    slider.addEventListener('wheel', function(e) {
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            e.preventDefault();
-            slider.scrollLeft += e.deltaY;
-        }
-    }, { passive: false });
-});
-</script>
-</article>
-        @endforeach
-    </div>
-</div>
-</section>
-@endif
-<div class="hero">
-                <div class="container">
-                    <div class="hero__contain flex">
-                        <h1 class="hero__title">
-                            Натуральные лакомства для собак
-                        </h1>
-                        <div class="hero__bottom">
-                            <ul class="list-reset flex hero__subtitle">
-                                <li class="hero__subtitle-item">
-                                    100% мясо
-                                </li>
-                                <li class="hero__subtitle-item">
-                                    без химии 
-                                </li>
-                                <li class="hero__subtitle-item">
-                                    ручная сушка
-                                </li>
-                            </ul>
-                            <div class="swiper heroSwiper">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img src="{{ asset('assets/img/hero_img1.jpg') }}" alt="">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="{{ asset('assets/img/hero_img2.jpg') }}" alt="">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="{{ asset('assets/img/hero_img3.jpg') }}" alt="">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="{{ asset('assets/img/hero_img4.jpg') }}" alt="">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="{{ asset('assets/img/hero_img5.jpg') }}" alt="">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="{{ asset('assets/img/hero_img6.jpg') }}" alt="">
-                                    </div>
-                                </div>
-                            </div>
-                            <script>
-                                document.addEventListener('DOMContentLoaded', () => {
-                                    new Swiper('.heroSwiper', {
-                                        loop: true,
-                                        centeredSlides: true,
-                                        slidesPerView: 2,
-                                        centeredSlidesBounds: true,
-                                        spaceBetween: 16,
-                                        speed: 600,
-                                        autoplay: {
-                                            delay: 3000,
-                                            disableOnInteraction: false,
-                                        },
-                                    });
+            <div class="hero-new__slider swiper heroVerticalSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="{{ asset('assets/img/hero_img1.jpg') }}" alt="Лакомства МокроНос">
+                    </div>
 
-                                    new Swiper('.heroSwiper', {
-                                        loop: true,
-                                        centeredSlides: true,
-                                        spaceBetween: 16,
-                                        speed: 600,
-                                        autoplay: {
-                                            delay: 3000,
-                                            disableOnInteraction: false,
-                                        },
-                                        breakpoints: {
-                                            0: {
-                                                slidesPerView: 1,
-                                                centeredSlides: false,
-                                                spaceBetween: 0,
-                                            },
-                                            769: {
-                                                slidesPerView: 'auto',
-                                                centeredSlides: true,
-                                                spaceBetween: 16,
-                                            }
-                                        }
-                                    });
-                                });
-                                </script>
-                            <a href="{{route('catalog')}}" class="hero__btn ">
-                                Перейти в каталог
-                            </a>
-                            <p class="hero__subdesc">
-                                Сделай первый заказ для совего любимца со скидкой 10%, с любовью МокроНос!
-                            </p>
-                            <p class="hero__note">
-                                * Все товары сертифицированы. Актуальную информацию читайте в описании товара
-                            </p>
-                        </div>
+                    <div class="swiper-slide">
+                        <img src="{{ asset('assets/img/hero_img2.jpg') }}" alt="Натуральные лакомства">
+                    </div>
 
+                    <div class="swiper-slide">
+                        <img src="{{ asset('assets/img/hero_img3.jpg') }}" alt="Товары для собак">
+                    </div>
+
+                    <div class="swiper-slide">
+                        <img src="{{ asset('assets/img/hero_img4.jpg') }}" alt="Лакомства для питомцев">
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+@if($news->isNotEmpty())
+<section class="stories-news">
+    <div class="container">
+        <div class="stories-news__head">
+            <h2>Новости МокроНос</h2>
+            <p>Акции, обновления и полезная информация для владельцев собак</p>
+        </div>
+
+        <div class="stories-news__list">
+            @foreach($news as $item)
+                <button
+                    class="stories-news__item"
+                    type="button"
+                    data-news-title="{{ $item->title }}"
+                    data-news-text="{{ $item->description }}"
+                    data-news-date="{{ optional($item->published_at ?? $item->created_at)->format('d.m.Y') }}"
+                    data-news-image="{{ asset('storage/' . $item->image) }}"
+                    data-news-button-text="{{ $item->button_text }}"
+                    data-news-button-url="{{ $item->button_url }}"
+                >
+                    <span class="stories-news__circle">
+                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}">
+                    </span>
+
+                    <span class="stories-news__name">
+                        {{ Str::limit($item->title, 18) }}
+                    </span>
+                </button>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<div class="news-modal" id="newsModal">
+    <div class="news-modal__overlay" data-news-close></div>
+
+    <div class="news-modal__content">
+        <button class="news-modal__close" type="button" data-news-close>×</button>
+
+        <img class="news-modal__image" id="newsModalImage" src="" alt="">
+
+        <div class="news-modal__body">
+            <span class="news-modal__date" id="newsModalDate"></span>
+            <h3 class="news-modal__title" id="newsModalTitle"></h3>
+            <p class="news-modal__text" id="newsModalText"></p>
+
+            <a class="news-modal__button" id="newsModalButton" href="#" style="display:none;">
+                Подробнее
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
             <section class="advantages">
                 <div class="container">
                     <h2 class="advantages__title">
@@ -418,4 +376,24 @@ document.querySelectorAll('.home-news__slider').forEach(slider => {
 <script>
 console.log('JS работает');
 </script>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    new Swiper('.heroVerticalSwiper', {
+        direction: 'vertical',
+        loop: true,
+        speed: 700,
+        autoplay: {
+            delay: 2800,
+            disableOnInteraction: false,
+        },
+        effect: 'slide',
+        slidesPerView: 1,
+        allowTouchMove: true,
+        mousewheel: false,
+    });
+});
+</script>
+@endpush
+
 @endsection

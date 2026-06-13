@@ -20,6 +20,12 @@ document.addEventListener('click', function (e) {
 });
 
 function updateCartIcon(qty) {
-    const el = document.querySelector('.cart-count');
-    if (el) el.innerText = qty;
+
+    const el = document.getElementById('cart-count');
+
+    if (!el) return;
+
+    el.innerText = qty;
+
+    el.classList.toggle('is-hidden', parseInt(qty) <= 0);
 }

@@ -75,7 +75,6 @@
             <option value="puppy" <?php echo e($product->age_group === 'puppy' ? 'selected' : ''); ?>>Щенок</option>
             <option value="junior" <?php echo e($product->age_group === 'junior' ? 'selected' : ''); ?>>Юниор</option>
             <option value="adult" <?php echo e($product->age_group === 'adult' ? 'selected' : ''); ?>>Взрослый</option>
-            <option value="senior" <?php echo e($product->age_group === 'senior' ? 'selected' : ''); ?>>Пожилой</option>
         </select>
     </div>
 
@@ -86,7 +85,6 @@
             <option value="small" <?php echo e($product->breed_size === 'small' ? 'selected' : ''); ?>>Мелкие породы</option>
             <option value="medium" <?php echo e($product->breed_size === 'medium' ? 'selected' : ''); ?>>Средние породы</option>
             <option value="large" <?php echo e($product->breed_size === 'large' ? 'selected' : ''); ?>>Крупные породы</option>
-            <option value="giant" <?php echo e($product->breed_size === 'giant' ? 'selected' : ''); ?>>Гигантские породы</option>
         </select>
     </div>
 

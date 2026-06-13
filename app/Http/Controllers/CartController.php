@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\Promocode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -332,5 +333,44 @@ class CartController extends Controller
         return response()->json([
             'count' => $cart->items()->sum('qty'),
         ]);
+    }
+
+    public function applyPromocode(Request $request)
+    {
+        $request->validate([
+            'code' => ['required', 'string', 'max:50'],
+        ]);
+
+        $cart = self::currentCart();
+        $cartTotal = (float) $cart->total_price;
+
+        $promocode = Promocode::where('code', strtoupper(trim($request->code)))->first();
+
+        if (!$promocode) {
+            return back()->with('promocode_error', 'Промокод не найден');
+        }
+
+        if (!$promocode->isAvailable($cartTotal)) {
+            return back()->with('promocode_error', 'Промокод недоступен или истёк');
+        }
+
+        $discount = $promocode->calculateDiscount($cartTotal);
+
+        session([
+            'promocode' => [
+                'id' => $promocode->id,
+                'code' => $promocode->code,
+                'discount' => $discount,
+            ],
+        ]);
+
+        return back()->with('success', 'Промокод применён');
+    }
+
+    public function removePromocode()
+    {
+        session()->forget('promocode');
+
+        return back()->with('success', 'Промокод удалён');
     }
 }

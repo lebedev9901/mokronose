@@ -50,7 +50,9 @@
             <a href="{{route('admin.news')}}" class="{{ request()->is('admin/news*') ? 'active' : '' }}">
                 Новости 
             </a>
-
+            <a href="{{route('admin.promocodes.index')}}" class="{{ request()->is('admin/promocodes*') ? 'active' : '' }}">
+                Промокоды 
+            </a>
 
         </nav>
 

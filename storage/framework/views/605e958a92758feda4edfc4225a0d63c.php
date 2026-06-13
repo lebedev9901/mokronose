@@ -1,0 +1,1 @@
+<?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/layouts/admin.blade.php ENDPATH**/ ?>

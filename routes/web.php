@@ -26,9 +26,10 @@ use Laravel\Socialite\Socialite;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog', [CatalogController::class, 'catalog'])->name('catalog');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product');
-
+Route::get('/catalog/product/{product}/quick', [CatalogController::class, 'quick'])
+    ->name('catalog.product.quick');
 Route::post('/cart/add/{product}', [CartController::class, 'ajaxAdd'])->name('cart.ajax.add');
 Route::post('/cart/increase/{product}', [CartController::class, 'ajaxIncrease'])->name('cart.ajax.increase');
 Route::post('/cart/decrease/{product}', [CartController::class, 'ajaxDecrease'])->name('cart.ajax.decrease');
@@ -166,6 +167,12 @@ Route::post('/addresses/{id}/main', [AddressController::class, 'setMain']);
 
 Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle'])
     ->name('favorites.toggle');
+
+    Route::post('/cart/promocode/apply', [CartController::class, 'applyPromocode'])
+    ->name('cart.promocode.apply');
+
+Route::post('/cart/promocode/remove', [CartController::class, 'removePromocode'])
+    ->name('cart.promocode.remove');
 });
 
 require __DIR__.'/auth.php';

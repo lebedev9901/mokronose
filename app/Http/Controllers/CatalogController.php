@@ -3,33 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CatalogController extends Controller
 {
-    public function index(Request $request)
+    public function catalog(Request $request)
     {
-        $categories = Category::with('children')
+        $categories = Category::with([
+                'children' => function ($query) {
+                    $query->withCount('products');
+                },
+            ])
+            ->withCount('products')
             ->whereNull('parent_id')
-            ->orderBy('title')
             ->get();
 
-        $query = Product::with(['images', 'categories.parent']);
+        $pets = auth()->check()
+            ? auth()->user()->pets()->get()
+            : collect();
 
-        if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
+        $query = Product::with(['images', 'categories']);
 
         if ($request->filled('category')) {
-            $category = Category::with('children')->find($request->category);
+            $categoryId = (int) $request->category;
+
+            $category = Category::with('children')->find($categoryId);
 
             if ($category) {
-                $ids = collect([$category->id])
-                    ->merge($category->children->pluck('id'))
-                    ->toArray();
+                $ids = [$category->id];
+
+                if ($category->children->isNotEmpty()) {
+                    $ids = array_merge(
+                        $ids,
+                        $category->children->pluck('id')->toArray()
+                    );
+                }
 
                 $query->whereHas('categories', function ($q) use ($ids) {
                     $q->whereIn('categories.id', $ids);
@@ -37,35 +47,95 @@ class CatalogController extends Controller
             }
         }
 
+        if ($request->filled('price_from')) {
+            $query->where('price', '>=', (float) $request->price_from);
+        }
+
+        if ($request->filled('price_to')) {
+            $query->where('price', '<=', (float) $request->price_to);
+        }
+
+        if ($request->filled('age_group')) {
+            $ages = (array) $request->age_group;
+
+            $query->where(function ($q) use ($ages) {
+                $q->whereIn('age_group', $ages)
+                    ->orWhereNull('age_group');
+            });
+        }
+
+        if ($request->filled('breed_size')) {
+            $sizes = (array) $request->breed_size;
+
+            $query->where(function ($q) use ($sizes) {
+                $q->whereIn('breed_size', $sizes)
+                    ->orWhereNull('breed_size')
+                    ->orWhere('breed_size', 'all');
+            });
+        }
+
+        match ($request->get('sort')) {
+            'price_asc' => $query->orderBy('price', 'asc'),
+            'price_desc' => $query->orderBy('price', 'desc'),
+            'old' => $query->orderBy('created_at', 'asc'),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+
+        $products = $query->paginate(12)->withQueryString();
+
+        $cartQuantities = [];
+
+        if (auth()->check()) {
+            $cart = Cart::where('user_id', auth()->id())->first();
+
+            if ($cart) {
+                $cartQuantities = $cart->items()
+                    ->pluck('qty', 'product_id')
+                    ->toArray();
+            }
+        } else {
+            $cart = Cart::where('session_id', session()->getId())->first();
+
+            if ($cart) {
+                $cartQuantities = $cart->items()
+                    ->pluck('qty', 'product_id')
+                    ->toArray();
+            }
+        }
+
         $favoriteIds = auth()->check()
-            ? auth()->user()->favoriteProducts()->pluck('products.id')->toArray()
+            ? auth()->user()->favorites()->pluck('product_id')->toArray()
             : [];
 
-        $products = $query->latest()->paginate(9)->withQueryString();
-            
-        $sessionId = session()->getId();
-        $userId = auth()->id();
+        if ($request->ajax()) {
+            return response()->json([
+                'products' => view('partials.product', compact(
+                    'products',
+                    'cartQuantities',
+                    'favoriteIds'
+                ))->render(),
 
-        $cart = Cart::where(function ($q) use ($userId, $sessionId) {
-            if ($userId) {
-                $q->where('user_id', $userId);
-            } else {
-                $q->where('session_id', $sessionId);
-            }
-        })->first();
+                'pagination' => view('partials.pagination', compact(
+                    'products'
+                ))->render(),
 
-        $cartQuantities = $cart
-            ? $cart->items()->pluck('qty', 'product_id')
-            : collect();
-
-        $cartCount = $cartQuantities->sum();
+                'total' => $products->total(),
+            ]);
+        }
 
         return view('catalog.index', compact(
             'products',
             'categories',
             'cartQuantities',
-            'cartCount',
-            'favoriteIds'
+            'favoriteIds',
+            'pets'
         ));
+    }
+
+    public function quick(Product $product)
+    {
+        $product->load(['images', 'categories']);
+
+        return view('partials.quick-product', compact('product'))->render();
     }
 }

@@ -74,11 +74,25 @@ class OrderController extends Controller
         }
 
         $order = DB::transaction(function () use ($cartItems, $request) {
-            $total = $cartItems->sum(fn($item) => $item->product->price * $item->qty);
+            $totalBeforeDiscount = $cartItems->sum(fn($item) => $item->product->price * $item->qty);
 
+            $promocode = session('promocode');
+            $discountAmount = 0;
+
+            if ($promocode) {
+                $discountAmount = (float) ($promocode['discount'] ?? 0);
+            }
+
+            $totalAfterDiscount = max($totalBeforeDiscount - $discountAmount, 0);
+            
             $orderData = [
                 'user_id' => auth()->id(),
-                'total_price' => $total,
+                'promocode_id' => $promocode['id'] ?? null,
+                'promocode_code' => $promocode['code'] ?? null,
+                'total_price' => $totalAfterDiscount,
+                'total_before_discount' => $totalBeforeDiscount,
+                'discount_amount' => $discountAmount,
+                'total_after_discount' => $totalAfterDiscount,
                 'delivery_method' => $request->delivery_method,
                 'payment_method' => $request->payment_method,
                 'status' => 'new',
@@ -128,6 +142,7 @@ class OrderController extends Controller
             ]);
 
             CartItem::where('user_id', auth()->id())->delete();
+            session()->forget('promocode');
 
             return $order;
         });
@@ -139,7 +154,7 @@ class OrderController extends Controller
                 $user->vk_id,
                 "Здравствуйте, {$user->first_name}!\n\n" .
                 "Ваш заказ №{$order->id} успешно оформлен и передан в поддержку.\n" .
-                "Сумма заказа: {$order->total_price} ₽\n\n" .
+                "Сумма заказа: {$order->total_after_discount} ₽\n\n" .
                 "Мы свяжемся с вами в ближайшее время."
             );
         }

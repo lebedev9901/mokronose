@@ -23,7 +23,7 @@ class ProfileController extends Controller
 
             $orders = collect();
             $chats = collect();
-
+            $pets = auth()->user()->pets;
             // Заказы
             if ($page === 'orders') {
 
@@ -57,7 +57,8 @@ class ProfileController extends Controller
                     'page',
                     'orders',
                     'chats',
-                    'products'
+                    'products',
+                    'pets'
                 )
             );
         }

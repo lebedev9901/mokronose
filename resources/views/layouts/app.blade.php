@@ -1,70 +1,80 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="yandex-verification" content="93a14333f280d765" >
-        <title>@yield('title', 'Мокронос — зоомагазин')</title>
-        <meta name="description" content="@yield('description', 'Интернет-магазин товаров для животных. Корма, игрушки, аксессуары и товары для питомцев.')">
-        <meta name="keywords" content="зоомагазин, товары для животных, корм для собак, корм для кошек, аксессуары для животных">
-        <meta name="robots" content="index, follow">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="canonical" href="{{ url()->current() }}">
-        <meta property="og:type" content="website">
-        <meta property="og:title" content="@yield('title', 'Мокронос — зоомагазин')">
-        <meta property="og:description" content="@yield('description', 'Интернет-магазин товаров для животных.')">
-        <meta property="og:url" content="{{ url()->current() }}">
-        <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
-        <meta property="og:site_name" content="Мокронос">       
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="@yield('title', 'Мокронос — зоомагазин')">
-        <meta name="twitter:description" content="@yield('description', 'Интернет-магазин товаров для животных.')">
-        <meta name="twitter:image" content="{{ asset('images/og-image.jpg') }}">
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-        <link rel="stylesheet" href="{{asset('assets/css/normalize.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/style.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/advantages.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/cart.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/catalog.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/faq.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/footer.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/header.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/hero.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/modal-login.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/process.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/product_preview.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/product.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/reviews.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/profile.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/dashboard.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/form.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/product__visual.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/category_visual.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/aboute.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/pay.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/order__check.css')}} ">
-    <link rel="stylesheet" href="{{asset('assets/css/news.css')}} ">
-        <!-- Scripts -->
-       <script src="{{asset('assets/js/catalog.js')}}" defer></script>
-       <script src="{{asset('assets/js/cart-page.js')}}" defer></script>
-       <script src="{{asset('assets/js/cart.js')}}" defer></script>
-       <script src="{{asset('assets/js/script.js')}}" defer></script>
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-    </head>
-    <body class="font-sans antialiased">
-        @include('partials.header')
+<head>
+    <meta charset="utf-8">
 
-            <!-- Page Content -->
-            <main class="min-h-screen">
-                @yield('content')
-            </main>
-        
-            @include('partials.footer')
-    </body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="yandex-verification" content="93a14333f280d765">
+
+    <title>@yield('title', 'Мокронос — лакомства для собак')</title>
+
+    <meta name="description" content="@yield('description', 'Интернет-магазин лакомств для животных.')">
+    <meta name="keywords" content="зоомагазин, товары для животных, корм для собак">
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@yield('title', 'Мокронос — лакомства для собак')">
+    <meta property="og:description" content="@yield('description', 'Интернет-магазин лакомств для животных.')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:site_name" content="Мокронос">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Мокронос — лакомства для собак')">
+    <meta name="twitter:description" content="@yield('description', 'Интернет-магазин лакомств для животных.')">
+    <meta name="twitter:image" content="{{ asset('images/og-image.jpg') }}">
+
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+    <link rel="stylesheet" href="{{ asset('assets/css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/header.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/footer.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/hero.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/catalog.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/product_preview.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/product.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/cart.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/modal-login.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/advantages.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/faq.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/process.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/reviews.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/product__visual.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/category_visual.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/aboute.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/pay.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/order__check.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/news.css') }}">
+
+    @stack('styles')
+</head>
+
+<body>
+    @include('partials.header')
+
+    <main>
+        @yield('content')
+    </main>
+
+    @include('partials.footer')
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="{{ asset('assets/js/catalog.js') }}" defer></script>
+    <script src="{{ asset('assets/js/cart-page.js') }}" defer></script>
+    <script src="{{ asset('assets/js/cart.js') }}" defer></script>
+    <script src="{{ asset('assets/js/script.js') }}" defer></script>
+
     @stack('scripts')
+</body>
 </html>

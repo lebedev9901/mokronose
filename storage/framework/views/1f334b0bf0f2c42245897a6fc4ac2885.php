@@ -47,8 +47,12 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title>Search SVG Icon</title><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21l-4.486-4.494M19 10.5a8.5 8.5 0 1 1-17 0a8.5 8.5 0 0 1 17 0Z"/></svg>
                             </button>
                         </form>
-                                             
-                        <ul class="header__links list-reset flex">
+                        <button class="header__burger btn-reset" type="button" id="headerBurger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>                    
+                        <ul class="header__links list-reset flex" id="headerMenu">
                             <li class="header__links-item">
                                 <a href="<?php echo e(route('catalog')); ?>">Каталог</a>
                             </li>
@@ -64,25 +68,42 @@
                         </ul>
                                               
                         <div class="header__enter flex">
-                               <?php if(auth()->guard()->check()): ?>
-                                    <a href="<?php echo e(route('profile.index')); ?>" class="btn-reset header__user">
-                                        ЛК   
-                                    </a>
-                                <?php else: ?>
-                            <a href="<?php echo e(route('login')); ?>" class="btn-reset header__login" id="login">Вход
-                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#prefix__clip0_705_5)" fill="#f5f5f5"><path d="M21 24h-3v-5a2 2 0 00-2-2H8a2 2 0 00-2 2v5H3v-5a5.006 5.006 0 015-5h8a5.006 5.006 0 015 5v5zM12 12a6 6 0 110-12 6 6 0 010 12zm0-9a3 3 0 100 6 3 3 0 000-6z"/></g><defs><clipPath id="prefix__clip0_705_5"><path fill="#fff" d="M0 0h24v24H0z"/></clipPath></defs></svg>
-</a>
+                            <?php if(auth()->check()): ?>
+                                <a href="<?php echo e(route('profile.index')); ?>" class="header-user">
+                                    <span class="header-user__avatar">
+                                        <?php echo e(mb_substr(auth()->user()->first_name ?? auth()->user()->name ?? 'П', 0, 1)); ?>
+
+                                    </span>
+
+                                    <span class="header-user__name">
+                                        <?php echo e(auth()->user()->first_name ?? auth()->user()->name); ?>
+
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="<?php echo e(route('login')); ?>" class="header-action">
+                                    Вход
+                                </a>
                             <?php endif; ?>
-                                
-                            
 
-                            <a  href="<?php echo e(route('cart')); ?>" class="btn-reset">
-                                Корзина <span class="cart-count <?php echo e(($cartCount ?? 0) <= 0 ? 'is-hidden' : ''); ?>" id="cart-count">
-                                    <?php echo e($cartCount ?? 0); ?>
+                            <a href="<?php echo e(route('cart')); ?>" class="header-cart">
+                            <svg class="header-cart__icon" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M7 21a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm10 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM2 2h2l2.4 11.2A2 2 0 008.36 15H18a2 2 0 001.93-1.48L22 6H6"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
 
-                                </span>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#prefix__clip0_702_2)" fill="#f5f5f5"><path d="M7 24a2 2 0 100-4 2 2 0 000 4zM17 24a2 2 0 100-4 2 2 0 000 4zM22.984 6.018A3.675 3.675 0 0020.364 5H5.654l-.263-2.062A3.328 3.328 0 002.087 0H1.5A1.5 1.5 0 000 1.5 1.5 1.5 0 001.5 3h.587a.331.331 0 01.326.3l1.5 11.759A3.327 3.327 0 007.217 18h10.122a5.5 5.5 0 005.3-4.042l1.246-4.531a3.489 3.489 0 00-.901-3.409zm-3.234 7.145A2.508 2.508 0 0117.339 15H7.217a.33.33 0 01-.325-.3L6.037 8h14.477a.5.5 0 01.486.632l-1.25 4.531z"/></g><defs><clipPath id="prefix__clip0_702_2"><path fill="#fff" d="M0 0h24v24H0z"/></clipPath></defs></svg>
-                            </a>
+                            <span class="header-cart__text">Корзина</span>
+
+                            <span class="header-cart__count <?php echo e(($cartCount ?? 0) <= 0 ? 'is-hidden' : ''); ?>" id="cart-count">
+                                <?php echo e($cartCount ?? 0); ?>
+
+                            </span>
+                        </a>
                         </div>
                     </div>
                 </div>

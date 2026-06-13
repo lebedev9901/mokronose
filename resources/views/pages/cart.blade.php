@@ -82,6 +82,51 @@
                 <span>{{ number_format($cart->total_price, 2) }} ₽</span>
             </div>
 
+            @if(session('promocode'))
+                <div class="cart-summary__row cart-summary__row--discount">
+                    <span>Скидка:</span>
+                    <span>-{{ number_format(session('promocode.discount'), 2) }} ₽</span>
+                </div>
+
+                <div class="cart-summary__row cart-summary__row--total">
+                    <span>К оплате:</span>
+                    <span>{{ number_format(max($cart->total_price - session('promocode.discount'), 0), 2) }} ₽</span>
+                </div>
+            @endif
+            <div class="cart-promocode">
+                <label for="promocode">Промокод</label>
+
+                <form action="{{ route('cart.promocode.apply') }}" method="POST" class="cart-promocode__form">
+                    @csrf
+
+                    <input
+                        type="text"
+                        id="promocode"
+                        name="code"
+                        placeholder="Введите промокод"
+                        value="{{ session('promocode.code') }}"
+                    >
+
+                    <button type="submit">Применить</button>
+                </form>
+
+                @if(session('promocode'))
+                    <div class="cart-promocode__success">
+                        Промокод {{ session('promocode.code') }} применён
+
+                        <form action="{{ route('cart.promocode.remove') }}" method="POST">
+                            @csrf
+                            <button type="submit">убрать</button>
+                        </form>
+                    </div>
+                @endif
+
+                @if(session('promocode_error'))
+                    <div class="cart-promocode__error">
+                        {{ session('promocode_error') }}
+                    </div>
+                @endif
+            </div>
             @if(Auth::check())
                 <a href="{{ route('order.checkout') }}" class="btn-primary">
                     Оформить заказ

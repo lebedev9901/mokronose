@@ -50,7 +50,9 @@
             <a href="<?php echo e(route('admin.news')); ?>" class="<?php echo e(request()->is('admin/news*') ? 'active' : ''); ?>">
                 Новости 
             </a>
-
+            <a href="<?php echo e(route('admin.promocodes.index')); ?>" class="<?php echo e(request()->is('admin/promocodes*') ? 'active' : ''); ?>">
+                Промокоды 
+            </a>
 
         </nav>
 

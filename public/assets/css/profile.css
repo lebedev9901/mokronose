@@ -1181,6 +1181,38 @@
     border-radius:12px;
 }
 
+.modal.is-open{
+    display: block;
+}
+
+.modal.is-open{
+    display:block;
+}
+
+.profile-favorites h2{
+    margin-bottom:18px;
+}
+
+.profile-favorite-card h3{
+    margin:0 0 8px;
+    font-size:18px;
+}
+
+.profile-favorite-card h3 a{
+    color:var(--color-text);
+    text-decoration:none;
+}
+
+.profile-favorite-card h3 a:hover{
+    color:var(--color-primary);
+}
+
+.profile-favorite-card p{
+    margin:0;
+    font-weight:700;
+    color:var(--color-primary);
+}
+
 @media(max-width:700px){
     .profile-pets-header,
     .pet-card{

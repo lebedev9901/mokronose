@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\PromocodeController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -104,4 +105,6 @@ Route::put('/admin/news/{news}', [NewsController::class, 'update'])
 
 Route::delete('/admin/news/{news}', [NewsController::class, 'destroy'])
     ->name('admin.news.destroy');
+    Route::resource('/admin/promocodes', PromocodeController::class)
+    ->names('admin.promocodes');
 });

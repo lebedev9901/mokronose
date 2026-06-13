@@ -23,20 +23,17 @@ class HomeController extends Controller
         $query->where('rating', '>', 4.5)
             ->orderBy('rating', 'desc');
 
-        $products = $query->take(6)->get();
+        $products = $query->take(3)->get();
 
         // fallback если пусто
         if ($products->isEmpty()) {
-            $products = Product::latest()->take(9)->get();
+            $products = Product::latest()->take(3)->get();
         }
 
         $reviews = Review::with(['user', 'product'])
            ->latest()
-            ->paginate(9);
+            ->paginate(3);
 
-        $vkReviews = VkReview::latest('vk_created_at')
-            ->take(6)
-            ->get();
 
         $news = News::where('is_active', true)
             ->where(function ($query) {
@@ -45,11 +42,10 @@ class HomeController extends Controller
             })
             ->orderBy('sort_order')
             ->latest()
-            ->take(6)
             ->get();
 
 
-        return view('pages.home', compact('products', 'reviews', 'vkReviews', 'news'));
+        return view('pages.home', compact('products', 'reviews', 'news'));
     }
 
 }
