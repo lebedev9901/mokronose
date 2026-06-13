@@ -30,9 +30,22 @@
         <div class="profile-card__left">
 
             <div class="profile-avatar">
+                @php
+                    if (!$user->avatar) {
+                        $avatarUrl = asset('assets/img/default-avatar.png');
+                    } elseif (str_starts_with($user->avatar, 'http')) {
+                        $avatarUrl = $user->avatar;
+                    } elseif (str_starts_with($user->avatar, '/storage/')) {
+                        $avatarUrl = asset(ltrim($user->avatar, '/'));
+                    } elseif (str_starts_with($user->avatar, 'storage/')) {
+                        $avatarUrl = asset($user->avatar);
+                    } else {
+                        $avatarUrl = asset('storage/' . $user->avatar);
+                    }
+                @endphp
                 <img
                     class="profile-avatar-img"
-                    src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/img/default-avatar.png') }}"
+                    src="{{ $avatarUrl }}"
                     alt="{{ $user->first_name ?? 'Профиль' }}"
                 >
                 <span class="status"></span>
@@ -246,6 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const phoneEl = document.getElementById('profile-phone');
     const emailEl = document.getElementById('profile-email');
     const avatarEl = document.querySelector('.profile-avatar-img');
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
 
     openBtn?.addEventListener('click', () => modal.classList.add('is-open'));
     closeBtn?.addEventListener('click', () => modal.classList.remove('is-open'));
@@ -260,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const res = await fetch("{{ route('profile.update') }}", {
             method: "POST",
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-CSRF-TOKEN': csrf,
                 'Accept': 'application/json'
             },
             body: new FormData(form)
