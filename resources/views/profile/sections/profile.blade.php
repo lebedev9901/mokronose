@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
         emailEl.textContent = user.email ?? '';
 
         avatarEl.src = user.avatar
-            ? `/storage/${user.avatar}`
+            ? user.avatar
             : '/assets/img/default-avatar.png';
 
         modal.classList.remove('is-open');
