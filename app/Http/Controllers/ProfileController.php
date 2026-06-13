@@ -135,8 +135,17 @@ public function update(Request $request)
     $user->save();
 
     return response()->json([
-        'success' => true,
-        'user' => $user
+         'success' => true,
+        'user' => [
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'middle_name' => $user->middle_name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'avatar' => $user->avatar
+                ? asset('storage/' . $user->avatar)
+                : null,
+        ]
     ]);
 }
     /**
