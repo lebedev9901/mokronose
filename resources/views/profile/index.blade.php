@@ -15,6 +15,7 @@
         @php
             $section = match($page) {
                 'orders'    => 'profile.sections.orders',
+                'favorites'    => 'profile.sections.favorites',
                 'pet'       => 'profile.sections.pet',
                 'addresses' => 'profile.sections.addresses',
                 'support'   => 'profile.sections.support',

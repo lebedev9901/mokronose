@@ -1,21 +1,121 @@
 <div class="profile-content">
 
-            <div class="profile-header">
-                <h1>Адреса доставки</h1>
-                <button class="btn-primary" id="openAddressModal" >+ Добавить адрес</button>
+    <div class="profile-section-head">
+        <div>
+            <h1 class="section-title">Адреса доставки</h1>
+            <p>Добавляйте и управляйте адресами доставки</p>
+        </div>
+
+        <button type="button" class="btn-primary" id="openAddressModal">
+            + Добавить адрес
+        </button>
+    </div>
+
+    <div class="addresses-grid" id="addressList">
+
+        @foreach(auth()->user()->addresses as $address)
+
+            <div class="address-card" data-id="{{ $address->id }}">
+
+                <div class="address-card-top">
+
+                    <h3>
+                        {{ $address->city ?: 'Адрес доставки' }}
+                    </h3>
+
+                    <span class="badge">
+                        {{ $address->is_default ? 'Основной' : 'Дополнительный' }}
+                    </span>
+
+                </div>
+
+                <p class="address-text">
+                    {{ $address->street }},
+                    {{ $address->house }}
+
+                    @if($address->apartment)
+                        , кв. {{ $address->apartment }}
+                    @endif
+                </p>
+
+                @if($address->comment)
+                    <p class="address-text-light">
+                        {{ $address->comment }}
+                    </p>
+                @endif
+
+                <div class="address-actions">
+
+                    <button
+                        type="button"
+                        class="btn-secondary edit-address"
+                        data-id="{{ $address->id }}"
+                        data-city="{{ $address->city }}"
+                        data-street="{{ $address->street }}"
+                        data-house="{{ $address->house }}"
+                        data-apartment="{{ $address->apartment }}"
+                        data-comment="{{ $address->comment }}"
+                    >
+                        Редактировать
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-danger delete-address"
+                        data-url="{{ route('addresses.destroy', $address->id) }}"
+                    >
+                        Удалить
+                    </button>
+
+                    @if(!$address->is_default)
+                        <button
+                            type="button"
+                            class="btn-primary set-main-address"
+                            data-id="{{ $address->id }}"
+                        >
+                            Сделать основным
+                        </button>
+                    @endif
+
+                </div>
+
             </div>
 
-            <div id="addressModal" class="modal">
+        @endforeach
+
+    </div>
+
+    @if(auth()->user()->addresses->isEmpty())
+        <div class="empty-state" id="addressEmptyState">
+
+            <p>У вас пока нет адресов</p>
+
+            <button
+                type="button"
+                class="btn-primary"
+                id="openFirstAddressModal"
+            >
+                Добавить первый адрес
+            </button>
+
+        </div>
+    @endif
+
+</div>
+
+<div id="addressModal" class="modal">
     <div class="modal-content">
 
         <div class="modal-header">
-            <h3>Новый адрес</h3>
+            <h3 id="addressModalTitle">Новый адрес</h3>
             <button type="button" id="closeAddressModal" class="modal-close">×</button>
         </div>
 
         <form id="addressForm" class="address-form">
             @csrf
-                <input type="hidden" name="id" id="address_id">
+
+            <input type="hidden" name="id" id="address_id">
+
             <div class="form-grid">
 
                 <div class="form-group">
@@ -29,7 +129,6 @@
                 </div>
 
                 <div class="form-row">
-
                     <div class="form-group">
                         <label>Дом *</label>
                         <input type="text" name="house" placeholder="10" required>
@@ -39,7 +138,6 @@
                         <label>Квартира</label>
                         <input type="text" name="apartment" placeholder="25">
                     </div>
-
                 </div>
 
                 <div class="form-group">
@@ -58,94 +156,55 @@
     </div>
 </div>
 
-            <div class="addresses-grid" id="addressList">
-
-                @forelse(auth()->user()->addresses as $address)
-                    <div class="address-card">
-
-                        <div class="address-card-top">
-                            <h3>{{ $address->city }}</h3>
-                            <span class="badge">
-                                {{ $address->is_default ? 'Основной' : 'Дополнительный' }}
-                            </span>
-                        </div>
-
-                        <p class="address-text">
-                            {{ $address->street }}, {{ $address->house }}
-                        </p>
-
-                        <p class="address-text-light">
-                            {{ $address->comment }}
-                        </p>
-
-                        <div class="address-actions">
-
-                            <button class="btn-secondary edit-address"
-                                    data-id="{{ $address->id }}"
-                                    data-city="{{ $address->city }}"
-                                    data-street="{{ $address->street }}"
-                                    data-house="{{ $address->house }}"
-                                    data-apartment="{{ $address->apartment }}">
-                                Редактировать
-                            </button>
-                            <button class="btn-danger delete-address" data-id="{{ $address->id }}">
-                                Удалить
-                            </button>
-                                                        <button class="btn-primary set-main-address"
-                                    data-id="{{ $address->id }}">
-                                Сделать основным
-                            </button>
-                        </div>
-
-                    </div>
-                @empty
-                    <div class="empty-state">
-                        <p>У вас пока нет адресов</p>
-                        <button class="btn-primary">Добавить первый адрес</button>
-                    </div>
-                @endforelse
-
-            </div>
-
-</div>
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
 
     const modal = document.getElementById('addressModal');
     const openBtn = document.getElementById('openAddressModal');
+    const openFirstBtn = document.getElementById('openFirstAddressModal');
     const closeBtn = document.getElementById('closeAddressModal');
     const form = document.getElementById('addressForm');
     const list = document.getElementById('addressList');
+    const title = document.getElementById('addressModalTitle');
+    const addressId = document.getElementById('address_id');
 
-    // --------------------------
-    // OPEN
-    // --------------------------
-    openBtn.addEventListener('click', function () {
+    function openModal() {
+        modal.classList.add('is-open');
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-open');
         form.reset();
-        document.getElementById('address_id').value = '';
-        modal.style.display = 'block';
+        addressId.value = '';
+        title.textContent = 'Новый адрес';
+    }
+
+    openBtn?.addEventListener('click', function () {
+        closeModal();
+        openModal();
     });
 
-    // --------------------------
-    // CLOSE
-    // --------------------------
-    closeBtn.addEventListener('click', () => modal.style.display = 'none');
+    openFirstBtn?.addEventListener('click', function () {
+        closeModal();
+        openModal();
+    });
+
+    closeBtn?.addEventListener('click', closeModal);
 
     window.addEventListener('click', function (e) {
-        if (e.target === modal) modal.style.display = 'none';
+        if (e.target === modal) {
+            closeModal();
+        }
     });
 
-    // --------------------------
-    // RENDER
-    // --------------------------
     function renderAddress(a) {
         return `
             <div class="address-card" data-id="${a.id}">
 
                 <div class="address-card-top">
-                    <h3>${a.city ?? ''}</h3>
+                    <h3>${a.city || 'Адрес'}</h3>
 
                     <span class="badge">
                         ${a.is_default ? 'Основной' : 'Дополнительный'}
@@ -153,35 +212,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
 
                 <p class="address-text">
-                    ${a.street} ${a.house}
+                    ${a.street}, ${a.house}
                     ${a.apartment ? ', кв. ' + a.apartment : ''}
                 </p>
 
-                <p class="address-text-light">
-                    ${a.comment ?? ''}
-                </p>
+                ${a.comment ? `
+                    <p class="address-text-light">
+                        ${a.comment}
+                    </p>
+                ` : ''}
 
                 <div class="address-actions">
 
-                    <button class="btn-secondary edit-address"
+                    <button
+                        class="btn-secondary edit-address"
+                        type="button"
                         data-id="${a.id}"
-                        data-city="${a.city ?? ''}"
-                        data-street="${a.street}"
-                        data-house="${a.house}"
-                        data-apartment="${a.apartment ?? ''}"
-                        data-comment="${a.comment ?? ''}">
+                        data-city="${a.city || ''}"
+                        data-street="${a.street || ''}"
+                        data-house="${a.house || ''}"
+                        data-apartment="${a.apartment || ''}"
+                        data-comment="${a.comment || ''}"
+                    >
                         Редактировать
                     </button>
 
-                    <button class="btn-danger delete-address"
-                        data-id="${a.id}">
+                    <button
+                        class="btn-danger delete-address"
+                        type="button"
+                        data-url="/addresses/${a.id}"
+                    >
                         Удалить
                     </button>
 
-                    <button class="btn-primary set-main-address"
-                        data-id="${a.id}">
-                        Сделать основным
-                    </button>
+                    ${!a.is_default ? `
+                        <button
+                            class="btn-primary set-main-address"
+                            type="button"
+                            data-id="${a.id}"
+                        >
+                            Сделать основным
+                        </button>
+                    ` : ''}
 
                 </div>
 
@@ -189,32 +261,43 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     }
 
-    // --------------------------
-    // SUBMIT (CREATE + UPDATE)
-    // --------------------------
+    function removeEmptyState() {
+        const empty = document.getElementById('addressEmptyState');
+
+        if (empty) {
+            empty.remove();
+        }
+    }
+
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        let id = document.getElementById('address_id').value;
+        const id = addressId.value;
 
-        let url = id
+        const url = id
             ? `/addresses/${id}`
             : `{{ route('addresses.store') }}`;
 
-        let res = await fetch(url, {
+        const res = await fetch(url, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json'
             },
             body: new FormData(form)
         });
 
-        let data = await res.json();
-        if (!data.success) return;
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(data.message || 'Ошибка сохранения адреса');
+            return;
+        }
 
         const a = data.address;
+        const old = list.querySelector(`.address-card[data-id="${a.id}"]`);
 
-        let old = list.querySelector(`[data-id="${a.id}"]`);
+        removeEmptyState();
 
         if (old) {
             old.outerHTML = renderAddress(a);
@@ -222,88 +305,92 @@ document.addEventListener('DOMContentLoaded', function () {
             list.insertAdjacentHTML('beforeend', renderAddress(a));
         }
 
-        form.reset();
-        document.getElementById('address_id').value = '';
-        modal.style.display = 'none';
+        closeModal();
     });
 
-    // --------------------------
-    // SINGLE CLICK HANDLER
-    // --------------------------
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', async function (e) {
 
-        // DELETE
-        if (e.target.classList.contains('delete-address')) {
-
-            let id = e.target.dataset.id;
-
-            fetch(`/addresses/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(r => r.json())
-            .then(data => {
-
-                if (data.success) {
-                    let card = document.querySelector(`.address-card[data-id="${id}"]`);
-                    if (card) card.remove();
-                }
-
-            });
-        }
-
-        // EDIT
         if (e.target.classList.contains('edit-address')) {
-
             const b = e.target;
 
-            document.getElementById('address_id').value = b.dataset.id;
-            document.querySelector('[name="city"]').value = b.dataset.city;
-            document.querySelector('[name="street"]').value = b.dataset.street;
-            document.querySelector('[name="house"]').value = b.dataset.house;
-            document.querySelector('[name="apartment"]').value = b.dataset.apartment;
-            document.querySelector('[name="comment"]').value = b.dataset.comment;
+            addressId.value = b.dataset.id;
+            form.querySelector('[name="city"]').value = b.dataset.city || '';
+            form.querySelector('[name="street"]').value = b.dataset.street || '';
+            form.querySelector('[name="house"]').value = b.dataset.house || '';
+            form.querySelector('[name="apartment"]').value = b.dataset.apartment || '';
+            form.querySelector('[name="comment"]').value = b.dataset.comment || '';
 
-            modal.style.display = 'block';
+            title.textContent = 'Редактировать адрес';
+            openModal();
         }
 
-        // MAIN
-        if (e.target.classList.contains('set-main-address')) {
+        if (e.target.classList.contains('delete-address')) {
+            if (!confirm('Удалить адрес?')) return;
 
-            let id = e.target.dataset.id;
+            const btn = e.target;
+            const card = btn.closest('.address-card');
 
-            fetch(`/addresses/${id}/main`, {
-                method: 'POST',
+            const res = await fetch(btn.dataset.url, {
+                method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': csrf,
+                    'Accept': 'application/json'
                 }
-            })
-            .then(res => res.json())
-            .then(data => {
-
-                if (!data.success) return;
-
-                document.querySelectorAll('.address-card').forEach(card => {
-
-                    let badge = card.querySelector('.badge');
-                    if (badge) badge.textContent = 'Дополнительный';
-
-                });
-
-                let active = document.querySelector(`.address-card[data-id="${data.address_id}"]`);
-
-                if (active) {
-                    let badge = active.querySelector('.badge');
-                    if (badge) badge.textContent = 'Основной';
-                }
-
             });
 
+            const data = await res.json();
+
+            if (data.success) {
+                card.remove();
+            }
+        }
+
+        if (e.target.classList.contains('set-main-address')) {
+            const id = e.target.dataset.id;
+
+            const res = await fetch(`/addresses/${id}/main`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrf,
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await res.json();
+
+            if (!data.success) return;
+
+            document.querySelectorAll('.address-card').forEach(card => {
+                const badge = card.querySelector('.badge');
+                const actions = card.querySelector('.address-actions');
+                const cardId = card.dataset.id;
+
+                if (badge) badge.textContent = 'Дополнительный';
+
+                if (actions && !actions.querySelector('.set-main-address')) {
+                    actions.insertAdjacentHTML('beforeend', `
+                        <button
+                            class="btn-primary set-main-address"
+                            type="button"
+                            data-id="${cardId}"
+                        >
+                            Сделать основным
+                        </button>
+                    `);
+                }
+            });
+
+            const active = document.querySelector(`.address-card[data-id="${data.address_id}"]`);
+
+            if (active) {
+                const badge = active.querySelector('.badge');
+                const mainBtn = active.querySelector('.set-main-address');
+
+                if (badge) badge.textContent = 'Основной';
+                if (mainBtn) mainBtn.remove();
+            }
         }
 
     });
-
 });
 </script>

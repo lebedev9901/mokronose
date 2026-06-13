@@ -35,4 +35,5 @@ class FavoriteController extends Controller
             'is_favorite' => true,
         ]);
     }
+
 }

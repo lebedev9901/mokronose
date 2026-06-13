@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Order;
+use App\Models\SupportChat;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,12 +24,24 @@ class ProfileController extends Controller
 
             $orders = collect();
             $chats = collect();
+            $reviews = collect();
+            if ($page === 'reviews') {
+                $reviews = auth()->user()
+                    ->reviews()
+                    ->with('product.images')
+                    ->latest()
+                    ->get();
+            }
             $pets = auth()->user()->pets;
             // Заказы
             if ($page === 'orders') {
 
                 $orders = auth()->user()
                     ->orders()
+                    ->with([
+                        'chat',
+                        'items.product.images',
+                    ])
                     ->latest()
                     ->paginate(10);
             }
@@ -42,14 +55,24 @@ class ProfileController extends Controller
             // Поддержка
             if ($page === 'support') {
 
-                $chats = \App\Models\SupportChat::with('message')
+                $chats = SupportChat::with('message')
                     ->where('user_id', auth()->id())
                     ->latest()
                     ->get();
             }
 
             $page = $page ?? 'profile';
-
+            $stats = [
+                'orders' => auth()->user()->orders()->count(),
+                'pets' => auth()->user()->pets()->count(),
+                'favorites' => auth()->user()->favorites()->count(),
+                'reviews' => auth()->user()->reviews()->count(),
+            ];
+            $latestOrders = auth()->user()
+            ->orders()
+            ->latest()
+            ->take(5)
+            ->get();
             return view(
                 'profile.index',
                 compact(
@@ -58,9 +81,13 @@ class ProfileController extends Controller
                     'orders',
                     'chats',
                     'products',
-                    'pets'
+                    'pets',
+                    'stats',
+                    'latestOrders',
+                    'reviews'
                 )
             );
+
         }
 
     public function edit(Request $request): View
@@ -102,7 +129,7 @@ public function update(Request $request)
 
         $path = $file->store('avatars', 'public');
 
-        $user->avatar = '/storage/' . $path;
+        $user->avatar = $path;
     }
 
     $user->save();

@@ -1,61 +1,137 @@
-<section class="profile-pets-page">
+@if(session('success'))
+    <div class="alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+<div class="profile-pets-page">
+
     <div class="profile-pets-header">
         <div>
-            <h1>Мои питомцы</h1>
-            <p>Добавляйте питомцев, чтобы мы могли подбирать товары под возраст и породу.</p>
+            <h1>🐾 Мои питомцы</h1>
+            <p>Добавляйте питомцев, чтобы подбирать корм и товары точнее</p>
         </div>
 
-        <button type="button" class="pet-btn pet-btn-primary" onclick="openPetModal()">
+        <button class="pet-btn pet-btn-primary" id="openPetModal" type="button">
             + Добавить питомца
         </button>
     </div>
 
-    <div id="petsList" class="pets-list"></div>
-</section>
+    <div class="pets-list">
+        @forelse($pets as $pet)
+            <div class="pet-card">
 
-<div id="petModal" class="pet-modal">
-    <div class="pet-modal__overlay" onclick="closePetModal()"></div>
+                <div class="pet-card__main">
+                    @if($pet->avatar)
+                        <img src="{{ asset('storage/' . $pet->avatar) }}" class="pet-card__avatar-image" alt="{{ $pet->name }}">
+                    @else
+                        <div class="pet-card__avatar">🐶</div>
+                    @endif
+
+                    <div>
+                        <h3>{{ $pet->name }}</h3>
+
+                        <div class="pet-card__meta">
+                            @if($pet->breed)
+                                <span>{{ $pet->breed }}</span>
+                            @endif
+
+                            @if($pet->age_group)
+                                <span>
+                                    @switch($pet->age_group)
+                                        @case('puppy') Щенок @break
+                                        @case('junior') Юниор @break
+                                        @case('adult') Взрослый @break
+                                        @default {{ $pet->age_group }}
+                                    @endswitch
+                                </span>
+                            @endif
+
+                            @if($pet->breed_size)
+                                <span>
+                                    @switch($pet->breed_size)
+                                        @case('small') Мелкая порода @break
+                                        @case('medium') Средняя порода @break
+                                        @case('large') Крупная порода @break
+                                        @default {{ $pet->breed_size }}
+                                    @endswitch
+                                </span>
+                            @endif
+
+                            @if($pet->weight)
+                                <span>{{ $pet->weight }} кг</span>
+                            @endif
+                        </div>
+
+                        @if($pet->notes)
+                            <p class="pet-card__notes">{{ $pet->notes }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="pet-card__actions">
+                    <button
+                        class="pet-btn pet-btn-light edit-pet-btn"
+                        type="button"
+                        data-id="{{ $pet->id }}"
+                        data-name="{{ $pet->name }}"
+                        data-breed="{{ $pet->breed }}"
+                        data-age_group="{{ $pet->age_group }}"
+                        data-breed_size="{{ $pet->breed_size }}"
+                        data-weight="{{ $pet->weight }}"
+                        data-notes="{{ $pet->notes }}"
+                    >
+                        Изменить
+                    </button>
+
+                    <form method="POST" action="{{ route('pets.destroy', $pet->id) }}">
+                        @csrf
+                        @method('DELETE')
+
+                        <button class="pet-btn pet-btn-danger" type="submit" onclick="return confirm('Удалить питомца?')">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        @empty
+            <div class="pets-empty">
+                🐶 У вас пока нет питомцев
+            </div>
+        @endforelse
+    </div>
+
+</div>
+
+
+<div class="pet-modal" id="petModal">
+    <div class="pet-modal__overlay" id="closePetOverlay"></div>
 
     <div class="pet-modal__content">
         <div class="pet-modal__header">
             <h2 id="petModalTitle">Добавить питомца</h2>
-
-            <button type="button" class="pet-modal__close" onclick="closePetModal()">
-                ×
-            </button>
+            <button class="pet-modal__close" id="closePetModal" type="button">×</button>
         </div>
 
-        <form id="petForm" class="pet-form">
+        <form class="pet-form" id="petForm" method="POST" action="{{ route('pets.store') }}" enctype="multipart/form-data">
             @csrf
-
-            <input type="hidden" name="pet_id" id="petId">
-            <div class="pet-form__field">
-                <label>Фото питомца</label>
-
-                <input
-                    type="file"
-                    name="avatar"
-                    id="petAvatar"
-                    accept="image/*"
-                >
-
-                <div id="avatarPreview" class="avatar-preview"></div>
-            </div>
-            <div class="pet-form__field">
-                <label>Кличка</label>
-                <input type="text" name="name" id="petName" required>
-            </div>
-
-            <div class="pet-form__field">
-                <label>Порода</label>
-                <input type="text" name="breed" id="petBreed">
-            </div>
+            <input type="hidden" name="_method" id="petFormMethod" value="POST">
 
             <div class="pet-form__grid">
                 <div class="pet-form__field">
+                    <label>Имя</label>
+                    <input type="text" name="name" id="petName" required>
+                </div>
+
+                <div class="pet-form__field">
+                    <label>Порода</label>
+                    <input type="text" name="breed" id="petBreed">
+                </div>
+
+                <div class="pet-form__field">
                     <label>Возраст</label>
                     <select name="age_group" id="petAgeGroup">
-                        <option value="">Не выбран</option>
+                        <option value="">Не указано</option>
                         <option value="puppy">Щенок</option>
                         <option value="junior">Юниор</option>
                         <option value="adult">Взрослый</option>
@@ -65,37 +141,35 @@
                 <div class="pet-form__field">
                     <label>Размер породы</label>
                     <select name="breed_size" id="petBreedSize">
-                        <option value="">Не выбран</option>
-                        <option value="small">Мелкая порода</option>
-                        <option value="medium">Средняя порода</option>
-                        <option value="large">Крупная порода</option>
+                        <option value="">Не указано</option>
+                        <option value="small">Маленькая</option>
+                        <option value="medium">Средняя</option>
+                        <option value="large">Крупная</option>
                     </select>
-                </div>
-            </div>
-
-            <div class="pet-form__grid">
-                <div class="pet-form__field">
-                    <label>Дата рождения</label>
-                    <input type="date" name="birth_date" id="petBirthDate">
                 </div>
 
                 <div class="pet-form__field">
                     <label>Вес, кг</label>
-                    <input type="number" step="0.01" min="0" max="200" name="weight" id="petWeight">
+                    <input type="number" step="0.1" name="weight" id="petWeight">
+                </div>
+
+                <div class="pet-form__field">
+                    <label>Фото</label>
+                    <input type="file" name="avatar" accept="image/*">
                 </div>
             </div>
 
             <div class="pet-form__field">
-                <label>Особенности питомца</label>
+                <label>Заметки</label>
                 <textarea name="notes" id="petNotes"></textarea>
             </div>
 
             <div class="pet-form__actions">
-                <button type="button" class="pet-btn pet-btn-light" onclick="closePetModal()">
+                <button class="pet-btn pet-btn-light" type="button" id="cancelPetModal">
                     Отмена
                 </button>
 
-                <button type="submit" class="pet-btn pet-btn-primary">
+                <button class="pet-btn pet-btn-primary" type="submit">
                     Сохранить
                 </button>
             </div>
@@ -103,201 +177,62 @@
     </div>
 </div>
 
+
 <script>
-const petForm = document.getElementById('petForm');
-const petsList = document.getElementById('petsList');
-const petModal = document.getElementById('petModal');
-const petModalTitle = document.getElementById('petModalTitle');
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('petModal');
+    const form = document.getElementById('petForm');
 
-const petId = document.getElementById('petId');
-const petName = document.getElementById('petName');
-const petBreed = document.getElementById('petBreed');
-const petAgeGroup = document.getElementById('petAgeGroup');
-const petBreedSize = document.getElementById('petBreedSize');
-const petBirthDate = document.getElementById('petBirthDate');
-const petWeight = document.getElementById('petWeight');
-const petNotes = document.getElementById('petNotes');
+    const title = document.getElementById('petModalTitle');
+    const method = document.getElementById('petFormMethod');
 
-const ageLabels = {
-    puppy: 'Щенок',
-    junior: 'Юниор',
-    adult: 'Взрослый',
-};
+    const openBtn = document.getElementById('openPetModal');
+    const closeBtn = document.getElementById('closePetModal');
+    const cancelBtn = document.getElementById('cancelPetModal');
+    const overlay = document.getElementById('closePetOverlay');
 
-const breedLabels = {
-    small: 'Мелкая порода',
-    medium: 'Средняя порода',
-    large: 'Крупная порода',
-};
+    const name = document.getElementById('petName');
+    const breed = document.getElementById('petBreed');
+    const ageGroup = document.getElementById('petAgeGroup');
+    const breedSize = document.getElementById('petBreedSize');
+    const weight = document.getElementById('petWeight');
+    const notes = document.getElementById('petNotes');
 
-document.getElementById('petAvatar')?.addEventListener('change', function(e){
-
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(event){
-
-        document.getElementById('avatarPreview').innerHTML = `
-            <img
-                src="${event.target.result}"
-                style="
-                    width:120px;
-                    height:120px;
-                    border-radius:50%;
-                    object-fit:cover;
-                "
-            >
-        `;
-    };
-
-    reader.readAsDataURL(file);
-});
-
-function openPetModal(pet = null) {
-    petForm.reset();
-
-    if (pet) {
-        petModalTitle.textContent = 'Редактировать питомца';
-
-        petId.value = pet.id;
-        petName.value = pet.name ?? '';
-        petBreed.value = pet.breed ?? '';
-        petAgeGroup.value = pet.age_group ?? '';
-        petBreedSize.value = pet.breed_size ?? '';
-        petBirthDate.value = pet.birth_date ?? '';
-        petWeight.value = pet.weight ?? '';
-        petNotes.value = pet.notes ?? '';
-    } else {
-        petModalTitle.textContent = 'Добавить питомца';
-        petId.value = '';
+    function openModal() {
+        modal.classList.add('is-open');
     }
 
-    petModal.classList.add('is-open');
-}
+    function closeModal() {
+        modal.classList.remove('is-open');
+        form.reset();
+        form.action = "{{ route('pets.store') }}";
+        method.value = 'POST';
+        title.textContent = 'Добавить питомца';
+    }
 
-function closePetModal() {
-    petModal.classList.remove('is-open');
-}
+    openBtn?.addEventListener('click', openModal);
+    closeBtn?.addEventListener('click', closeModal);
+    cancelBtn?.addEventListener('click', closeModal);
+    overlay?.addEventListener('click', closeModal);
 
-function renderPet(pet) {
-    const div = document.createElement('div');
-    div.className = 'pet-card';
-    div.dataset.id = pet.id;
+    document.querySelectorAll('.edit-pet-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.dataset.id;
 
-    div.innerHTML = `
-        <div class="pet-card__main">
-            ${
-                pet.avatar
-                    ? `<img src="/storage/${pet.avatar}" class="pet-card__avatar-image">`
-                    : `<div class="pet-card__avatar">🐶</div>`
-            }
+            form.action = `/profile/pet/${id}`;
+            method.value = 'PUT';
 
-            <div>
-                <h3>${pet.name}</h3>
+            title.textContent = 'Редактировать питомца';
 
-                <div class="pet-card__meta">
-                    ${pet.breed ? `<span>${pet.breed}</span>` : ''}
-                    ${pet.age_group ? `<span>${ageLabels[pet.age_group] ?? pet.age_group}</span>` : ''}
-                    ${pet.breed_size ? `<span>${breedLabels[pet.breed_size] ?? pet.breed_size}</span>` : ''}
-                    ${pet.weight ? `<span>${pet.weight} кг</span>` : ''}
-                </div>
+            name.value = this.dataset.name || '';
+            breed.value = this.dataset.breed || '';
+            ageGroup.value = this.dataset.age_group || '';
+            breedSize.value = this.dataset.breed_size || '';
+            weight.value = this.dataset.weight || '';
+            notes.value = this.dataset.notes || '';
 
-                ${pet.notes ? `<p class="pet-card__notes">${pet.notes}</p>` : ''}
-            </div>
-        </div>
-
-        <div class="pet-card__actions">
-            <button type="button" class="pet-btn pet-btn-light" onclick='openPetModal(${JSON.stringify(pet)})'>
-                Редактировать
-            </button>
-
-            <button type="button" class="pet-btn pet-btn-danger" onclick="deletePet(${pet.id})">
-                Удалить
-            </button>
-        </div>
-    `;
-
-    return div;
-}
-
-function loadPets() {
-    fetch('{{ route('pets.index') }}', {
-        headers: {
-            'Accept': 'application/json'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        petsList.innerHTML = '';
-
-        if (!data.pets.length) {
-            petsList.innerHTML = `
-                <div class="pets-empty">
-                    <h3>Питомцев пока нет</h3>
-                    <p>Добавьте первого питомца, чтобы получать рекомендации по товарам.</p>
-                </div>
-            `;
-            return;
-        }
-
-        data.pets.forEach(pet => {
-            petsList.appendChild(renderPet(pet));
+            openModal();
         });
     });
-}
-
-petForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(petForm);
-    const id = petId.value;
-
-    let url = '{{ route('pets.store') }}';
-    let method = 'POST';
-
-    if (id) {
-        url = `/profile/pet/${id}`;
-        formData.append('_method', 'PUT');
-    }
-
-    fetch(url, {
-        method: method,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (!data.success) return;
-
-        closePetModal();
-        loadPets();
-    });
 });
-
-function deletePet(id) {
-   
-
-    fetch(`/profile/pet/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Accept': 'application/json'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (!data.success) return;
-
-        loadPets();
-    });
-}
-
-loadPets();
 </script>
-

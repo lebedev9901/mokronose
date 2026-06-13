@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Pet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PetController extends Controller
 {
     public function index()
-{
-    $pets = Pet::where('user_id', auth()->id())
-        ->latest()
-        ->get();
+    {
+        $pets = Pet::where('user_id', auth()->id())
+            ->latest()
+            ->get();
 
-    return response()->json([
-        'pets' => $pets,
-    ]);
-}
+        return view('profile.sections.pet', compact('pets'));
+    }
 
     public function store(Request $request)
     {
@@ -39,12 +38,11 @@ class PetController extends Controller
 
         $data['user_id'] = auth()->id();
 
-        $pet = Pet::create($data);
+        Pet::create($data);
 
-        return response()->json([
-            'success' => true,
-            'pet' => $pet,
-        ]);
+        return redirect()
+            ->route('profile.page', ['page' => 'pet'])
+            ->with('success', 'Питомец добавлен');
     }
 
     public function update(Request $request, Pet $pet)
@@ -61,31 +59,36 @@ class PetController extends Controller
             'notes' => 'nullable|string',
             'avatar' => 'nullable|image|max:2048',
         ]);
-        if ($request->hasFile('avatar')) {
 
-            $avatar = $request
+        if ($request->hasFile('avatar')) {
+            if ($pet->avatar && Storage::disk('public')->exists($pet->avatar)) {
+                Storage::disk('public')->delete($pet->avatar);
+            }
+
+            $data['avatar'] = $request
                 ->file('avatar')
                 ->store('pets', 'public');
-
-            $data['avatar'] = $avatar;
         }
 
         $pet->update($data);
 
-        return response()->json([
-            'success' => true,
-            'pet' => $pet,
-        ]);
+        return redirect()
+            ->route('profile.page', ['page' => 'pet'])
+            ->with('success', 'Питомец обновлён');
     }
 
     public function destroy(Pet $pet)
     {
         abort_if($pet->user_id !== auth()->id(), 403);
 
+        if ($pet->avatar && Storage::disk('public')->exists($pet->avatar)) {
+            Storage::disk('public')->delete($pet->avatar);
+        }
+
         $pet->delete();
 
-        return response()->json([
-            'success' => true,
-        ]);
+        return redirect()
+            ->route('profile.page', ['page' => 'pet'])
+            ->with('success', 'Питомец удалён');
     }
 }

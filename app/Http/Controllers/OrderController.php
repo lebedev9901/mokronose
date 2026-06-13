@@ -173,7 +173,7 @@ class OrderController extends Controller
             ->orders()
             ->with('chat')
             ->latest()
-            ->get();
+            ->paginate(9);
 
         return view('profile.orders', compact('orders'));
     }

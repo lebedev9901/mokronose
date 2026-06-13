@@ -99,7 +99,7 @@ Route::get('/dashboard', function () {
         return back()->with('message', 'Письмо отправлено!');
     })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-    Route::get('/profile/section/orders', [OrderController::class, 'index'])->name('profile.orders');
+
     Route::get('/chat/{id}', [SupportChatController::class, 'show'])->name('chat.show');
     Route::post('/chat/{id}/send', [SupportChatController::class, 'send'])->name('chat.send');
 Route::middleware('auth')->group(function () {

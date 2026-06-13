@@ -1,124 +1,243 @@
-<div class="profile-card">
+<div class="profile-content">
 
-    <div class="profile-avatar">
-        <img class="profile-avatar-img"
-             src="{{ $user->avatar ?? '/img/default-avatar.png' }}" alt="">
-        <span class="status"></span>
-    </div>
+    <section class="profile-hero">
+        <div class="profile-hero__content">
+            <span class="profile-hero__badge">Личный кабинет</span>
 
-    <div class="profile-info">
+            <h1>Привет, {{ $user->first_name ?? 'друг' }} 👋</h1>
 
-        <h2 id="profile-name">
-            {{ $user->last_name }} {{ $user->first_name }} {{ $user->middle_name }}
-        </h2>
+            <p>
+                Добро пожаловать в Мокронос. Здесь ваши заказы, питомцы, избранное и поддержка.
+            </p>
 
-        <p>Email: <span id="profile-email">{{ $user->email }}</span></p>
+            <div class="profile-hero__stats">
+                <span>{{ $stats['orders'] }} заказов</span>
+                <span>{{ $stats['pets'] }} питомцев</span>
+                <span>{{ $stats['favorites'] }} избранных</span>
+                <span>{{ $stats['reviews'] }} отзывов</span>
+            </div>
 
-        <p>Телефон: <span id="profile-phone">{{ $user->phone ?? 'не указан' }}</span></p>
+            <a href="{{ route('catalog') }}" class="btn-primary">
+                Перейти в каталог
+            </a>
+        </div>
 
-        <p>
-            VK ID: {{ $user->vk_id ?? 'не привязан' }}
-        </p>
+        <div class="profile-hero__icon">🐶</div>
+    </section>
 
-        <span class="profile-role">
-            {{ $user->role === 'admin' ? 'Администратор' : 'Пользователь' }}
-        </span>
 
-        <p class="profile-meta">
-            Зарегистрирован: {{ $user->created_at->format('d.m.Y') }}
-        </p>
+    <section class="profile-card">
+        <div class="profile-card__left">
 
-    </div>
+            <div class="profile-avatar">
+                <img
+                    class="profile-avatar-img"
+                    src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/img/default-avatar.png') }}"
+                    alt="{{ $user->first_name ?? 'Профиль' }}"
+                >
+                <span class="status"></span>
+            </div>
 
-    <div class="profile-actions flex">
+            <div class="profile-info">
+                <h2 id="profile-name">
+                    {{ trim($user->last_name . ' ' . $user->first_name . ' ' . $user->middle_name) ?: 'Пользователь' }}
+                </h2>
 
-        <button class="btn-primary" id="openProfileModal">
-            Редактировать профиль
-        </button>
+                <p>Email: <span id="profile-email">{{ $user->email }}</span></p>
+                <p>Телефон: <span id="profile-phone">{{ $user->phone ?? 'не указан' }}</span></p>
+                <p>VK ID: {{ $user->vk_id ?? 'не привязан' }}</p>
 
-        @if(!$user->vk_id)
-            <div id="vkid-profile-link" class="btn-primary"></div>
-        @else
-            <button class="btn-secondary" disabled>VK привязан</button>
-        @endif
+                <span class="profile-role">
+                    {{ $user->role === 'admin' ? 'Администратор' : 'Пользователь' }}
+                </span>
 
-        <a href="https://vk.me/mokronose" target="_blank" class="btn-secondary">
-            Написать в VK
+                <p class="profile-meta">
+                    Зарегистрирован: {{ $user->created_at->format('d.m.Y') }}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn-primary" id="openProfileModal" type="button">
+                Редактировать профиль
+            </button>
+
+            @if(!$user->vk_id)
+                <div id="vkid-profile-link"></div>
+            @else
+                <button class="btn-secondary" disabled type="button">
+                    VK привязан
+                </button>
+            @endif
+
+            <a href="https://vk.me/mokronose" target="_blank" class="btn-secondary">
+                Написать в VK
+            </a>
+        </div>
+    </section>
+
+
+    <section class="profile-quick-actions">
+
+        <a href="{{ route('profile.page', ['page' => 'pet']) }}" class="profile-quick-card">
+            <span>🐾</span>
+            <div>
+                <h3>Мои питомцы</h3>
+                <p>Карточки питомцев</p>
+            </div>
         </a>
 
-    </div>
+        <a href="{{ route('profile.page', ['page' => 'orders']) }}" class="profile-quick-card">
+            <span>📦</span>
+            <div>
+                <h3>Мои заказы</h3>
+                <p>История покупок</p>
+            </div>
+        </a>
+
+        <a href="{{ route('favorites.index') }}" class="profile-quick-card">
+            <span>❤️</span>
+            <div>
+                <h3>Избранное</h3>
+                <p>Сохранённые товары</p>
+            </div>
+        </a>
+
+        <a href="{{ route('support.index') }}" class="profile-quick-card">
+            <span>💬</span>
+            <div>
+                <h3>Поддержка</h3>
+                <p>Вопросы и обращения</p>
+            </div>
+        </a>
+
+    </section>
+
+
+    <section class="profile-latest-orders">
+
+        <div class="profile-section-head">
+            <div>
+                <h2>📦 Последние заказы</h2>
+                <p>Ваши последние покупки в Мокроносе</p>
+            </div>
+
+            <a href="{{ route('profile.page', ['page' => 'orders']) }}" class="btn-secondary">
+                Все заказы
+            </a>
+        </div>
+
+        <div class="profile-orders-list">
+            @forelse($latestOrders as $order)
+                <div class="profile-order-card">
+
+                    <div class="profile-order-main">
+                        <strong>Заказ №{{ $order->id }}</strong>
+                        <span>{{ $order->created_at->format('d.m.Y') }}</span>
+                    </div>
+
+                    <div class="profile-order-info">
+                        <span class="order-status status-{{ $order->status }}">
+                            {{ $order->status_label ?? $order->status }}
+                        </span>
+
+                        <strong>
+                            {{ number_format($order->total_price ?? $order->total ?? 0, 0, '.', ' ') }} ₽
+                        </strong>
+                    </div>
+
+                    <a href="{{ route('orders.show', $order->id) }}" class="btn-primary">
+                        Подробнее
+                    </a>
+
+                </div>
+            @empty
+                <div class="empty-block">
+                    У вас пока нет заказов.
+                </div>
+            @endforelse
+        </div>
+
+    </section>
+
+
+    <section class="profile-favorites">
+
+        <div class="profile-section-head">
+            <div>
+                <h2>❤️ Избранные товары</h2>
+                <p>Товары, которые вы сохранили</p>
+            </div>
+
+            <a href="{{ route('profile.page', ['page' => 'favorites']) }}" class="btn-secondary">
+                Все избранное
+            </a>
+        </div>
+
+        <div class="profile-favorites-grid">
+            @forelse($products->take(4) as $product)
+                @php
+                    $preview = $product->images->where('is_preview', true)->first()
+                        ?? $product->images->first();
+                @endphp
+
+                <a href="{{ route('product', $product->id) }}" class="profile-favorite-card">
+                    <img
+                        src="{{ $preview ? asset('storage/' . $preview->image) : asset('assets/img/no-image.png') }}"
+                        alt="{{ $product->title }}"
+                    >
+
+                    <div>
+                        <h3>{{ $product->title }}</h3>
+                        <p>{{ number_format($product->price, 0, '.', ' ') }} ₽</p>
+                    </div>
+                </a>
+            @empty
+                <div class="empty-block">
+                    В избранном пока нет товаров.
+                </div>
+            @endforelse
+        </div>
+
+    </section>
 
 </div>
 
-<div class="modal" id="profileModal">
 
+<div class="modal" id="profileModal">
     <div class="modal-content">
 
         <div class="modal-header">
             <h3>Редактирование профиля</h3>
-            <button class="modal-close" id="closeProfileModal">×</button>
+            <button class="modal-close" id="closeProfileModal" type="button">×</button>
         </div>
 
-        <form method="POST"id="profileForm">
+        <form method="POST" id="profileForm" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
+
             <div class="form-grid">
-
-                <input type="text" name="first_name" value="{{ $user->first_name }}" placeholder="Имя">
                 <input type="text" name="last_name" value="{{ $user->last_name }}" placeholder="Фамилия">
+                <input type="text" name="first_name" value="{{ $user->first_name }}" placeholder="Имя">
                 <input type="text" name="middle_name" value="{{ $user->middle_name }}" placeholder="Отчество">
-
                 <input type="text" name="phone" value="{{ $user->phone }}" placeholder="Телефон">
                 <input type="email" name="email" value="{{ $user->email }}" placeholder="Email">
-
-                <input type="file" name="avatar">
-
+                <input type="file" name="avatar" accept="image/*">
             </div>
 
             <button class="btn-primary full-width" type="submit">
                 Сохранить
             </button>
-
         </form>
 
     </div>
-
 </div>
-
-
-<section class="profile-favorites">
-    <h2>❤️ Избранные товары</h2>
-
-    @forelse($products as $product)
-        <div class="profile-favorite-card">
-            @php
-                $preview = $product->images->where('is_preview', true)->first()
-                    ?? $product->images->first();
-            @endphp
-
-          
-                <img src="{{ $preview
-                            ? asset('storage/' . $preview->image)
-                            : asset('assets/img/no-image.png') }}"
-                        alt="{{ $product->title }}">
-            
-
-            <div>
-                <h3><a href="{{route('product', $product->id)}}">{{ $product->title }}</a></h3>
-                <p>{{ $product->price }} ₽</p>
-            </div>
-        </div>
-    @empty
-        <p>В избранном пока нет товаров.</p>
-    @endforelse
-</section>
 
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-
     const form = document.getElementById('profileForm');
-
     const modal = document.getElementById('profileModal');
     const openBtn = document.getElementById('openProfileModal');
     const closeBtn = document.getElementById('closeProfileModal');
@@ -128,109 +247,44 @@ document.addEventListener('DOMContentLoaded', function () {
     const emailEl = document.getElementById('profile-email');
     const avatarEl = document.querySelector('.profile-avatar-img');
 
-    // OPEN MODAL
-    openBtn.addEventListener('click', () => {
-        modal.style.display = 'block';
-    });
-
-    // CLOSE MODAL
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+    openBtn?.addEventListener('click', () => modal.classList.add('is-open'));
+    closeBtn?.addEventListener('click', () => modal.classList.remove('is-open'));
 
     window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
+        if (e.target === modal) modal.classList.remove('is-open');
     });
 
-    // SUBMIT
-    form.addEventListener('submit', async function (e) {
+    form?.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const res = await fetch("{{ route('profile.update') }}", {
             method: "POST",
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
             },
             body: new FormData(form)
         });
 
         const data = await res.json();
 
-        if (!data.success) return;
-
-        const user = data.user;
-
-        // FULL NAME
-        const fullName =
-            `${user.last_name ?? ''} ${user.first_name ?? ''} ${user.middle_name ?? ''}`;
-
-        if (nameEl) nameEl.textContent = fullName.trim();
-        if (phoneEl) phoneEl.textContent = user.phone ?? 'не указан';
-        if (emailEl) emailEl.textContent = user.email ?? '';
-
-        // AVATAR
-        if (avatarEl) {
-            avatarEl.src = user.avatar
-                ? user.avatar
-                : '/img/default-avatar.png';
+        if (!data.success) {
+            alert(data.message || 'Ошибка сохранения');
+            return;
         }
 
-        modal.style.display = 'none';
-    });
+        const user = data.user;
+        const fullName = `${user.last_name ?? ''} ${user.first_name ?? ''} ${user.middle_name ?? ''}`.trim();
 
+        nameEl.textContent = fullName || 'Пользователь';
+        phoneEl.textContent = user.phone ?? 'не указан';
+        emailEl.textContent = user.email ?? '';
+
+        avatarEl.src = user.avatar
+            ? `/storage/${user.avatar}`
+            : '/assets/img/default-avatar.png';
+
+        modal.classList.remove('is-open');
+    });
 });
-</script>
-
-<script src="https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js"></script>
-<script>
-if ('VKIDSDK' in window) {
-    const VKID = window.VKIDSDK;
-
-    VKID.Config.init({
-        app: 54596619,
-        redirectUrl: 'https://mokronos.ru/vk/callback',
-        responseMode: VKID.ConfigResponseMode.Callback,
-        source: VKID.ConfigSource.LOWCODE,
-        scope: 'email phone',
-    });
-
-    const oneTap = new VKID.OneTap();
-
-    oneTap.render({
-        container: document.getElementById('vkid-profile-link'),
-        showAlternativeLogin: true
-    })
-    .on(VKID.WidgetEvents.ERROR, function(error) {
-        console.error('VK ERROR:', error);
-    })
-    .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function(payload) {
-        VKID.Auth.exchangeCode(payload.code, payload.device_id)
-            .then(function(data) {
-                return fetch('{{ route('vk.link') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        user_id: data.user_id,
-                        access_token: data.access_token,
-                        email: data.email,
-                        phone: data.phone
-                    })
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    window.location.reload();
-                } else {
-                    alert(data.message || 'Ошибка VK');
-                }
-            });
-    });
-}
 </script>
