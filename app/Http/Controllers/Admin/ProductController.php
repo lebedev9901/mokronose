@@ -34,10 +34,10 @@ class ProductController extends Controller
         'stock' => 'nullable|integer',
         'images.*' => 'image',
         'age_group' => 'nullable|array',
-        'age_group.*' => 'in:puppy,junior,adult',
+        'age_group.*' => 'in:puppy,junior,adult,all',
 
         'breed_size' => 'nullable|array',
-        'breed_size.*' => 'in:small,medium,large',
+        'breed_size.*' => 'in:small,medium,large,all',
     ]);
 
     DB::transaction(function () use ($request) {
@@ -103,10 +103,10 @@ class ProductController extends Controller
             'images.*' => 'image',
 
             'age_group' => 'nullable|array',
-            'age_group.*' => 'in:puppy,junior,adult',
+            'age_group.*' => 'in:puppy,junior,adult,all',
 
             'breed_size' => 'nullable|array',
-            'breed_size.*' => 'in:small,medium,large',
+            'breed_size.*' => 'in:small,medium,large,all',
         ]);
 
         $product->update([

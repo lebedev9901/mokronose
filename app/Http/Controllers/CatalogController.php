@@ -25,6 +25,25 @@ class CatalogController extends Controller
             : collect();
 
         $query = Product::with(['images', 'categories']);
+        if ($request->filled('pet_id') && auth()->check()) {
+                $pet = auth()->user()
+                    ->pets()
+                    ->find($request->pet_id);
+
+                if ($pet) {
+                    if ($pet->age_group) {
+                        $request->merge([
+                            'age_group' => [$pet->age_group],
+                        ]);
+                    }
+
+                    if ($pet->breed_size) {
+                        $request->merge([
+                            'breed_size' => [$pet->breed_size],
+                        ]);
+                    }
+                }
+            }
 
         if ($request->filled('category')) {
             $categoryId = (int) $request->category;
@@ -63,7 +82,8 @@ class CatalogController extends Controller
             $q->orWhereJsonContains('age_group', $age);
         }
 
-        $q->orWhereNull('age_group')
+        $q->orWhereNull('age_group', 'all')
+        ->orWhereNull('age_group')
             ->orWhereJsonLength('age_group', 0);
     });
 }
@@ -76,7 +96,8 @@ if ($request->filled('breed_size')) {
             $q->orWhereJsonContains('breed_size', $size);
         }
 
-        $q->orWhereNull('breed_size')
+        $q->orWhereNull('breed_size', 'all')
+        ->orWhereNull('breed_size')
             ->orWhereJsonLength('breed_size', 0);
     });
 }

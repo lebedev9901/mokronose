@@ -1,17 +1,17 @@
-@extends('admin.layouts.app')
 
-@section('title', 'Создать товар')
-@section('page-title', 'Создать товар')
-@section('page-subtitle', 'Добавление нового товара в каталог')
 
-@section('content')
+<?php $__env->startSection('title', 'Создать товар'); ?>
+<?php $__env->startSection('page-title', 'Создать товар'); ?>
+<?php $__env->startSection('page-subtitle', 'Добавление нового товара в каталог'); ?>
 
-<form action="{{ route('admin.products.store') }}"
+<?php $__env->startSection('content'); ?>
+
+<form action="<?php echo e(route('admin.products.store')); ?>"
       method="POST"
       enctype="multipart/form-data"
       class="admin-form">
 
-    @csrf
+    <?php echo csrf_field(); ?>
 
     <div class="admin-form-grid">
 
@@ -48,12 +48,12 @@
             <h3>Категории</h3>
 
             <div class="admin-checkbox-list">
-                @foreach($categories as $category)
+                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <label>
-                        <input type="checkbox" name="categories[]" value="{{ $category->id }}">
-                        <span>{{ $category->title }}</span>
+                        <input type="checkbox" name="categories[]" value="<?php echo e($category->id); ?>">
+                        <span><?php echo e($category->title); ?></span>
                     </label>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
 
@@ -217,4 +217,5 @@ if (imagesInput) {
 }
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/admin/products/create.blade.php ENDPATH**/ ?>

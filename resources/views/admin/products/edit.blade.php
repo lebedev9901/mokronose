@@ -141,6 +141,11 @@
                             {{ in_array('adult', $ageGroups) ? 'checked' : '' }}>
                         <span>Взрослые</span>
                     </label>
+                    <label>
+                        <input type="checkbox" name="age_group[]" value="all"
+                            {{ in_array('all', $ageGroups) ? 'checked' : '' }}>
+                        <span>Для всех</span>
+                    </label>
                 </div>
             </div>
 
@@ -163,6 +168,11 @@
                     <label>
                         <input type="checkbox" name="breed_size[]" value="large"
                             {{ in_array('large', $breedSizes) ? 'checked' : '' }}>
+                        <span>Крупные породы</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="breed_size[]" value="all"
+                            {{ in_array('all', $breedSizes) ? 'checked' : '' }}>
                         <span>Крупные породы</span>
                     </label>
                 </div>

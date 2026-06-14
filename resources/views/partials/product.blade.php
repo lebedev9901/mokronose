@@ -9,12 +9,14 @@
         'puppy' => 'Щенкам',
         'junior' => 'Юниорам',
         'adult' => 'Взрослым',
+        'all' => 'Для всех',
     ];
 
     $breedLabels = [
         'small' => 'Мелким породам',
         'medium' => 'Средним породам',
         'large' => 'Крупным породам',
+        'all' => 'Для всех пород',
     ];
 
     $productAgeGroups = is_array($product->age_group)
@@ -70,16 +72,24 @@
             <div class="product-info">
 
                 <div class="product-badges">
+                    @if(empty($productAgeGroups) || in_array('all', $productAgeGroups))
+                        <span class="product-badge">Для всех</span>
+                    @endif
+
                     @foreach($productAgeGroups as $age)
-                        @if(isset($ageLabels[$age]))
+                        @if($age !== 'all' && isset($ageLabels[$age]))
                             <span class="product-badge">
                                 {{ $ageLabels[$age] }}
                             </span>
                         @endif
                     @endforeach
 
+                    @if(empty($productBreedSizes) || in_array('all', $productBreedSizes))
+                        <span class="product-badge product-badge--soft">Все породы</span>
+                    @endif
+
                     @foreach($productBreedSizes as $breed)
-                        @if(isset($breedLabels[$breed]))
+                        @if($breed !== 'all' && isset($breedLabels[$breed]))
                             <span class="product-badge product-badge--soft">
                                 {{ $breedLabels[$breed] }}
                             </span>

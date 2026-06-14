@@ -1,9 +1,9 @@
-@extends('layouts.app')
 
-@section('title', 'Каталог товаров — Мокронос')
-@section('description', 'Каталог товаров для животных в интернет-магазине Мокронос.')
 
-@section('content')
+<?php $__env->startSection('title', 'Каталог товаров — Мокронос'); ?>
+<?php $__env->startSection('description', 'Каталог товаров для животных в интернет-магазине Мокронос.'); ?>
+
+<?php $__env->startSection('content'); ?>
 <div class="container catalog">
 
     <h2 class="section-title">Каталог лакомств</h2>
@@ -16,55 +16,55 @@
                 <h3 class="catalog-filters__title">Категории</h3>
 
                 <div class="catalog-main-categories">
-                    <a href="{{ route('catalog', request()->except('category', 'page')) }}"
-                       class="catalog-filter-main catalog-category-link {{ request('category') ? '' : 'is-active' }}"
+                    <a href="<?php echo e(route('catalog', request()->except('category', 'page'))); ?>"
+                       class="catalog-filter-main catalog-category-link <?php echo e(request('category') ? '' : 'is-active'); ?>"
                        data-category="">
                         Все товары
                     </a>
 
-                    @foreach($categories as $category)
-                        <a href="{{ route('catalog', array_merge(request()->except('page'), ['category' => $category->id])) }}"
-                           class="catalog-filter-main catalog-category-link {{ request('category') == $category->id ? 'is-active' : '' }}"
-                           data-category="{{ $category->id }}">
-                            {{ $category->title }}
+                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <a href="<?php echo e(route('catalog', array_merge(request()->except('page'), ['category' => $category->id]))); ?>"
+                           class="catalog-filter-main catalog-category-link <?php echo e(request('category') == $category->id ? 'is-active' : ''); ?>"
+                           data-category="<?php echo e($category->id); ?>">
+                            <?php echo e($category->title); ?>
+
                         </a>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
 
                 <div class="catalog-subcategories">
-                    @foreach($categories as $category)
-                        @if($category->children->isNotEmpty())
+                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php if($category->children->isNotEmpty()): ?>
                             <div
-                                class="catalog-subcategory-row {{
-                                    request('category') == $category->id ||
+                                class="catalog-subcategory-row <?php echo e(request('category') == $category->id ||
                                     $category->children->pluck('id')->contains((int) request('category'))
                                     ? 'is-visible'
-                                    : ''
-                                }}"
-                                data-parent-category="{{ $category->id }}"
+                                    : ''); ?>"
+                                data-parent-category="<?php echo e($category->id); ?>"
                             >
-                                <a href="{{ route('catalog', array_merge(request()->except('page'), ['category' => $category->id])) }}"
-                                   class="catalog-filter-child catalog-category-link {{ request('category') == $category->id ? 'is-active' : '' }}"
-                                   data-category="{{ $category->id }}"
-                                   data-parent="{{ $category->id }}">
+                                <a href="<?php echo e(route('catalog', array_merge(request()->except('page'), ['category' => $category->id]))); ?>"
+                                   class="catalog-filter-child catalog-category-link <?php echo e(request('category') == $category->id ? 'is-active' : ''); ?>"
+                                   data-category="<?php echo e($category->id); ?>"
+                                   data-parent="<?php echo e($category->id); ?>">
                                     Все в категории
                                 </a>
 
-                                @foreach($category->children as $child)
-                                    <a href="{{ route('catalog', array_merge(request()->except('page'), ['category' => $child->id])) }}"
-                                       class="catalog-filter-child catalog-category-link {{ request('category') == $child->id ? 'is-active' : '' }}"
-                                       data-category="{{ $child->id }}"
-                                       data-parent="{{ $category->id }}">
-                                        {{ $child->title }}
+                                <?php $__currentLoopData = $category->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <a href="<?php echo e(route('catalog', array_merge(request()->except('page'), ['category' => $child->id]))); ?>"
+                                       class="catalog-filter-child catalog-category-link <?php echo e(request('category') == $child->id ? 'is-active' : ''); ?>"
+                                       data-category="<?php echo e($child->id); ?>"
+                                       data-parent="<?php echo e($category->id); ?>">
+                                        <?php echo e($child->title); ?>
+
                                     </a>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
-                        @endif
-                    @endforeach
+                        <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
 
-                @auth
-                    @if(isset($pets) && $pets->count())
+                <?php if(auth()->guard()->check()): ?>
+                    <?php if(isset($pets) && $pets->count()): ?>
                         <div class="catalog-filter-section">
                             <h3 class="catalog-filters__title">Подбор</h3>
 
@@ -75,59 +75,61 @@
                             <select id="catalogPetSelect" class="catalog-pet-select">
                                 <option value="">Выберите питомца</option>
 
-                                @foreach($pets as $pet)
+                                <?php $__currentLoopData = $pets; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pet): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option
-                                        value="{{ $pet->id }}"
-                                        data-age="{{ $pet->age_group ?: 'all' }}"
-                                        data-size="{{ $pet->breed_size ?: 'all' }}"
-                                        {{ request('pet_id') == $pet->id ? 'selected' : '' }}
+                                        value="<?php echo e($pet->id); ?>"
+                                        data-age="<?php echo e($pet->age_group ?: 'all'); ?>"
+                                        data-size="<?php echo e($pet->breed_size ?: 'all'); ?>"
+                                        <?php echo e(request('pet_id') == $pet->id ? 'selected' : ''); ?>
+
                                     >
-                                        {{ $pet->name }}
+                                        <?php echo e($pet->name); ?>
+
                                     </option>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
-                    @endif
-                @endauth
+                    <?php endif; ?>
+                <?php endif; ?>
 
-                <form method="GET" action="{{ route('catalog') }}" class="catalog-sort-form" id="catalogFilterForm">
+                <form method="GET" action="<?php echo e(route('catalog')); ?>" class="catalog-sort-form" id="catalogFilterForm">
 
-                    <input type="hidden" name="category" id="catalogCategoryInput" value="{{ request('category') }}">
-                    <input type="hidden" name="sort" id="catalogSortInput" value="{{ request('sort', 'new') }}">
-                    <input type="hidden" name="pet_id" id="catalogPetId" value="{{ request('pet_id') }}">
+                    <input type="hidden" name="category" id="catalogCategoryInput" value="<?php echo e(request('category')); ?>">
+                    <input type="hidden" name="sort" id="catalogSortInput" value="<?php echo e(request('sort', 'new')); ?>">
+                    <input type="hidden" name="pet_id" id="catalogPetId" value="<?php echo e(request('pet_id')); ?>">
 
                     <h3 class="catalog-filters__title">Фильтры</h3>
 
                     <div class="catalog-sort-field">
                         <label>Цена от</label>
-                        <input type="number" name="price_from" value="{{ request('price_from') }}" placeholder="0">
+                        <input type="number" name="price_from" value="<?php echo e(request('price_from')); ?>" placeholder="0">
                     </div>
 
                     <div class="catalog-sort-field">
                         <label>Цена до</label>
-                        <input type="number" name="price_to" value="{{ request('price_to') }}" placeholder="5000">
+                        <input type="number" name="price_to" value="<?php echo e(request('price_to')); ?>" placeholder="5000">
                     </div>
 
                     <div class="catalog-filter-section">
                         <h3 class="catalog-filters__title">Возраст</h3>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="age_group[]" value="puppy" {{ in_array('puppy', (array) request('age_group', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="age_group[]" value="puppy" <?php echo e(in_array('puppy', (array) request('age_group', [])) ? 'checked' : ''); ?>>
                             <span>Щенки</span>
                         </label>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="age_group[]" value="junior" {{ in_array('junior', (array) request('age_group', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="age_group[]" value="junior" <?php echo e(in_array('junior', (array) request('age_group', [])) ? 'checked' : ''); ?>>
                             <span>Юниоры</span>
                         </label>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="age_group[]" value="adult" {{ in_array('adult', (array) request('age_group', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="age_group[]" value="adult" <?php echo e(in_array('adult', (array) request('age_group', [])) ? 'checked' : ''); ?>>
                             <span>Взрослые</span>
                         </label>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="age_group[]" value="all" {{ in_array('all', (array) request('age_group', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="age_group[]" value="all" <?php echo e(in_array('all', (array) request('age_group', [])) ? 'checked' : ''); ?>>
                             <span>Для всех</span>
                         </label>
                     </div>
@@ -136,27 +138,27 @@
                         <h3 class="catalog-filters__title">Размер породы</h3>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="breed_size[]" value="small" {{ in_array('small', (array) request('breed_size', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="breed_size[]" value="small" <?php echo e(in_array('small', (array) request('breed_size', [])) ? 'checked' : ''); ?>>
                             <span>Маленькие</span>
                         </label>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="breed_size[]" value="medium" {{ in_array('medium', (array) request('breed_size', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="breed_size[]" value="medium" <?php echo e(in_array('medium', (array) request('breed_size', [])) ? 'checked' : ''); ?>>
                             <span>Средние</span>
                         </label>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="breed_size[]" value="large" {{ in_array('large', (array) request('breed_size', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="breed_size[]" value="large" <?php echo e(in_array('large', (array) request('breed_size', [])) ? 'checked' : ''); ?>>
                             <span>Крупные</span>
                         </label>
 
                         <label class="catalog-check">
-                            <input type="checkbox" name="breed_size[]" value="all" {{ in_array('all', (array) request('breed_size', [])) ? 'checked' : '' }}>
+                            <input type="checkbox" name="breed_size[]" value="all" <?php echo e(in_array('all', (array) request('breed_size', [])) ? 'checked' : ''); ?>>
                             <span>Для всех пород</span>
                         </label>
                     </div>
 
-                    <a href="{{ route('catalog') }}" class="catalog-filter-reset" id="catalogReset">
+                    <a href="<?php echo e(route('catalog')); ?>" class="catalog-filter-reset" id="catalogReset">
                         Сбросить
                     </a>
 
@@ -169,27 +171,27 @@
 
             <div class="catalog-toolbar">
                 <div class="catalog-count">
-                    Найдено товаров: <span id="catalogTotal">{{ $products->total() }}</span>
+                    Найдено товаров: <span id="catalogTotal"><?php echo e($products->total()); ?></span>
                 </div>
 
                 <div class="catalog-toolbar-sort">
                     <label>Сортировка</label>
 
                     <select id="catalogSortTop">
-                        <option value="new" {{ request('sort', 'new') == 'new' ? 'selected' : '' }}>Сначала новые</option>
-                        <option value="old" {{ request('sort') == 'old' ? 'selected' : '' }}>Сначала старые</option>
-                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Цена ↑</option>
-                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Цена ↓</option>
+                        <option value="new" <?php echo e(request('sort', 'new') == 'new' ? 'selected' : ''); ?>>Сначала новые</option>
+                        <option value="old" <?php echo e(request('sort') == 'old' ? 'selected' : ''); ?>>Сначала старые</option>
+                        <option value="price_asc" <?php echo e(request('sort') == 'price_asc' ? 'selected' : ''); ?>>Цена ↑</option>
+                        <option value="price_desc" <?php echo e(request('sort') == 'price_desc' ? 'selected' : ''); ?>>Цена ↓</option>
                     </select>
                 </div>
             </div>
 
             <div class="catalog-grid" id="catalogProducts">
-                @include('partials.product')
+                <?php echo $__env->make('partials.product', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
 
             <div id="catalogPagination">
-                @include('partials.pagination')
+                <?php echo $__env->make('partials.pagination', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
 
         </div>
@@ -454,7 +456,7 @@ function toggleFavorite(button) {
     fetch(`/favorites/${productId}/toggle`, {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
             'Accept': 'application/json'
         }
     })
@@ -507,4 +509,5 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/catalog/index.blade.php ENDPATH**/ ?>
