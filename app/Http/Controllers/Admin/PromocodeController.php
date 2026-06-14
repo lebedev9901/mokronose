@@ -40,7 +40,7 @@ class PromocodeController extends Controller
         Promocode::create($data);
 
         return redirect()
-            ->route('promocodes.index')
+            ->route('admin.promocodes.index')
             ->with('success', 'Промокод создан');
     }
 

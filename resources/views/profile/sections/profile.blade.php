@@ -174,6 +174,46 @@
 
     </section>
 
+    <section class="profile-recommendations">
+
+        <div class="profile-section-head">
+            <div>
+                <h2>🐾 Рекомендуем для ваших питомцев</h2>
+                <p>Подборка товаров по возрасту и размеру питомца</p>
+            </div>
+
+            <a href="{{ route('catalog') }}" class="btn-secondary">
+                В каталог
+            </a>
+        </div>
+
+        <div class="recommendations-grid">
+            @forelse($recommendedProducts as $product)
+                @php
+                    $preview = $product->images->where('is_preview', true)->first()
+                        ?? $product->images->first();
+                @endphp
+
+                <a href="{{ route('product', $product->id) }}" class="recommendation-card">
+                    <img
+                        src="{{ $preview ? asset('storage/' . $preview->image) : asset('assets/img/no-image.png') }}"
+                        alt="{{ $product->title }}"
+                    >
+
+                    <div>
+                        <h3>{{ $product->title }}</h3>
+                        <p>{{ number_format($product->price, 0, '.', ' ') }} ₽</p>
+                    </div>
+                </a>
+            @empty
+                <div class="empty-block">
+                    Пока нет подходящих рекомендаций.
+                </div>
+            @endforelse
+        </div>
+
+    </section>
+
 
     <section class="profile-favorites">
 

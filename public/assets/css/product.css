@@ -11,7 +11,7 @@
 }
 
 .product-page {
-    padding: 60px 0;
+    padding: 10px 0;
 }
 
 .product-page__grid {
@@ -599,4 +599,144 @@
         font-size: 13px;
         padding: 14px;
     }
+}
+
+.similar-products {
+    margin-top: 70px;
+    padding-bottom: 50px;
+}
+
+.similar-products__head {
+    margin-bottom: 28px;
+}
+
+.similar-products__head h2 {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.similar-products__head p {
+    font-size: 16px;
+    color: #444;
+}
+
+.similar-products__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.similar-card {
+    display: block;
+    text-decoration: none;
+    color: #111;
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0,0,0,.06);
+    transition: .25s ease;
+}
+
+.similar-card:hover {
+    transform: translateY(-4px);
+}
+
+.similar-card__image {
+    height: 230px;
+    background: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.similar-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 22px;
+}
+
+.similar-card__body {
+    padding: 20px;
+}
+
+.similar-card__body h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.similar-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.similar-card__meta span {
+    color: #555;
+    font-size: 15px;
+}
+
+.similar-card__meta strong {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+@media (max-width: 992px) {
+    .similar-products__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 540px) {
+    .similar-products__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #777;
+}
+
+.breadcrumbs a {
+    color: #777;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.breadcrumbs a:hover {
+    color: var(--accent);
+}
+
+.breadcrumbs-current {
+    color: #222;
+    font-weight: 600;
+}
+
+.breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #777;
+}
+
+.breadcrumbs a {
+    color: #777;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.breadcrumbs a:hover {
+    color: var(--accent);
+}
+
+.breadcrumbs-current {
+    color: #222;
+    font-weight: 600;
 }

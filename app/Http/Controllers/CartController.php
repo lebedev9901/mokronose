@@ -77,9 +77,37 @@ class CartController extends Controller
         })->first();
 
 
+        $pets = auth()->check()
+        ? auth()->user()->pets()->first()
+        : null;
+
+
+        $firstPet = $pets->first();
+
+        $recommendedProducts = Product::with('images')
+            ->when($firstPet?->age_group, function ($query) use ($firstPet) {
+                $query->where(function ($q) use ($firstPet) {
+                    $q->where('age_group', $firstPet->age_group)
+                    ->orWhereNull('age_group')
+                    ->orWhere('age_group', '')
+                    ->orWhere('age_group', 'all');
+                });
+            })
+            ->when($firstPet?->breed_size, function ($query) use ($firstPet) {
+                $query->where(function ($q) use ($firstPet) {
+                    $q->where('breed_size', $firstPet->breed_size)
+                    ->orWhereNull('breed_size')
+                    ->orWhere('breed_size', '')
+                    ->orWhere('breed_size', 'all');
+                });
+            })
+            ->latest()
+            ->take(4)
+            ->get();
+
         $items = $cart ? $cart->items()->with('product')->get() : collect();
 
-        return view('pages.cart', compact('items', 'cart'));
+        return view('pages.cart', compact('items', 'cart', 'recommendedProducts'));
     }
 
     public function remove(CartItem $item)
@@ -94,7 +122,36 @@ class CartController extends Controller
     {
         $qty = max(1, (int) $request->qty);
 
-        $item->update(['qty' => $qty]);
+        $item->update([
+            'qty' => $qty,
+        ]);
+
+        $item->refresh();
+
+        $cart = $item->cart;
+        $cart->load('items.product');
+
+        $total = $cart->items->sum(function ($cartItem) {
+            return $cartItem->qty * $cartItem->product->price;
+        });
+
+        $count = $cart->items->sum('qty');
+
+        if ($request->expectsJson()) {
+            $discount = session('promocode.discount', 0);
+            $payTotal = max($total - $discount, 0);
+
+            return response()->json([
+                'qty' => $item->qty,
+                'minus_disabled' => $item->qty <= 1,
+                'next_minus_qty' => $item->qty - 1,
+                'next_plus_qty' => $item->qty + 1,
+                'item_total' => number_format($item->qty * $item->product->price, 2, '.', ' ') . ' ₽',
+                'total' => number_format($total, 2, '.', ' ') . ' ₽',
+                'pay_total' => number_format($payTotal, 2, '.', ' ') . ' ₽',
+                'count' => $count,
+            ]);
+        }
 
         return back()->with('success', 'Количество обновлено');
     }
@@ -352,6 +409,10 @@ class CartController extends Controller
 
         if (!$promocode->isAvailable($cartTotal)) {
             return back()->with('promocode_error', 'Промокод недоступен или истёк');
+        }
+
+        if (auth()->check() && auth()->user()->promocode_used_at) {
+            return back()->with('promocode_error', 'Вы уже использовали промокод ранее.');
         }
 
         $discount = $promocode->calculateDiscount($cartTotal);

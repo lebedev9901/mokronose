@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
 
-    <div class="cart">
+    <div class="cart flex">
 
     <h1 class="section-title">Корзина</h1>
 
@@ -14,6 +14,39 @@
             <p>Корзина пуста</p>
             <a href="{{route('catalog')}}" class="btn-primary">Перейти в каталог</a>
         </div>
+        @if($recommendedProducts->count())
+    <section class="cart-recommendations">
+
+        <div class="profile-section-head">
+            <div>
+                <h2>🐾 Возможно, вам подойдёт</h2>
+                <p>Подборка товаров для быстрого старта</p>
+            </div>
+        </div>
+
+        <div class="recommendations-grid">
+            @foreach($recommendedProducts as $product)
+                @php
+                    $preview = $product->images->where('is_preview', true)->first()
+                        ?? $product->images->first();
+                @endphp
+
+                <a href="{{ route('product', $product->id) }}" class="recommendation-card">
+                    <img
+                        src="{{ $preview ? asset('storage/' . $preview->image) : asset('assets/img/no-image.png') }}"
+                        alt="{{ $product->title }}"
+                    >
+
+                    <div>
+                        <h3>{{ $product->title }}</h3>
+                        <p>{{ number_format($product->price, 0, '.', ' ') }} ₽</p>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+
+    </section>
+@endif
     @else
 
     <div class="cart-grid">
@@ -22,7 +55,7 @@
         <div class="cart-items">
 
             @foreach($items as $item)
-            <div class="cart-item">
+            <div class="cart-item" id="cart-item-{{$item->id}}">
 
                 <div class="cart-item__info">
                     <h3>{{ $item->product->title }}</h3>
@@ -30,29 +63,34 @@
                 </div>
 
                 <!-- КОЛИЧЕСТВО -->
-                <div class="cart-qty">
+              <div class="cart-qty" data-item-id="{{ $item->id }}">
+    <button
+        type="button"
+        class="cart-qty__btn cart-qty__minus"
+        data-url="{{ route('cart.update', $item) }}"
+        data-qty="{{ $item->qty - 1 }}"
+        @if($item->qty <= 1) disabled @endif
+    >
+        −
+    </button>
 
-                    <form action="{{ route('cart.update', $item) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="qty" value="{{ $item->qty - 1 }}">
-                        <button @if($item->qty <= 1) disabled @endif>−</button>
-                    </form>
+    <span class="cart-qty__value" id="cart-qty-{{ $item->id }}">
+        {{ $item->qty }}
+    </span>
 
-                    <span>{{ $item->qty }}</span>
-
-                    <form action="{{ route('cart.update', $item) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="qty" value="{{ $item->qty + 1 }}">
-                        <button>+</button>
-                    </form>
-
-                </div>
+    <button
+        type="button"
+        class="cart-qty__btn cart-qty__plus"
+        data-url="{{ route('cart.update', $item) }}"
+        data-qty="{{ $item->qty + 1 }}"
+    >
+        +
+    </button>
+</div>
 
                 <!-- СУММА -->
-                <div class="cart-sum">
-                    {{ number_format($item->qty * $item->product->price, 2) }} ₽
+                <div class="cart-sum" id="cart-item-total-{{ $item->id }}">
+                    {{ number_format($item->qty * $item->product->price, 2, '.', ' ') }} ₽
                 </div>
 
                 <!-- УДАЛИТЬ -->
@@ -74,12 +112,12 @@
 
             <div class="cart-summary__row">
                 <span>Товаров:</span>
-                <span>{{ $cart->total_qty }}</span>
+                <span id="cart-total-count">{{ $cart->total_qty }}</span>
             </div>
 
             <div class="cart-summary__row">
                 <span>Сумма:</span>
-                <span>{{ number_format($cart->total_price, 2) }} ₽</span>
+               <span id="cart-total-price">{{ number_format($cart->total_price, 2, '.', ' ') }} ₽</span>
             </div>
 
             @if(session('promocode'))
@@ -90,7 +128,9 @@
 
                 <div class="cart-summary__row cart-summary__row--total">
                     <span>К оплате:</span>
-                    <span>{{ number_format(max($cart->total_price - session('promocode.discount'), 0), 2) }} ₽</span>
+                    <span id="cart-pay-total">
+                        {{ number_format(max($cart->total_price - session('promocode.discount'), 0), 2, '.', ' ') }} ₽
+                    </span>
                 </div>
             @endif
             <div class="cart-promocode">
@@ -149,4 +189,52 @@
     @endif
 </div>
 </div>
+<script>
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.cart-qty__btn');
+
+    if (!btn) return;
+
+    const qtyBox = btn.closest('.cart-qty');
+    const itemId = qtyBox.dataset.itemId;
+
+    fetch(btn.dataset.url, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            _method: 'PUT',
+            qty: btn.dataset.qty,
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById(`cart-qty-${itemId}`).innerText = data.qty;
+
+        const minusBtn = qtyBox.querySelector('.cart-qty__minus');
+        const plusBtn = qtyBox.querySelector('.cart-qty__plus');
+
+        minusBtn.dataset.qty = data.next_minus_qty;
+        plusBtn.dataset.qty = data.next_plus_qty;
+        minusBtn.disabled = data.minus_disabled;
+
+        document.getElementById(`cart-item-total-${itemId}`).innerText = data.item_total;
+        document.getElementById('cart-total-count').innerText = data.count;
+        document.getElementById('cart-total-price').innerText = data.total;
+
+        const payTotal = document.getElementById('cart-pay-total');
+
+        if (payTotal && data.pay_total !== undefined) {
+            payTotal.innerText = data.pay_total;
+        }
+
+        if (typeof updateCartIcon === 'function') {
+            updateCartIcon(data.count);
+        }
+    });
+});
+</script>
 @endsection

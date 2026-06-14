@@ -2,6 +2,18 @@
 
 @section('title', $product->title . ' — Мокронос')
 @section('description', Str::limit(strip_tags($product->description), 160))
+@php
+    $previewImage = $product->images->where('is_preview', true)->first()
+        ?? $product->images->first();
+
+    $schemaImage = $previewImage
+        ? asset('storage/' . $previewImage->image)
+        : asset('assets/img/no-image.png');
+
+    $schemaRating = $product->rating > 0 ? $product->rating : 5;
+
+    $schemaReviewsCount = $product->reviews?->count() ?? 0;
+@endphp
 
 @section('content')
 @php
@@ -28,7 +40,34 @@
 @endphp
 
 <div class="container">
+    <div class="breadcrumbs">
+    <a href="{{ route('home') }}">Главная</a>
+
+    <span>/</span>
+
+    <a href="{{ route('catalog') }}">Каталог</a>
+
+    @if($product->categories->isNotEmpty())
+
+        <span>/</span>
+
+        <a href="{{ route('catalog', [
+            'category' => $product->categories->first()->id
+        ]) }}">
+            {{ $product->categories->first()->title }}
+        </a>
+
+    @endif
+
+    <span>/</span>
+
+    <span class="breadcrumbs-current">
+        {{ $product->title }}
+    </span>
+</div>
     <section class="product-page">
+
+
 
         <div class="product-page__grid">
 
@@ -262,7 +301,7 @@
                                 <div class="review-avatar">
                                     @if($review->user?->avatar)
                                         <img
-                                            src="{{ $review->user->avatar }}"
+                                            src="{{ asset('storage/' . $review->user->avatar) }}"
                                             alt="{{ $review->user?->first_name ?? $review->user?->name }}"
                                             class="review-avatar-img"
                                         >
@@ -291,7 +330,47 @@
             @endif
         </div>
 
+     
+
     </section>
+       @if($similarProducts->isNotEmpty())
+    <section class="similar-products">
+        <div class="similar-products__head">
+            <h2>Похожие товары</h2>
+            <p>Мы подобрали товары, которые могут подойти вашему питомцу</p>
+        </div>
+
+        <div class="similar-products__grid">
+            @foreach($similarProducts as $similar)
+                @php
+                    $preview = $similar->images->where('is_preview', true)->first()
+                        ?? $similar->images->first();
+                @endphp
+
+                <a href="{{ route('product', $similar->id) }}" class="similar-card">
+                    <div class="similar-card__image">
+                        <img
+                            src="{{ $preview ? asset('storage/' . $preview->image) : asset('assets/img/no-image.png') }}"
+                            alt="{{ $similar->title }}"
+                        >
+                    </div>
+
+                    <div class="similar-card__body">
+                        <h3>{{ $similar->title }}</h3>
+
+                        <div class="similar-card__meta">
+                            @if($similar->weight)
+                                <span>{{ $similar->weight }}</span>
+                            @endif
+
+                            <strong>{{ $similar->price }} ₽</strong>
+                        </div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </section>
+@endif
 </div>
 
 <script>
@@ -344,5 +423,35 @@ function toggleFavorite(button) {
         button.classList.toggle('is-active', data.is_favorite);
     });
 }
+</script>
+
+
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $product->title,
+    'description' => strip_tags($product->description),
+    'image' => $schemaImage,
+    'sku' => 'product-' . $product->id,
+    'brand' => [
+        '@type' => 'Brand',
+        'name' => 'Мокронос',
+    ],
+    'offers' => [
+        '@type' => 'Offer',
+        'url' => route('product', ['product' => $product->id]),
+        'priceCurrency' => 'RUB',
+        'price' => $product->price,
+        'availability' => $product->stock > 0
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+    ],
+    'aggregateRating' => [
+        '@type' => 'AggregateRating',
+        'ratingValue' => $schemaRating,
+        'reviewCount' => max($schemaReviewsCount, 1),
+    ],
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 @endsection

@@ -32,9 +32,16 @@
     <!-- 👤 Пользователь -->
     <div class="reviews__card-user">
         <div class="avatar">
-            {{ mb_substr($review->user->name, 0, 1) }}
-        </div>
-
+    @if($review->user?->avatar)
+        <img
+            src="{{ $review->user->avatar }}"
+            alt="{{ $review->user?->name }}"
+            class="avatar-img"
+        >
+    @else
+        {{ mb_substr($review->user?->name ?? 'П', 0, 1) }}
+    @endif
+</div>
         <div>
             <div class="name">{{ $review->user->name }}</div>
             <div class="date">{{ $review->created_at->format('d.m.Y') }}</div>

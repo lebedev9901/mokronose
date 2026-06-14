@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\SupportChat;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,29 @@ class ProfileController extends Controller
                     ->paginate(10);
             }
 
+            $firstPet = $pets->first();
+
+            $recommendedProducts = Product::with('images')
+                ->when($firstPet?->age_group, function ($query) use ($firstPet) {
+                    $query->where(function ($q) use ($firstPet) {
+                        $q->where('age_group', $firstPet->age_group)
+                        ->orWhereNull('age_group')
+                        ->orWhere('age_group', '')
+                        ->orWhere('age_group', 'all');
+                    });
+                })
+                ->when($firstPet?->breed_size, function ($query) use ($firstPet) {
+                    $query->where(function ($q) use ($firstPet) {
+                        $q->where('breed_size', $firstPet->breed_size)
+                        ->orWhereNull('breed_size')
+                        ->orWhere('breed_size', '')
+                        ->orWhere('breed_size', 'all');
+                    });
+                })
+                ->latest()
+                ->take(4)
+                ->get();
+
             $products = auth()->user()
             ->favoriteProducts()
             ->with('images')
@@ -84,7 +108,8 @@ class ProfileController extends Controller
                     'pets',
                     'stats',
                     'latestOrders',
-                    'reviews'
+                    'reviews',
+                    'recommendedProducts'
                 )
             );
 

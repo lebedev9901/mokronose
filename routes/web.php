@@ -173,6 +173,13 @@ Route::post('/favorites/{product}/toggle', [FavoriteController::class, 'toggle']
 
 Route::post('/cart/promocode/remove', [CartController::class, 'removePromocode'])
     ->name('cart.promocode.remove');
-});
+    Route::post('/profile/order/{order}/repeat', [OrderController::class, 'repeat'])
+    ->name('orders.repeat');
+    Route::post('/checkout/address', [AddressController::class, 'storeAjax'])
+    ->name('checkout.address.store');
+
+    });
+
+
 
 require __DIR__.'/auth.php';

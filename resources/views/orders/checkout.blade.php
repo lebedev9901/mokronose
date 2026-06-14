@@ -207,163 +207,247 @@
     </div>
 
 </div>
+<div class="map-modal" id="mapModal">
+    <div class="map-modal__overlay" id="closeMapModal"></div>
 
+    <div class="map-modal__content">
+        <div class="map-modal__head">
+            <div>
+                <h3>Выберите адрес на карте</h3>
+                <p>Кликните по нужному месту, адрес подставится автоматически</p>
+            </div>
+
+            <button type="button" id="closeMapModalBtn">✕</button>
+        </div>
+
+        <div id="checkoutMap" class="checkout-map"></div>
+
+        <button type="button" class="map-modal__save" id="saveMapAddress">
+            Использовать этот адрес
+        </button>
+    </div>
+</div>
+<div class="address-modal" id="addressModal">
+    <div class="address-modal__overlay" id="closeAddressModal"></div>
+
+    <div class="address-modal__content">
+        <div class="address-modal__head">
+            <h3>Добавить адрес</h3>
+            <button type="button" id="closeAddressModalBtn">✕</button>
+        </div>
+
+        <form id="addressAjaxForm">
+            @csrf
+
+            <input type="text" name="city" placeholder="Город">
+
+            <input type="text" name="street" placeholder="Улица" required>
+
+            <input type="text" name="house" placeholder="Дом" required>
+
+            <input type="text" name="apartment" placeholder="Квартира">
+
+            <button type="submit">Сохранить адрес</button>
+        </form>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
-
 <script>
-
 window.userAddresses = @json(auth()->user()->addresses ?? []);
 
+let checkoutMap = null;
+let checkoutPlacemark = null;
+let selectedMapAddress = '';
+let selectedTargetInput = null;
+
 document.addEventListener('DOMContentLoaded', function () {
-
     const deliveryRadios = document.querySelectorAll('input[name="delivery_method"]');
-
     const container = document.getElementById('delivery-extra');
-
     const selectedBox = document.getElementById('selected-delivery');
-
     const submitBtn = document.querySelector('.checkout-submit');
+    const addressModal = document.getElementById('addressModal');
 
     function clearContainer() {
-
         container.innerHTML = '';
         selectedBox.innerHTML = '';
-
         submitBtn.disabled = false;
-
     }
 
-    // COURIER
-    function renderCourier() {
+    function formatAddress(a) {
+    let parts = [];
 
-        if (!window.userAddresses.length) {
+    if (a.city) parts.push(a.city);
+    if (a.street) parts.push(a.street);
+    if (a.house) parts.push('д. ' + a.house);
+    if (a.apartment) parts.push('кв. ' + a.apartment);
 
-            container.innerHTML = `
-                <div class="empty-address">
-                    У вас нет адресов
-                    <br><br>
-                    <a href="/profile" class="btn-add-address">
-                        Добавить адрес
-                    </a>
-                </div>
-            `;
+    return parts.join(', ');
+}
 
-            submitBtn.disabled = true;
-
+    function renderSelectedAddress(a) {
+        if (!a) {
+            selectedBox.innerHTML = '';
             return;
         }
 
-        const defaultAddress = window.userAddresses.find(a => a.is_default);
-
-        container.innerHTML = `
-            <div class="delivery-box">
-
-                <h4>Выберите адрес</h4>
-
-                ${window.userAddresses.map(a => `
-                    <label class="radio-item">
-
-                        <input type="radio"
-                               name="address_id"
-                               value="${a.id}"
-                               ${defaultAddress && a.id === defaultAddress.id ? 'checked' : ''}>
-
-                        ${a.city ?? ''}, ${a.street} ${a.house}
-
-                    </label>
-                `).join('')}
-
+        selectedBox.innerHTML = `
+            <div class="selected-delivery-box">
+                <strong>Выбран адрес:</strong>
+                <p>${formatAddress(a)}</p>
             </div>
         `;
+    }
+
+    function renderCourier() {
+        const defaultAddress = window.userAddresses.find(a => a.is_default) ?? window.userAddresses[0];
+
+        container.innerHTML = `
+            <div class="delivery-box delivery-box--service">
+                <div class="delivery-service-head">
+                    <div>
+                        <h4>Адрес курьерской доставки</h4>
+                        <p>Выберите сохранённый адрес или добавьте новый</p>
+                    </div>
+                </div>
+
+                <div class="checkout-addresses">
+                    ${window.userAddresses.length ? window.userAddresses.map(a => `
+                        <label class="checkout-address-card">
+                            <input
+                                type="radio"
+                                name="address_id"
+                                value="${a.id}"
+                                ${defaultAddress && a.id === defaultAddress.id ? 'checked' : ''}
+                            >
+
+                            <div>
+                                <strong>${a.title ?? 'Адрес доставки'}</strong>
+                                <p>${formatAddress(a)}</p>
+                            </div>
+                        </label>
+                    `).join('') : `
+                        <div class="empty-address">
+                            У вас пока нет сохранённых адресов
+                        </div>
+                    `}
+                </div>
+
+                <button type="button" class="add-address-btn" id="openAddressModal">
+                    + Добавить адрес
+                </button>
+            </div>
+        `;
+
+        submitBtn.disabled = !window.userAddresses.length;
 
         if (defaultAddress) {
             renderSelectedAddress(defaultAddress);
         }
-
     }
 
-    function renderSelectedAddress(a) {
-
-        selectedBox.innerHTML = `
-            <div class="selected-delivery-box">
-
-                <strong>Доставка:</strong><br>
-
-                ${a.city ?? ''},
-                ${a.street} ${a.house}
-
-            </div>
-        `;
-
-    }
-
-    // PICKUP
     function renderPickup() {
-
         container.innerHTML = `
-            <div class="delivery-box">
+            <div class="delivery-box delivery-box--service">
+                <div class="delivery-service-head">
+                    <div>
+                        <h4>Пункт самовывоза</h4>
+                        <p>Выберите удобный пункт выдачи заказа</p>
+                    </div>
+                </div>
 
-                <label class="radio-item">
-                    <input type="radio"
-                           name="pickup_point"
-                           value="Подольск, п. Железнодорожный, 28">
+                <div class="checkout-addresses">
+                    <label class="checkout-address-card">
+                        <input
+                            type="radio"
+                            name="pickup_point"
+                            value="Подольск, п. Железнодорожный, 28"
+                            required
+                        >
 
-                    Подольск, п. Железнодорожный, 28
-                </label>
+                        <div>
+                            <strong>Подольск</strong>
+                            <p>п. Железнодорожный, 28</p>
+                        </div>
+                    </label>
 
-                <label class="radio-item">
-                    <input type="radio"
-                           name="pickup_point"
-                           value="Москва, ул. Братеевская 16к3">
+                    <label class="checkout-address-card">
+                        <input
+                            type="radio"
+                            name="pickup_point"
+                            value="Москва, ул. Братеевская 16к3"
+                            required
+                        >
 
-                    Москва, ул. Братеевская 16к3
-                </label>
-
+                        <div>
+                            <strong>Москва</strong>
+                            <p>ул. Братеевская 16к3</p>
+                        </div>
+                    </label>
+                </div>
             </div>
         `;
-
     }
 
-    // CDEK
     function renderCdek() {
-
         container.innerHTML = `
-            <div class="delivery-box">
+            <div class="delivery-box delivery-box--service">
+                <div class="delivery-service-head">
+                    <div>
+                        <h4>Пункт выдачи СДЭК</h4>
+                        <p>Введите адрес пункта выдачи или выберите его на карте</p>
+                    </div>
+                </div>
 
-                <input type="text"
-                       name="cdek_point"
-                       placeholder="Введите пункт СДЭК">
+                <div class="delivery-address-row">
+                    <input
+                        type="text"
+                        name="cdek_point"
+                        id="cdek_point"
+                        placeholder="Например: Москва, ул. Ленина, 10"
+                        required
+                    >
 
+                    <button type="button" class="delivery-map-btn" data-target="cdek_point">
+                        Выбрать на карте
+                    </button>
+                </div>
             </div>
         `;
-
     }
 
-    // POST
     function renderPost() {
-
         container.innerHTML = `
-            <div class="delivery-box">
+            <div class="delivery-box delivery-box--service">
+                <div class="delivery-service-head">
+                    <div>
+                        <h4>Адрес доставки Почтой России</h4>
+                        <p>Введите полный почтовый адрес или выберите точку на карте</p>
+                    </div>
+                </div>
 
-                <textarea name="post_address"
-                          placeholder="Введите адрес"></textarea>
+                <div class="delivery-address-row">
+                    <textarea
+                        name="post_address"
+                        id="post_address"
+                        placeholder="Индекс, город, улица, дом, квартира"
+                        required
+                    ></textarea>
 
+                    <button type="button" class="delivery-map-btn" data-target="post_address">
+                        Выбрать на карте
+                    </button>
+                </div>
             </div>
         `;
-
     }
 
-    // SWITCH
     deliveryRadios.forEach(radio => {
-
         radio.addEventListener('change', function () {
-
             clearContainer();
 
             switch (this.value) {
-
                 case 'courier':
                     renderCourier();
                     break;
@@ -379,29 +463,151 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 'post':
                     renderPost();
                     break;
-
             }
-
         });
-
     });
 
-    // LISTENER
     document.addEventListener('change', function(e) {
-
         if (e.target.name === 'address_id') {
-
-            let a = window.userAddresses.find(x => x.id == e.target.value);
-
-            renderSelectedAddress(a);
-
+            const address = window.userAddresses.find(x => x.id == e.target.value);
+            renderSelectedAddress(address);
         }
-
     });
 
+    document.addEventListener('click', function(e) {
+        const openAddressBtn = e.target.closest('#openAddressModal');
+
+        if (!openAddressBtn) return;
+
+        addressModal.classList.add('is-active');
+    });
+
+    document.getElementById('closeAddressModal')?.addEventListener('click', closeAddressModal);
+    document.getElementById('closeAddressModalBtn')?.addEventListener('click', closeAddressModal);
+
+    function closeAddressModal() {
+        addressModal.classList.remove('is-active');
+    }
+
+    document.getElementById('addressAjaxForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        fetch('{{ route('checkout.address.store') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        
+            .then(data => {
+                const address = data.address;
+
+                window.userAddresses.push(address);
+
+                renderCourier();
+
+                setTimeout(() => {
+                    const radio = document.querySelector(`input[name="address_id"][value="${address.id}"]`);
+
+                    if (radio) {
+                        radio.checked = true;
+                        renderSelectedAddress(address);
+                    }
+                }, 50);
+
+                form.reset();
+                closeAddressModal();
+            
+        });
+    });
 });
 
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.delivery-map-btn');
+
+    if (!btn) return;
+
+    selectedTargetInput = document.getElementById(btn.dataset.target);
+
+    openCheckoutMap();
+});
+
+function openCheckoutMap() {
+    document.getElementById('mapModal').classList.add('is-active');
+
+    setTimeout(() => {
+        if (!checkoutMap) {
+            initCheckoutMap();
+        } else {
+            checkoutMap.container.fitToViewport();
+        }
+    }, 200);
+}
+
+function closeCheckoutMap() {
+    document.getElementById('mapModal').classList.remove('is-active');
+}
+
+document.getElementById('closeMapModal')?.addEventListener('click', closeCheckoutMap);
+document.getElementById('closeMapModalBtn')?.addEventListener('click', closeCheckoutMap);
+
+function initCheckoutMap() {
+    ymaps.ready(function () {
+        checkoutMap = new ymaps.Map('checkoutMap', {
+            center: [55.751244, 37.618423],
+            zoom: 10,
+            controls: ['zoomControl', 'searchControl']
+        });
+
+        checkoutMap.events.add('click', function (e) {
+            setMapPoint(e.get('coords'));
+        });
+    });
+}
+
+function setMapPoint(coords) {
+    if (checkoutPlacemark) {
+        checkoutPlacemark.geometry.setCoordinates(coords);
+    } else {
+        checkoutPlacemark = new ymaps.Placemark(coords, {}, {
+            preset: 'islands#brownDotIcon',
+            draggable: true
+        });
+
+        checkoutMap.geoObjects.add(checkoutPlacemark);
+
+        checkoutPlacemark.events.add('dragend', function () {
+            getAddressByCoords(checkoutPlacemark.geometry.getCoordinates());
+        });
+    }
+
+    getAddressByCoords(coords);
+}
+
+function getAddressByCoords(coords) {
+    ymaps.geocode(coords).then(function (res) {
+        const firstGeoObject = res.geoObjects.get(0);
+
+        if (!firstGeoObject) return;
+
+        selectedMapAddress = firstGeoObject.getAddressLine();
+    });
+}
+
+document.getElementById('saveMapAddress')?.addEventListener('click', function () {
+    if (!selectedTargetInput || !selectedMapAddress) {
+        alert('Сначала выберите точку на карте');
+        return;
+    }
+
+    selectedTargetInput.value = selectedMapAddress;
+    closeCheckoutMap();
+});
 </script>
-
 @endpush
-

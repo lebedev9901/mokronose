@@ -75,6 +75,13 @@
                         </a>
                     <?php endif; ?>
                 </div>
+                <form method="POST" action="<?php echo e(route('orders.repeat', $order->id)); ?>">
+                    <?php echo csrf_field(); ?>
+
+                    <button type="submit" class="btn-primary">
+                        Повторить заказ
+                    </button>
+                </form>
             </div>
 
         </div>

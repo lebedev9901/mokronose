@@ -74,6 +74,13 @@
                         </a>
                     @endif
                 </div>
+                <form method="POST" action="{{ route('orders.repeat', $order->id) }}">
+                    @csrf
+
+                    <button type="submit" class="btn-primary">
+                        Повторить заказ
+                    </button>
+                </form>
             </div>
 
         </div>

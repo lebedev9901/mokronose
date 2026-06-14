@@ -74,7 +74,7 @@
     <script src="<?php echo e(asset('assets/js/cart-page.js')); ?>" defer></script>
     <script src="<?php echo e(asset('assets/js/cart.js')); ?>" defer></script>
     <script src="<?php echo e(asset('assets/js/script.js')); ?>" defer></script>
-
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=6ddd0b57-b0eb-4daa-aed7-5147db0f1650&lang=ru_RU" type="text/javascript"></script>
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/layouts/app.blade.php ENDPATH**/ ?>

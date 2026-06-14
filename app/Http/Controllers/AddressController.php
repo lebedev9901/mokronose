@@ -84,6 +84,32 @@ class AddressController extends Controller
             'address_id' => $id
         ]);
     }
+
+    public function storeAjax(Request $request)
+    {
+        $data = $request->validate([
+            'city' => ['nullable', 'string', 'max:255'],
+            'street' => ['required', 'string', 'max:255'],
+            'house' => ['required', 'string', 'max:50'],
+            'apartment' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $data['user_id'] = auth()->id();
+
+        $address = Address::create($data);
+
+        return response()->json([
+            'success' => true,
+            'address' => [
+                'id' => $address->id,
+                'city' => $address->city,
+                'street' => $address->street,
+                'house' => $address->house,
+                'apartment' => $address->apartment,
+                'is_default' => $address->is_default ?? false,
+            ],
+        ]);
+    }
 }
 
 

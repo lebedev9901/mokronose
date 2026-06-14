@@ -74,7 +74,7 @@
     <script src="{{ asset('assets/js/cart-page.js') }}" defer></script>
     <script src="{{ asset('assets/js/cart.js') }}" defer></script>
     <script src="{{ asset('assets/js/script.js') }}" defer></script>
-
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=6ddd0b57-b0eb-4daa-aed7-5147db0f1650&lang=ru_RU" type="text/javascript"></script>
     @stack('scripts')
 </body>
 </html>

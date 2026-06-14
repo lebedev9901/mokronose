@@ -1315,3 +1315,83 @@ main{
     line-height: 1.6;
     color: #222;
 }
+
+
+.map-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+}
+
+.map-modal.is-active {
+    display: block;
+}
+
+.map-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+}
+
+.map-modal__content {
+    position: relative;
+    z-index: 2;
+    width: min(900px, calc(100% - 24px));
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.map-modal__head {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.map-modal__head h3 {
+    margin: 0 0 6px;
+}
+
+.map-modal__head p {
+    margin: 0;
+    color: #777;
+}
+
+.map-modal__head button {
+    border: none;
+    background: #f3eadf;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.checkout-map {
+    height: 520px;
+    width: 100%;
+}
+
+.map-modal__save {
+    width: calc(100% - 40px);
+    margin: 20px;
+    height: 50px;
+    border: none;
+    border-radius: 16px;
+    background: #9c642d;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .map-modal__content {
+        margin: 20px auto;
+    }
+
+    .checkout-map {
+        height: 420px;
+    }
+}

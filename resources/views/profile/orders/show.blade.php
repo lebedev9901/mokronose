@@ -19,6 +19,13 @@
             <span class="order-status status-{{ $order->status }}">
                 {{ $order->status_label }}
             </span>
+            <form method="POST" action="{{ route('orders.repeat', $order->id) }}">
+                    @csrf
+
+                    <button type="submit" class="btn-primary">
+                        Повторить заказ
+                    </button>
+                </form>
         </div>
 
         <div class="order-layout">
@@ -81,7 +88,7 @@
                     </div>
                 </section>
 
-
+                
                 <section class="order-card">
                     <div class="order-card-head">
                         <div>
@@ -89,6 +96,7 @@
                             <p>Связь с поддержкой по этому заказу</p>
                         </div>
                     </div>
+                    
 
                     @if($order->chat)
                         @php
@@ -113,6 +121,7 @@
                             Чат по заказу пока не создан.
                         </div>
                     @endif
+                    
                 </section>
 
             </main>
@@ -219,6 +228,7 @@
                         </p>
                     </div>
                 </section>
+                
 
             </aside>
 

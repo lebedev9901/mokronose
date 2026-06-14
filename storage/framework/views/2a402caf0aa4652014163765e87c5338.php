@@ -20,6 +20,13 @@
                 <?php echo e($order->status_label); ?>
 
             </span>
+            <form method="POST" action="<?php echo e(route('orders.repeat', $order->id)); ?>">
+                    <?php echo csrf_field(); ?>
+
+                    <button type="submit" class="btn-primary">
+                        Повторить заказ
+                    </button>
+                </form>
         </div>
 
         <div class="order-layout">
@@ -83,7 +90,7 @@
                     </div>
                 </section>
 
-
+                
                 <section class="order-card">
                     <div class="order-card-head">
                         <div>
@@ -91,6 +98,7 @@
                             <p>Связь с поддержкой по этому заказу</p>
                         </div>
                     </div>
+                    
 
                     <?php if($order->chat): ?>
                         <?php
@@ -115,6 +123,7 @@
                             Чат по заказу пока не создан.
                         </div>
                     <?php endif; ?>
+                    
                 </section>
 
             </main>
@@ -228,6 +237,7 @@
                         </p>
                     </div>
                 </section>
+                
 
             </aside>
 

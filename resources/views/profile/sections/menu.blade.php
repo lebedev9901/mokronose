@@ -1,6 +1,6 @@
 @php
 $menu_items = [
-    ['page' => 'profile', 'title' => 'Мой профиль', 'descr' => 'Редактирование данных'],
+    ['page' => 'profile', 'title' => 'Мой профиль', 'descr' => 'Личный кабинет'],
     ['page' => 'favorites', 'title' => 'Избранное', 'descr' => 'Товары, который вы оценили'],
     ['page' => 'orders', 'title' => 'История заказов', 'descr' => 'Ваши заказы за всё время'],
     ['page' => 'pet', 'title' => 'Питомец', 'descr' => 'Ваши друзья тоже здесь'],
@@ -14,8 +14,10 @@ if(auth()->check() && auth()->user()->role === 'admin'){
     $menu_items[] = ['page' => 'admin', 'title' => 'Админ панель', 'descr' => 'Управление товарами и заказами'];
 }
 @endphp
-
-<nav>
+<button class="profile-menu-toggle" type="button" id="profileMenuToggle">
+    ☰ Меню профиля
+</button>
+<nav class="profile-sidebar-nav" id="profileSidebarNav">
     <ul class="dashboard__list list-reset">
         @foreach($menu_items as $item)
             @php
@@ -44,3 +46,13 @@ $route = $item['page'] === 'profile'
         @endforeach
     </ul>
 </nav>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('profileMenuToggle');
+    const nav = document.getElementById('profileSidebarNav');
+
+    toggle?.addEventListener('click', function () {
+        nav.classList.toggle('is-open');
+    });
+});
+</script>

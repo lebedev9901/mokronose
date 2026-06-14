@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Promocode;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
 use App\Services\VkMessageService;
@@ -81,6 +83,14 @@ class OrderController extends Controller
 
             if ($promocode) {
                 $discountAmount = (float) ($promocode['discount'] ?? 0);
+            }
+            if (session('promocode') && auth()->check()) {
+                auth()->user()->update([
+                    'promocode_used_at' => now(),
+                ]);
+            }
+            if (session('promocode.id')) {
+                Promocode::where('id', session('promocode.id'))->increment('used_count');
             }
 
             $totalAfterDiscount = max($totalBeforeDiscount - $discountAmount, 0);
@@ -187,5 +197,39 @@ class OrderController extends Controller
         $order->load('chat.message', 'items.product.images', 'address');
 
         return view('profile.orders.show', compact('order'));
+    }
+
+    public function repeat(Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+
+        $order->load('items.product');
+
+        $cart = Cart::firstOrCreate([
+            'user_id' => auth()->id(),
+        ]);
+
+        foreach ($order->items as $item) {
+            if (!$item->product) {
+                continue;
+            }
+
+            $cartItem = CartItem::firstOrCreate(
+                [
+                    'cart_id' => $cart->id,
+                    'product_id' => $item->product_id,
+                ],
+                [
+                    'user_id' => auth()->id(),
+                    'qty' => 0,
+                ]
+            );
+
+            $cartItem->increment('qty', $item->qty);
+        }
+
+        return redirect()
+            ->route('cart')
+            ->with('success', 'Товары из заказа добавлены в корзину');
     }
 }
