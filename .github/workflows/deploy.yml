@@ -26,6 +26,9 @@ jobs:
             php artisan storage:link || true
             chown -R www-data:www-data storage bootstrap/cache
             chmod -R 775 storage bootstrap/cache
+            systemctl reload php8.3-fpm
+            systemctl reload nginx
             npm run build
+
             
             
