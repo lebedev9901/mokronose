@@ -1,131 +1,115 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Заказ #' . $order->id)
+@section('page-title', 'Заказ #' . $order->id)
+@section('page-subtitle', 'Карточка заказа и чат с клиентом')
 
 @section('content')
 
-<div class="order-layout">
+<div class="admin-order-layout">
 
-    {{-- LEFT --}}
-    <div class="order-info card">
+    <div class="admin-form-card">
 
-        <div class="order-top">
+        <div class="admin-order-top">
+            <h3>Информация о заказе</h3>
 
-            <h1>
-                Заказ #{{ $order->id }}
-            </h1>
-
-            <span class="status status-new">
-                {{ $order->status }}
-            </span>
-
+            @if($order->status === 'confirmed')
+                <span class="admin-status admin-status--success">Подтверждён</span>
+            @elseif($order->status === 'new')
+                <span class="admin-status admin-status--warning">Новый</span>
+            @else
+                <span class="admin-status">{{ $order->status }}</span>
+            @endif
         </div>
 
-        <div class="info-group">
-            <label>Клиент</label>
-            <div>{{ $order->user->name }}</div>
+        <div class="admin-info-list">
+            <div>
+                <span>Клиент</span>
+                <strong>{{ $order->user->name ?? 'Удалён' }}</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>{{ $order->user->email ?? '-' }}</strong>
+            </div>
+
+            <div>
+                <span>Телефон</span>
+                <strong>{{ $order->user->phone ?? '-' }}</strong>
+            </div>
+
+            <div>
+                <span>Дата заказа</span>
+                <strong>{{ $order->created_at->format('d.m.Y H:i') }}</strong>
+            </div>
         </div>
 
-        <div class="info-group">
-            <label>Email</label>
-            <div>{{ $order->user->email }}</div>
-        </div>
+        <h3 class="admin-section-title">Товары</h3>
 
-        <div class="info-group">
-            <label>Телефон</label>
-            <div>{{ $order->user->phone }}</div>
-        </div>
-
-        <hr>
-
-        <h3>Товары</h3>
-
-        <div class="order-products">
-
+        <div class="admin-order-products">
             @foreach($order->items as $item)
-
-                <div class="product-row">
-
+                <div class="admin-order-product">
                     <div>
-                        {{ $item->product->title ?? 'Удалён товар' }}
+                        <strong>{{ $item->product->title ?? 'Удалён товар' }}</strong>
+                        <span>x{{ $item->qty }}</span>
                     </div>
 
-                    <div>
-                        x{{ $item->qty }}
-                    </div>
-
-                    <div>
-                        {{ $item->price }} ₽
-                    </div>
-
+                    <strong>{{ number_format($item->price, 0, ',', ' ') }} ₽</strong>
                 </div>
-
             @endforeach
-
         </div>
 
-        <hr>
-
-        <div class="order-total">
-            Итого:
-            <strong>
-                {{ $order->total_price }} ₽
-            </strong>
+        <div class="admin-order-total">
+            <span>Итого</span>
+            <strong>{{ number_format($order->total_price, 0, ',', ' ') }} ₽</strong>
         </div>
+
+        @if($order->status !== 'confirmed')
+            <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST">
+                @csrf
+                <button class="admin-btn">
+                    Подтвердить заказ
+                </button>
+            </form>
+        @endif
 
     </div>
 
-    {{-- RIGHT --}}
-    <div class="chat-box card">
+    <div class="admin-chat-panel">
 
-        <div class="chat-header">
-            Чат заказа
+        <div class="admin-chat-panel__head">
+            <div>
+                <h3>Чат с клиентом</h3>
+                <p>Сообщения по заказу #{{ $order->id }}</p>
+            </div>
         </div>
 
-        <div class="chat-messages">
+        <div class="admin-chat-panel__body"
+             id="adminOrderChatMessages"
+             data-url="{{ route('admin.orders.messages', $order->id) }}">
 
-            @if($order->chat)
-
-                @foreach($order->chat->message as $message)
-
-                    <div class="message {{ $message->sender_type }}">
-
-                        <div class="message-user">
-                            {{ $message->user->name }}
-                        </div>
-
-                        <div class="message-text">
-                            {{ $message->message }}
-                        </div>
-
-                        <div class="message-date">
-                            {{ $message->created_at->format('H:i') }}
-                        </div>
-
-                    </div>
-
-                @endforeach
-
+            @if($order->chat && $order->chat->message->count())
+                @include('admin.orders.partials.messages', [
+                    'messages' => $order->chat->message
+                ])
             @else
-
-                <div class="empty-chat">
+                <div class="admin-chat-empty">
                     Сообщений пока нет
                 </div>
-
             @endif
 
         </div>
 
         <form action="{{ route('admin.orders.message', $order->id) }}"
               method="POST"
-              class="chat-form">
+              class="admin-chat-panel__form"
+              id="adminOrderChatForm">
 
             @csrf
 
-            <textarea name="message"
-                      placeholder="Введите сообщение"></textarea>
+            <textarea name="message" placeholder="Написать клиенту..." required></textarea>
 
-            <button class="btn btn-primary">
+            <button class="admin-btn">
                 Отправить
             </button>
 
@@ -134,5 +118,70 @@
     </div>
 
 </div>
+
+<script>
+const adminChatBox = document.getElementById('adminOrderChatMessages');
+const adminChatForm = document.getElementById('adminOrderChatForm');
+
+let lastAdminChatHtml = '';
+
+function scrollAdminChatToBottom() {
+    if (!adminChatBox) return;
+    adminChatBox.scrollTop = adminChatBox.scrollHeight;
+}
+
+function loadAdminOrderMessages() {
+    if (!adminChatBox) return;
+
+    const isNearBottom =
+        adminChatBox.scrollHeight
+        - adminChatBox.scrollTop
+        - adminChatBox.clientHeight < 80;
+
+    fetch(adminChatBox.dataset.url, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (lastAdminChatHtml !== data.html) {
+                lastAdminChatHtml = data.html;
+                adminChatBox.innerHTML = data.html;
+
+                if (isNearBottom) {
+                    scrollAdminChatToBottom();
+                }
+            }
+        });
+}
+
+if (adminChatForm) {
+    adminChatForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(adminChatForm);
+        const textarea = adminChatForm.querySelector('textarea');
+
+        fetch(adminChatForm.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': formData.get('_token'),
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+            .then(response => response.json())
+            .then(() => {
+                textarea.value = '';
+                loadAdminOrderMessages();
+            });
+    });
+}
+
+scrollAdminChatToBottom();
+loadAdminOrderMessages();
+setInterval(loadAdminOrderMessages, 3000);
+</script>
 
 @endsection

@@ -1,124 +1,96 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Заказы')
+@section('page-title', 'Заказы')
+@section('page-subtitle', 'Управление заказами магазина')
 
 @section('content')
 
-<div class="page-header">
-
+<div class="admin-page-head">
     <div>
-        <h1 class="page-title">Заказы</h1>
-        <p class="page-subtitle">
-            Всего заказов: {{ $orders->count() }}
-        </p>
+        <h2>Список заказов</h2>
+        <p>Всего заказов: {{ $orders->count() }}</p>
     </div>
 
-    <div class="order-badge">
-        🔔 Новых заказов:
-        <span>{{ $newOrders }}</span>
+    <div class="admin-order-badge">
+        🔔 Новых заказов: <strong>{{ $newOrders }}</strong>
     </div>
-
 </div>
 
-<div class="card">
-
+<div class="admin-table-wrap">
     <table class="admin-table">
-
         <thead>
-        <tr>
-            <th>#</th>
-            <th>Клиент</th>
-            <th>Телефон</th>
-            <th>Сумма</th>
-            <th>Статус</th>
-            <th>Дата</th>
-            <th>Действия</th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>#</th>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Подтверждение</th>
+                <th>Действия</th>
+            </tr>
         </thead>
 
         <tbody>
+            @forelse($orders as $order)
+                <tr>
+                    <td class="admin-muted">#{{ $order->id }}</td>
 
-        @foreach($orders as $order)
+                    <td>
+                        <strong>{{ $order->user->name ?? 'Удалён' }}</strong>
+                    </td>
 
-            <tr>
+                    <td>{{ $order->user->phone ?? '-' }}</td>
 
-                <td>
-                    #{{ $order->id }}
-                </td>
+                    <td>
+                        <strong>{{ number_format($order->total_price, 0, ',', ' ') }} ₽</strong>
+                    </td>
 
-                <td>
-                    {{ $order->user->name ?? 'Удалён' }}
-                </td>
+                    <td>
+                        @if($order->status === 'new')
+                            <span class="admin-status admin-status--warning">Новый</span>
+                        @elseif($order->status === 'progress')
+                            <span class="admin-status admin-status--info">В работе</span>
+                        @elseif($order->status === 'done')
+                            <span class="admin-status admin-status--success">Завершён</span>
+                        @elseif($order->status === 'confirmed')
+                            <span class="admin-status admin-status--success">Подтверждён</span>
+                        @else
+                            <span class="admin-status">{{ $order->status }}</span>
+                        @endif
+                    </td>
 
-                <td>
-                    {{ $order->user->phone ?? '-' }}
-                </td>
+                    <td>{{ $order->created_at->format('d.m.Y H:i') }}</td>
 
-                <td class="price">
-                    {{ number_format($order->total_price, 0, '.', ' ') }} ₽
-                </td>
+                    <td>
+                        @if($order->status !== 'confirmed')
+                            <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST">
+                                @csrf
+                                <button class="admin-btn-light" type="submit">
+                                    Подтвердить
+                                </button>
+                            </form>
+                        @else
+                            <span class="admin-status admin-status--success">✔ Готово</span>
+                        @endif
+                    </td>
 
-                <td>
-
-                    @if($order->status == 'new')
-                        <span class="status status-new">
-                            Новый
-                        </span>
-                    @endif
-
-                    @if($order->status == 'progress')
-                        <span class="status status-progress">
-                            В работе
-                        </span>
-                    @endif
-
-                    @if($order->status == 'done')
-                        <span class="status status-done">
-                            Завершён
-                        </span>
-                    @endif
-
-                </td>
-
-                <td>
-                    {{ $order->created_at->format('d.m.Y H:i') }}
-                </td>
-
-                 <td>
-
-                @if($order->status !== 'confirmed')
-
-                    <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST">
-                        @csrf
-                        <button type="submit">
-                            Подтвердить
-                        </button>
-                    </form>
-
-                @else
-                    ✔ подтверждён
-                @endif
-
-            </td>
-
-                <td>
-
-                    <a href="{{ route('admin.orders.show', $order->id) }}"
-                       class="btn btn-primary">
-                        Открыть
-                    </a>
-
-                </td>
-
-            </tr>
-
-        @endforeach
-
+                    <td>
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="admin-btn-light">
+                            Открыть
+                        </a>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="8" class="admin-empty">
+                        Заказов пока нет
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
-
     </table>
-
 </div>
 
 @endsection

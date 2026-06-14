@@ -3,75 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title><?php echo $__env->yieldContent('title'); ?></title>
- <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin.css')); ?> ">
-    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+    <title><?php echo $__env->yieldContent('title', 'Админка'); ?> | Мокронос</title>
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/admin.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/normalize.css')); ?>">
 </head>
-<body>
+<body class="admin-body">
 
-<div class="admin-wrapper">
+<div class="admin">
 
-    
-    <aside class="sidebar">
+    <aside class="admin-sidebar">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="admin-logo">
+            🐾 Мокронос
+            <span>Admin panel</span>
+        </a>
 
-        <div class="logo">
-            Мокронос Admin
-        </div>
+        <nav class="admin-nav">
+    <a href="<?php echo e(route('admin.dashboard')); ?>" class="<?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
+        Главная
+    </a>
 
-        <nav class="menu">
+    <a href="<?php echo e(route('admin.products')); ?>" class="<?php echo e(request()->routeIs('admin.products*') ? 'active' : ''); ?>">
+        Товары
+    </a>
 
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="<?php echo e(request()->is('admin') ? 'active' : ''); ?>">
-                Dashboard
-            </a>
+    <a href="<?php echo e(route('admin.categories')); ?>" class="<?php echo e(request()->routeIs('admin.categories*') ? 'active' : ''); ?>">
+        Категории
+    </a>
 
-            <a href="<?php echo e(route('admin.products')); ?>" class="<?php echo e(request()->is('admin/products*') ? 'active' : ''); ?>">
-                Товары
-            </a>
-           
-            <a href="<?php echo e(route('admin.categories')); ?>" class="<?php echo e(request()->is('admin/categories*') ? 'active' : ''); ?>">
-                Категории
-            </a>
+    <a href="<?php echo e(route('admin.orders')); ?>" class="<?php echo e(request()->routeIs('admin.orders*') ? 'active' : ''); ?>">
+        Заказы
+    </a>
 
+    <a href="<?php echo e(route('admin.users')); ?>" class="<?php echo e(request()->routeIs('admin.users*') ? 'active' : ''); ?>">
+        Пользователи
+    </a>
 
-            
-            <a href="<?php echo e(route('admin.users')); ?>" class="<?php echo e(request()->is('admin/users*') ? 'active' : ''); ?>">
-                Пользователи
-            </a>
+    <a href="<?php echo e(route('admin.support')); ?>" class="<?php echo e(request()->routeIs('admin.support*') ? 'active' : ''); ?>">
+        Поддержка
+    </a>
 
-            <a href="<?php echo e(route('admin.orders')); ?>" class="<?php echo e(request()->is('admin/orders*') ? 'active' : ''); ?>">
-                Заказы
-            </a>
+    <a href="<?php echo e(route('admin.news')); ?>" class="<?php echo e(request()->routeIs('admin.news*') ? 'active' : ''); ?>">
+        Новости
+    </a>
 
-            <a href="<?php echo e(route('admin.support')); ?>" class="<?php echo e(request()->is('admin/support*') ? 'active' : ''); ?>">
-                Чаты
-            </a>
+    <a href="<?php echo e(route('admin.promocodes.index')); ?>" class="<?php echo e(request()->routeIs('admin.promocodes*') ? 'active' : ''); ?>">
+        Промокоды
+    </a>
+</nav>
 
-            <a href="<?php echo e(route('admin.news')); ?>" class="<?php echo e(request()->is('admin/news*') ? 'active' : ''); ?>">
-                Новости 
-            </a>
-            <a href="<?php echo e(route('admin.promocodes.index')); ?>" class="<?php echo e(request()->is('admin/promocodes*') ? 'active' : ''); ?>">
-                Промокоды 
-            </a>
-
-        </nav>
-
+        <a href="<?php echo e(route('home')); ?>" class="admin-site-link">← На сайт</a>
     </aside>
 
-    
-    <main class="content">
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1><?php echo $__env->yieldContent('page-title', 'Панель управления'); ?></h1>
+                <p><?php echo $__env->yieldContent('page-subtitle', 'Управление магазином Мокронос'); ?></p>
+            </div>
 
-        <header class="header">
-            Панель управления
+            <form method="POST" action="<?php echo e(route('logout')); ?>">
+                <?php echo csrf_field(); ?>
+                <button class="admin-logout">Выйти</button>
+            </form>
         </header>
 
-        <div class="page-content">
-            <?php echo $__env->yieldContent('content'); ?>
-        </div>
+        <?php if(session('success')): ?>
+            <div class="admin-alert">
+                <?php echo e(session('success')); ?>
 
+            </div>
+        <?php endif; ?>
+
+        <?php echo $__env->yieldContent('content'); ?>
     </main>
 
 </div>
-
+<?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/admin/layouts/app.blade.php ENDPATH**/ ?>

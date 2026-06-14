@@ -1,75 +1,87 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Редактировать новость')
+@section('page-title', 'Редактировать новость')
+@section('page-subtitle', $news->title)
 
 @section('content')
-
-<h1>Редактировать новость</h1>
 
 <form action="{{ route('admin.news.update', $news) }}"
       method="POST"
       enctype="multipart/form-data"
-      style="display:grid; gap:15px; max-width:700px;">
+      class="admin-form">
 
     @csrf
     @method('PUT')
 
-    <div>
-        <label>Заголовок</label>
-        <input type="text" name="title" value="{{ $news->title }}" required>
-    </div>
+    <div class="admin-form-card">
+        <h3>Основная информация</h3>
 
-    <div>
-        <label>Описание</label>
-        <textarea name="description">{{ $news->description }}</textarea>
-    </div>
-
-    @if($news->image)
-        <div>
-            <label>Текущее фото</label>
-            <br>
-            <img src="{{ asset('storage/' . $news->image) }}"
-                 style="width:200px; height:120px; object-fit:cover; border-radius:12px;">
+        <div class="admin-field">
+            <label>Заголовок</label>
+            <input type="text" name="title" value="{{ old('title', $news->title) }}" required>
         </div>
-    @endif
 
-    <div>
-        <label>Новое фото</label>
-        <input type="file" name="image" accept="image/*">
+        <div class="admin-field">
+            <label>Описание</label>
+            <textarea name="description">{{ old('description', $news->description) }}</textarea>
+        </div>
+
+        @if($news->image)
+            <div class="admin-current-news-image">
+                <label>Текущее фото</label>
+                <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}">
+            </div>
+        @endif
+
+        <div class="admin-field">
+            <label>Новое фото</label>
+            <input type="file" name="image" accept="image/*">
+        </div>
     </div>
 
-    <div>
-        <label>Текст кнопки</label>
-        <input type="text" name="button_text" value="{{ $news->button_text }}">
+    <div class="admin-form-card">
+        <h3>Кнопка и публикация</h3>
+
+        <div class="admin-form-grid admin-form-grid--3">
+            <div class="admin-field">
+                <label>Текст кнопки</label>
+                <input type="text" name="button_text" value="{{ old('button_text', $news->button_text) }}">
+            </div>
+
+            <div class="admin-field">
+                <label>Ссылка кнопки</label>
+                <input type="text" name="button_url" value="{{ old('button_url', $news->button_url) }}">
+            </div>
+
+            <div class="admin-field">
+                <label>Порядок сортировки</label>
+                <input type="number" name="sort_order" value="{{ old('sort_order', $news->sort_order) }}">
+            </div>
+
+            <div class="admin-field">
+                <label>Дата публикации</label>
+                <input type="datetime-local"
+                       name="published_at"
+                       value="{{ old('published_at', $news->published_at ? $news->published_at->format('Y-m-d\TH:i') : '') }}">
+            </div>
+        </div>
+
+        <label class="admin-switch">
+            <input type="checkbox" name="is_active" {{ old('is_active', $news->is_active) ? 'checked' : '' }}>
+            <span>Активна</span>
+        </label>
     </div>
 
-    <div>
-        <label>Ссылка кнопки</label>
-        <input type="text" name="button_url" value="{{ $news->button_url }}">
+    <div class="admin-form-actions">
+        <a href="{{ route('admin.news') }}" class="admin-btn-light">
+            Назад
+        </a>
+
+        <button class="admin-btn">
+            Сохранить
+        </button>
     </div>
-
-    <div>
-        <label>Порядок сортировки</label>
-        <input type="number" name="sort_order" value="{{ $news->sort_order }}">
-    </div>
-
-    <div>
-        <label>Дата публикации</label>
-        <input
-            type="datetime-local"
-            name="published_at"
-            value="{{ $news->published_at ? $news->published_at->format('Y-m-d\TH:i') : '' }}"
-        >
-    </div>
-
-    <label>
-        <input type="checkbox" name="is_active" {{ $news->is_active ? 'checked' : '' }}>
-        Активна
-    </label>
-
-    <button class="btn btn-primary">
-        Сохранить
-    </button>
 
 </form>
 

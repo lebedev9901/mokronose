@@ -1,40 +1,52 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Панель управления')
+
+@section('page-title', 'Панель управления')
+@section('page-subtitle', 'Статистика магазина Мокронос')
 
 @section('content')
 
-<div class="dashboard">
+<div class="dashboard-cards">
 
-    <h1 class="mb-4">📊 Dashboard</h1>
-
-    <div class="dashboard-grid">
-
-        <div class="card">
-            <h3>📦 Товары</h3>
-            <p>{{ $productsCount }}</p>
+    <div class="dashboard-card">
+        <div class="dashboard-card__icon">📦</div>
+        <div>
+            <span>Всего товаров</span>
+            <strong>{{ $productsCount }}</strong>
         </div>
+    </div>
 
-        <div class="card">
-            <h3>📦 В наличии</h3>
-            <p>{{ $productsInStock }}</p>
+    <div class="dashboard-card">
+        <div class="dashboard-card__icon">✅</div>
+        <div>
+            <span>В наличии</span>
+            <strong>{{ $productsInStock }}</strong>
         </div>
+    </div>
 
-        <div class="card">
-            <h3>🧾 Заказы</h3>
-            <p>{{ $ordersCount }}</p>
+    <div class="dashboard-card">
+        <div class="dashboard-card__icon">🧾</div>
+        <div>
+            <span>Заказы</span>
+            <strong>{{ $ordersCount }}</strong>
         </div>
+    </div>
 
-        <div class="card">
-            <h3>👤 Пользователи</h3>
-            <p>{{ $usersCount }}</p>
+    <div class="dashboard-card">
+        <div class="dashboard-card__icon">👤</div>
+        <div>
+            <span>Пользователи</span>
+            <strong>{{ $usersCount }}</strong>
         </div>
+    </div>
 
-        <div class="card highlight">
-            <h3>💰 Продажи</h3>
-            <p>{{ number_format($totalSales, 0, ',', ' ') }} ₽</p>
+    <div class="dashboard-card dashboard-card--sales">
+        <div class="dashboard-card__icon">💰</div>
+        <div>
+            <span>Продажи</span>
+            <strong>{{ number_format($totalSales, 0, ',', ' ') }} ₽</strong>
         </div>
-
     </div>
 
 </div>

@@ -1,49 +1,78 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Новости')
+@section('page-title', 'Новости')
+@section('page-subtitle', 'Управление баннерами и новостями на главной')
 
 @section('content')
 
-<h1>Новости</h1>
+<div class="admin-page-head">
+    <div>
+        <h2>Список новостей</h2>
+        <p>Всего новостей: {{ $news->count() }}</p>
+    </div>
 
-<a href="{{ route('admin.news.create') }}" class="btn btn-primary">
-    + Создать новость
-</a>
+    <a href="{{ route('admin.news.create') }}" class="admin-btn">
+        + Создать новость
+    </a>
+</div>
 
-<div style="margin-top:20px; display:grid; gap:15px;">
+<div class="admin-news-grid">
     @forelse($news as $item)
-        <div style="display:flex; gap:15px; align-items:center; padding:15px; border:1px solid #ddd; border-radius:12px;">
-            @if($item->image)
-                <img src="{{ asset('storage/' . $item->image) }}"
-                     style="width:100px; height:70px; object-fit:cover; border-radius:8px;">
-            @endif
+        <div class="admin-news-card">
 
-            <div style="flex:1;">
-                <h3>{{ $item->title }}</h3>
-                <p>{{ $item->description }}</p>
-
-                <small>
-                    {{ $item->is_active ? 'Активна' : 'Скрыта' }}
-                    |
-                    Сортировка: {{ $item->sort_order }}
-                </small>
+            <div class="admin-news-card__image">
+                @if($item->image)
+                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}">
+                @else
+                    <span>Нет фото</span>
+                @endif
             </div>
 
-            <a href="{{ route('admin.news.edit', $item) }}" class="btn">
-                Редактировать
-            </a>
+            <div class="admin-news-card__body">
+                <div class="admin-news-card__top">
+                    @if($item->is_active)
+                        <span class="admin-status admin-status--success">Активна</span>
+                    @else
+                        <span class="admin-status admin-status--danger">Скрыта</span>
+                    @endif
 
-            <form action="{{ route('admin.news.destroy', $item) }}" method="POST">
-                @csrf
-                @method('DELETE')
+                    <span class="admin-muted">Сортировка: {{ $item->sort_order }}</span>
+                </div>
 
-                <button onclick="return confirm('Удалить новость?')" class="btn btn-danger">
-                    Удалить
-                </button>
-            </form>
+                <h3>{{ $item->title }}</h3>
+
+                <p>{{ \Illuminate\Support\Str::limit($item->description, 140) }}</p>
+
+                @if($item->published_at)
+                    <div class="admin-news-date">
+                        Дата публикации: {{ $item->published_at->format('d.m.Y H:i') }}
+                    </div>
+                @endif
+
+                <div class="admin-actions">
+                    <a href="{{ route('admin.news.edit', $item) }}" class="admin-btn-light">
+                        Редактировать
+                    </a>
+
+                    <form action="{{ route('admin.news.destroy', $item) }}"
+                          method="POST"
+                          onsubmit="return confirm('Удалить новость?')">
+                        @csrf
+                        @method('DELETE')
+
+                        <button class="admin-btn-danger">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     @empty
-        <p>Новостей пока нет.</p>
+        <div class="admin-form-card">
+            <p class="admin-empty-text">Новостей пока нет.</p>
+        </div>
     @endforelse
 </div>
 

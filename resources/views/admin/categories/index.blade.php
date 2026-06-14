@@ -1,75 +1,113 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Категории')
+@section('page-title', 'Категории')
+@section('page-subtitle', 'Управление категориями и подкатегориями')
 
 @section('content')
 
-<h1>Категории</h1>
+<div class="admin-form-card admin-category-create">
+    <h3>Добавить категорию</h3>
 
-<form action="{{ route('admin.categories.store') }}" method="POST">
-    @csrf
+    <form action="{{ route('admin.categories.store') }}" method="POST" class="admin-category-form">
+        @csrf
 
-    <input type="text" name="title" placeholder="Название категории">
-    <select name="parent_id">
-        <option value="">Без родителя — основная категория</option>
+        <div class="admin-field">
+            <label>Название категории</label>
+            <input type="text" name="title" placeholder="Например: Сухой корм" required>
+        </div>
 
-        @foreach($categories->whereNull('parent_id') as $category)
-            <option value="{{ $category->id }}">
-                {{ $category->title }}
-            </option>
-        @endforeach
-    </select>
-    <button class="btn btn-primary">Добавить</button>
+        <div class="admin-field">
+            <label>Родительская категория</label>
+            <select name="parent_id">
+                <option value="">Без родителя — основная категория</option>
 
-</form>
+                @foreach($categories->whereNull('parent_id') as $category)
+                    <option value="{{ $category->id }}">
+                        {{ $category->title }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-<hr>
+        <button class="admin-btn">
+            Добавить
+        </button>
+    </form>
+</div>
 
-<table class="table">
+<div class="admin-page-head">
+    <div>
+        <h2>Список категорий</h2>
+        <p>Всего категорий: {{ $categories->count() }}</p>
+    </div>
+</div>
 
-    <tr>
-        <th>Категория</th>
-        <th>Товаров</th>
-        <th>Действия</th>
-    </tr>
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Категория</th>
+                <th>Тип</th>
+                <th>Товаров</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
 
-    @foreach($categories as $cat)
+        <tbody>
+            @forelse($categories as $cat)
+                <tr>
+                    <td>
+                        <strong>
+                            @if($cat->parent_id)
+                                — {{ $cat->title }}
+                            @else
+                                {{ $cat->title }}
+                            @endif
+                        </strong>
+                    </td>
 
-    <tr>
+                    <td>
+                        @if($cat->parent_id)
+                            <span class="admin-status admin-status--info">Подкатегория</span>
+                        @else
+                            <span class="admin-status admin-status--success">Основная</span>
+                        @endif
+                    </td>
 
-        <td>{{ $cat->title }}</td>
+                    <td>
+                        <strong>{{ $cat->products_count }}</strong>
+                    </td>
 
-        {{-- 📦 СКОЛЬКО ТОВАРОВ --}}
-        <td>
-            {{ $cat->products_count }}
-        </td>
+                    <td>
+                        <div class="admin-actions">
+                            <a href="{{ route('admin.categories.edit', $cat->id) }}"
+                               class="admin-btn-light">
+                                Изменить
+                            </a>
 
-        <td>
+                            <form action="{{ route('admin.categories.destroy', $cat->id) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Удалить категорию?')">
+                                @csrf
+                                @method('DELETE')
 
-            <a href="{{ route('admin.categories.edit', $cat->id) }}"
-               class="btn btn-primary" style="padding:5px 10px;">
-                Изменить
-            </a>
-
-            <form action="{{ route('admin.categories.destroy', $cat->id) }}"
-                  method="POST"
-                  style="display:inline-block;">
-
-                @csrf
-                @method('DELETE')
-
-                <button class="btn btn-danger" style="padding:5px 10px;">
-                    Удалить
-                </button>
-
-            </form>
-
-        </td>
-
-    </tr>
-
-    @endforeach
-
-</table>
+                                <button class="admin-btn-danger">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="admin-empty">
+                        Категории пока не добавлены
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
 @endsection

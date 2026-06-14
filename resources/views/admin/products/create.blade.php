@@ -1,216 +1,212 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Создать товар')
+@section('page-title', 'Создать товар')
+@section('page-subtitle', 'Добавление нового товара в каталог')
 
 @section('content')
 
-<h1>Создать товар</h1>
-
 <form action="{{ route('admin.products.store') }}"
       method="POST"
-      enctype="multipart/form-data">
+      enctype="multipart/form-data"
+      class="admin-form">
 
     @csrf
 
-    {{-- Название --}}
-    <div>
-        <label>Название</label>
-        <input type="text" name="title" required>
+    <div class="admin-form-grid">
+
+        <div class="admin-form-card">
+            <h3>Основная информация</h3>
+
+            <div class="admin-field">
+                <label>Название</label>
+                <input type="text" name="title" required>
+            </div>
+
+            <div class="admin-field">
+                <label>Описание</label>
+                <textarea name="description"></textarea>
+            </div>
+
+            <div class="admin-field">
+                <label>Вес (кг)</label>
+                <input type="number" step="0.01" name="weight" required>
+            </div>
+
+            <div class="admin-field">
+                <label>Цена</label>
+                <input type="number" step="0.01" name="price" required>
+            </div>
+
+            <div class="admin-field">
+                <label>Остаток</label>
+                <input type="number" name="stock" value="0">
+            </div>
+        </div>
+
+        <div class="admin-form-card">
+            <h3>Категории</h3>
+
+            <div class="admin-checkbox-list">
+                @foreach($categories as $category)
+                    <label>
+                        <input type="checkbox" name="categories[]" value="{{ $category->id }}">
+                        <span>{{ $category->title }}</span>
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
     </div>
 
-    {{-- Описание --}}
-    <div>
-        <label>Описание</label>
-        <textarea name="description"></textarea>
+    <div class="admin-form-card">
+        <h3>Характеристики товара</h3>
+
+        <div class="admin-form-grid admin-form-grid--3">
+            <div class="admin-field">
+                <label>Белки</label>
+                <input type="text" name="proteins" placeholder="24%">
+            </div>
+
+            <div class="admin-field">
+                <label>Жиры</label>
+                <input type="text" name="fats" placeholder="14%">
+            </div>
+
+            <div class="admin-field">
+                <label>Углеводы</label>
+                <input type="text" name="carbohydrates" placeholder="45%">
+            </div>
+
+            <div class="admin-field">
+                <label>Энергетическая ценность</label>
+                <input type="text" name="energy_value" placeholder="380 ккал / 100г">
+            </div>
+
+            <div class="admin-field">
+                <label>Срок годности</label>
+                <input type="text" name="shelf_life">
+            </div>
+        </div>
+        <div class="admin-form-card">
+    <h3>Подходит для</h3>
+
+    <div class="admin-form-grid">
+        <div>
+            <label class="admin-section-label">Возраст</label>
+
+            <div class="admin-checkbox-list">
+                <label>
+                    <input type="checkbox" name="age_group[]" value="puppy">
+                    <span>Щенки</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="age_group[]" value="junior">
+                    <span>Юниоры</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="age_group[]" value="adult">
+                    <span>Взрослые</span>
+                </label>
+            </div>
+        </div>
+
+        <div>
+            <label class="admin-section-label">Размер породы</label>
+
+            <div class="admin-checkbox-list">
+                <label>
+                    <input type="checkbox" name="breed_size[]" value="small">
+                    <span>Мелкие породы</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="breed_size[]" value="medium">
+                    <span>Средние породы</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="breed_size[]" value="large">
+                    <span>Крупные породы</span>
+                </label>
+            </div>
+        </div>
     </div>
-
-    <hr>
-
-    <h3>Характеристики товара</h3>
-
-    <div>
-        <label>Белки</label>
-        <input type="text" name="proteins" placeholder="24%">
-    </div>
-
-    <div>
-        <label>Жиры</label>
-        <input type="text" name="fats" placeholder="14%">
-    </div>
-
-    <div>
-        <label>Углеводы</label>
-        <input type="text" name="carbohydrates" placeholder="45%">
-    </div>
-
-    <div>
-        <label>Энергетическая ценность</label>
-        <input type="text" name="energy_value" placeholder="380 ккал / 100г">
-    </div>
-
-    <div>
-        <label>Срок годности</label>
-        <input type="text" name="shelf_life">
-    </div>
-
-    <div>
-        <label>Состав</label>
-        <textarea name="composition"></textarea>
-    </div>
-
-    <div>
-        <label>Условия хранения</label>
-        <textarea name="storage_conditions"></textarea>
-    </div>
-
-    <div>
-        <label>Рекомендации по кормлению</label>
-        <textarea name="recommendations"></textarea>
-    </div>
-
-    <div>
-        <label>Возраст</label>
-
-        <select name="age_group">
-            <option value="all">Все возрасты</option>
-            <option value="puppy">Щенок</option>
-            <option value="junior">Юниор</option>
-            <option value="adult">Взрослый</option>
-        </select>
-    </div>
-
-    <div>
-        <label>Порода</label>
-
-        <select name="breed_size">
-            <option value="all">Все породы</option>
-            <option value="small">Мелкие</option>
-            <option value="medium">Средние</option>
-            <option value="large">Крупные</option>
-        </select>
-    </div>
-
-    {{-- Вес --}}
-    <div>
-        <label>Вес (кг)</label>
-        <input type="number" step="0.01" name="weight" required>
-    </div>
-
-    {{-- Цена --}}
-    <div>
-        <label>Цена</label>
-        <input type="number" step="0.01" name="price" required>
-    </div>
-
-    {{-- Склад --}}
-    <div>
-        <label>Остаток</label>
-        <input type="number" name="stock" value="0">
-    </div>
-
-    <div>
-    <label>Категории</label>
-
-    @foreach($categories as $category)
-        <label style="display:block;">
-            <input
-                type="checkbox"
-                name="categories[]"
-                value="{{ $category->id }}"
-            >
-            {{ $category->title }}
-        </label>
-    @endforeach
 </div>
 
-</select>
+        <div class="admin-form-grid admin-form-grid--3">
+            <div class="admin-field">
+                <label>Состав</label>
+                <textarea name="composition"></textarea>
+            </div>
 
+            <div class="admin-field">
+                <label>Условия хранения</label>
+                <textarea name="storage_conditions"></textarea>
+            </div>
 
-    {{-- выбор превью --}}
-    <div>
-        <label>Фото товара</label>
-
-        <input
-            type="file"
-            name="images[]"
-            id="imagesInput"
-            multiple
-            accept="image/*"
-        >
+            <div class="admin-field">
+                <label>Рекомендации по кормлению</label>
+                <textarea name="recommendations"></textarea>
+            </div>
+        </div>
     </div>
 
-    <div
-        id="imagePreviewContainer"
-        style="
-            display:flex;
-            gap:15px;
-            flex-wrap:wrap;
-            margin-top:20px;
-        "
-    ></div>
+    <div class="admin-form-card">
+        <h3>Фото товара</h3>
 
-    <button type="submit">
-        Создать товар
-    </button>
+        <div class="admin-field">
+            <input type="file" name="images[]" id="imagesInput" multiple accept="image/*">
+        </div>
+
+        <div id="imagePreviewContainer" class="admin-image-preview"></div>
+    </div>
+
+    <div class="admin-form-actions">
+        <button type="submit" class="admin-btn">
+            Создать товар
+        </button>
+    </div>
 
 </form>
+
 <script>
+const imagesInput = document.getElementById('imagesInput');
 
-document
-    .getElementById('imagesInput')
-    .addEventListener('change', function (e) {
-
-        const container =
-            document.getElementById(
-                'imagePreviewContainer'
-            );
-
+if (imagesInput) {
+    imagesInput.addEventListener('change', function (e) {
+        const container = document.getElementById('imagePreviewContainer');
         container.innerHTML = '';
 
-        Array.from(e.target.files)
-            .forEach((file, index) => {
+        Array.from(e.target.files).forEach((file, index) => {
+            const reader = new FileReader();
 
-                const reader =
-                    new FileReader();
+            reader.onload = function (event) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'admin-preview-item';
 
-                reader.onload = function (event) {
-
-                    const wrapper =
-                        document.createElement('div');
-
-                    wrapper.style.width = '180px';
-
-                    wrapper.innerHTML = `
-                        <img
-                            src="${event.target.result}"
-                            style="
-                                width:180px;
-                                height:180px;
-                                object-fit:cover;
-                                border-radius:10px;
-                                border:1px solid #ddd;
-                            "
+                wrapper.innerHTML = `
+                    <img src="${event.target.result}">
+                    <label>
+                        <input
+                            type="radio"
+                            name="preview_index"
+                            value="${index}"
+                            ${index === 0 ? 'checked' : ''}
                         >
+                        Главное фото
+                    </label>
+                `;
 
-                        <div style="margin-top:10px">
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="preview_index"
-                                    value="${index}"
-                                    ${index === 0 ? 'checked' : ''}
-                                >
-                                Главное фото
-                            </label>
-                        </div>
-                    `;
+                container.appendChild(wrapper);
+            };
 
-                    container.appendChild(wrapper);
-                };
-
-                reader.readAsDataURL(file);
-            });
+            reader.readAsDataURL(file);
+        });
     });
-
+}
 </script>
+
 @endsection

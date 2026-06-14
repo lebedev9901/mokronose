@@ -1,27 +1,65 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Редактирование товара')
+@section('title', 'Редактирование пользователя')
+@section('page-title', 'Редактирование пользователя')
+@section('page-subtitle', $user->name)
 
 @section('content')
 
-<h1>Редактирование товара</h1>
+<form method="POST"
+      action="{{ route('admin.users.update', $user->id) }}"
+      class="admin-form">
 
-<form method="POST" action="{{ route('admin.users.update', $user->id) }}">
     @csrf
     @method('PUT')
 
-    <input name="name" value="{{ $user->name }}">
-    <input name="email" value="{{ $user->email }}">
+    <div class="admin-form-card">
+        <h3>Данные пользователя</h3>
 
+        <div class="admin-field">
+            <label>Имя</label>
+            <input type="text"
+                   name="name"
+                   value="{{ old('name', $user->name) }}"
+                   required>
+        </div>
 
+        <div class="admin-field">
+            <label>Email</label>
+            <input type="email"
+                   name="email"
+                   value="{{ old('email', $user->email) }}"
+                   required>
+        </div>
 
-    <select name="role">
-        <option value="user" @selected($user->role == 'user')>User</option>
-        <option value="support" @selected($user->role == 'support')>Support</option>
-        <option value="admin" @selected($user->role == 'admin')>Admin</option>
-    </select>
+        <div class="admin-field">
+            <label>Роль</label>
+            <select name="role">
+                <option value="user" @selected(old('role', $user->role) === 'user')>
+                    Пользователь
+                </option>
 
-    <button>Сохранить</button>
+                <option value="support" @selected(old('role', $user->role) === 'support')>
+                    Поддержка
+                </option>
+
+                <option value="admin" @selected(old('role', $user->role) === 'admin')>
+                    Администратор
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="admin-form-actions">
+        <a href="{{ route('admin.users') }}" class="admin-btn-light">
+            Назад
+        </a>
+
+        <button class="admin-btn">
+            Сохранить
+        </button>
+    </div>
+
 </form>
 
 @endsection

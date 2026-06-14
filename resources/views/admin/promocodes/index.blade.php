@@ -1,71 +1,72 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Промокоды')
+@section('page-title', 'Промокоды')
+@section('page-subtitle', 'Управление скидками и промокодами')
 
 @section('content')
 
-<div class="container">
-
-    <div class="dashboard-header">
-        <h1>Промокоды</h1>
-
-        <a href="{{ route('admin.promocodes.create') }}" class="btn-primary">
-            Создать промокод
-        </a>
+<div class="admin-page-head">
+    <div>
+        <h2>Список промокодов</h2>
+        <p>Всего промокодов: {{ $promocodes->total() }}</p>
     </div>
 
-    <div class="dashboard-card">
+    <a href="{{ route('admin.promocodes.create') }}" class="admin-btn">
+        + Создать промокод
+    </a>
+</div>
 
-        <table class="admin-table">
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Код</th>
+                <th>Название</th>
+                <th>Тип</th>
+                <th>Значение</th>
+                <th>Использовано</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
 
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Код</th>
-                    <th>Название</th>
-                    <th>Тип</th>
-                    <th>Значение</th>
-                    <th>Использовано</th>
-                    <th>Активен</th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            <tbody>
-
+        <tbody>
             @forelse($promocodes as $promocode)
-
                 <tr>
-
-                    <td>{{ $promocode->id }}</td>
+                    <td class="admin-muted">#{{ $promocode->id }}</td>
 
                     <td>
-                        <strong>{{ $promocode->code }}</strong>
+                        <span class="admin-promocode-code">
+                            {{ $promocode->code }}
+                        </span>
                     </td>
 
                     <td>
-                        {{ $promocode->title }}
-                    </td>
-
-                    <td>
-                        @if($promocode->type === 'percent')
-                            Процент
-                        @else
-                            Фиксированная
-                        @endif
+                        <strong>{{ $promocode->title ?? 'Без названия' }}</strong>
                     </td>
 
                     <td>
                         @if($promocode->type === 'percent')
-                            {{ $promocode->value }}%
+                            <span class="admin-status admin-status--info">Процент</span>
                         @else
-                            {{ $promocode->value }} ₽
+                            <span class="admin-status admin-status--warning">Фиксированная</span>
                         @endif
+                    </td>
+
+                    <td>
+                        <strong>
+                            @if($promocode->type === 'percent')
+                                {{ $promocode->value }}%
+                            @else
+                                {{ number_format($promocode->value, 0, ',', ' ') }} ₽
+                            @endif
+                        </strong>
                     </td>
 
                     <td>
                         {{ $promocode->used_count }}
-
                         @if($promocode->usage_limit)
                             / {{ $promocode->usage_limit }}
                         @endif
@@ -73,68 +74,45 @@
 
                     <td>
                         @if($promocode->is_active)
-                            <span class="status status-success">
-                                Активен
-                            </span>
+                            <span class="admin-status admin-status--success">Активен</span>
                         @else
-                            <span class="status status-danger">
-                                Выключен
-                            </span>
+                            <span class="admin-status admin-status--danger">Выключен</span>
                         @endif
                     </td>
 
                     <td>
-
-                        <div class="table-actions">
-
-                            <a
-                                href="{{ route('admin.promocodes.edit', $promocode) }}"
-                                class="btn-small"
-                            >
+                        <div class="admin-actions">
+                            <a href="{{ route('admin.promocodes.edit', $promocode) }}"
+                               class="admin-btn-light">
                                 Изменить
                             </a>
 
-                            <form
-                                action="{{ route('admin.promocodes.destroy', $promocode) }}"
-                                method="POST"
-                            >
+                            <form action="{{ route('admin.promocodes.destroy', $promocode) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Удалить промокод?')">
                                 @csrf
                                 @method('DELETE')
 
-                                <button
-                                    class="btn-small btn-danger"
-                                    onclick="return confirm('Удалить промокод?')"
-                                >
+                                <button class="admin-btn-danger">
                                     Удалить
                                 </button>
                             </form>
-
                         </div>
-
                     </td>
-
                 </tr>
-
             @empty
-
                 <tr>
-                    <td colspan="8">
+                    <td colspan="8" class="admin-empty">
                         Промокодов пока нет
                     </td>
                 </tr>
-
             @endforelse
+        </tbody>
+    </table>
+</div>
 
-            </tbody>
-
-        </table>
-
-        <div style="margin-top:20px;">
-            {{ $promocodes->links() }}
-        </div>
-
-    </div>
-
+<div class="admin-pagination">
+    {{ $promocodes->links() }}
 </div>
 
 @endsection

@@ -2,105 +2,118 @@
 
 @section('title', 'Товары')
 
+@section('page-title', 'Товары')
+@section('page-subtitle', 'Управление товарами магазина')
+
 @section('content')
 
-<h1>Товары</h1>
-<div style="margin-bottom: 20px;">
-    <a href="{{ route('admin.products.create') }}"
-       class="btn btn-primary">
+<div class="admin-page-head">
+    <div>
+        <h2>Список товаров</h2>
+        <p>Всего товаров: {{ $products->count() }}</p>
+    </div>
+
+    <a href="{{ route('admin.products.create') }}" class="admin-btn">
         + Добавить товар
     </a>
 </div>
-<table class="table">
 
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Фото</th>
-            <th>Название</th>
-            <th>Цена</th>
-            <th>Остаток</th>
-            <th>Категория</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        @foreach($products as $product)
-
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead>
             <tr>
-
-                <td>
-                    {{ $product->id }}
-                </td>
-
-                <td>
-                    <div class="thumbs">
-                        @foreach($product->images->take(2) as $img)
-                            <img src="{{ asset('storage/' . $img->image) }}">
-                        @endforeach
-
-                        @if($product->images->count() > 2)
-                            <div class="more">
-                                +{{ $product->images->count() - 2 }}
-                            </div>
-                        @endif
-                    </div>
-                </td>
-
-                <td>
-                    {{ $product->title }}
-                </td>
-
-                <td>
-                    {{ $product->price }} ₽
-                </td>
-                <td>
-                    {{ $product->stock }} 
-                </td>
-                <td>
-                    @foreach($product->categories as $category)
-                    <span style="
-                        display:inline-block;
-                        padding:3px 8px;
-                        background:#eee;
-                        border-radius:6px;
-                        margin:2px;
-                        font-size:12px;
-                        color: black;
-                    ">
-                        {{ $category->title }}
-                    </span>
-                @endforeach
-                </td>
-                <td>
-                    <a href="{{ route('admin.products.edit', $product->id) }}"
-                   class="btn btn-primary" style="padding: 6px 10px">
-                        Редактировать
-                    </a>
-
-                    <form action="{{ route('admin.products.destroy', $product->id) }}"
-                        method="POST"
-                        style="display:inline;"
-                        onsubmit="return confirm('Удалить товар?')">
-
-                        @csrf
-                        @method('DELETE')
-
-                         <button class="btn btn-danger" style="padding:6px 10px;">
-                            Удалить
-                        </button>
-
-                    </form>
-                </td>
-
+                <th>ID</th>
+                <th>Фото</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Остаток</th>
+                <th>Категории</th>
+                <th>Действия</th>
             </tr>
+        </thead>
 
-        @endforeach
+        <tbody>
+            @forelse($products as $product)
+                <tr>
+                    <td class="admin-muted">#{{ $product->id }}</td>
 
-    </tbody>
+                    <td>
+                        <div class="admin-thumbs">
+                            @forelse($product->images->take(2) as $img)
+                                <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $product->title }}">
+                            @empty
+                                <div class="admin-no-image">Нет фото</div>
+                            @endforelse
 
-</table>
+                            @if($product->images->count() > 2)
+                                <div class="admin-more">
+                                    +{{ $product->images->count() - 2 }}
+                                </div>
+                            @endif
+                        </div>
+                    </td>
+
+                    <td>
+                        <strong class="admin-product-title">
+                            {{ $product->title }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        <strong>{{ number_format($product->price, 0, ',', ' ') }} ₽</strong>
+                    </td>
+
+                    <td>
+                        @if($product->stock > 0)
+                            <span class="admin-status admin-status--success">
+                                {{ $product->stock }} шт.
+                            </span>
+                        @else
+                            <span class="admin-status admin-status--danger">
+                                Нет
+                            </span>
+                        @endif
+                    </td>
+
+                    <td>
+                        <div class="admin-tags">
+                            @forelse($product->categories as $category)
+                                <span>{{ $category->title }}</span>
+                            @empty
+                                <span>Без категории</span>
+                            @endforelse
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="admin-actions">
+                            <a href="{{ route('admin.products.edit', $product->id) }}"
+                               class="admin-btn-light">
+                                Изменить
+                            </a>
+
+                            <form action="{{ route('admin.products.destroy', $product->id) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Удалить товар?')">
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="admin-btn-danger">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="admin-empty">
+                        Товары пока не добавлены
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
 @endsection

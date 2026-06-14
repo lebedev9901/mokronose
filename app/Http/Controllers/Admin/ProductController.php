@@ -32,7 +32,12 @@ class ProductController extends Controller
         'price' => 'required|numeric',
         'weight' => 'required|numeric',
         'stock' => 'nullable|integer',
-        'images.*' => 'image'
+        'images.*' => 'image',
+        'age_group' => 'nullable|array',
+        'age_group.*' => 'in:puppy,junior,adult',
+
+        'breed_size' => 'nullable|array',
+        'breed_size.*' => 'in:small,medium,large',
     ]);
 
     DB::transaction(function () use ($request) {
@@ -52,8 +57,8 @@ class ProductController extends Controller
             'composition' => $request->composition,
             'storage_conditions' => $request->storage_conditions,
             'recommendations' => $request->recommendations,
-            'age_group' => $request->age_group,
-            'breed_size' => $request->breed_size,
+            'age_group' => $request->age_group ?? [],
+            'breed_size' => $request->breed_size ?? [],
             
         ]);
         if ($request->has('categories')) {
@@ -95,6 +100,13 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'weight' => 'required|numeric',
             'stock' => 'nullable|integer',
+            'images.*' => 'image',
+
+            'age_group' => 'nullable|array',
+            'age_group.*' => 'in:puppy,junior,adult',
+
+            'breed_size' => 'nullable|array',
+            'breed_size.*' => 'in:small,medium,large',
         ]);
 
         $product->update([
@@ -111,8 +123,8 @@ class ProductController extends Controller
             'composition' => $request->composition,
             'storage_conditions' => $request->storage_conditions,
             'recommendations' => $request->recommendations,
-            'age_group' => $request->age_group,
-            'breed_size' => $request->breed_size,
+            'age_group' => $request->age_group ?? [],
+            'breed_size' => $request->breed_size ?? [],
             
         ]);
         $product->categories()->sync($request->categories ?? []);

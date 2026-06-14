@@ -39,7 +39,6 @@ class AdminOrderController extends Controller
         $chat = $order->chat;
 
         if (!$chat) {
-
             $chat = $order->chat()->create([
                 'user_id' => $order->user_id,
             ]);
@@ -53,8 +52,10 @@ class AdminOrderController extends Controller
                 : 'system',
         ]);
 
-        return back();
-    }
+        return response()->json([
+            'success' => true,
+        ]);
+}
 
     public function confirm($id)
     {
@@ -65,4 +66,23 @@ class AdminOrderController extends Controller
 
         return back()->with('success', 'Заказ подтверждён');
     }
+
+    public function messages(Order $order)
+{
+    $order->load('chat.message.user');
+
+    if (!$order->chat) {
+        return response()->json([
+            'html' => '<div class="admin-chat-empty">Сообщений пока нет</div>',
+            'count' => 0,
+        ]);
+    }
+
+    return response()->json([
+        'html' => view('admin.orders.partials.messages', [
+            'messages' => $order->chat->message,
+        ])->render(),
+        'count' => $order->chat->message->count(),
+    ]);
+}
 }

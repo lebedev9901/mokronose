@@ -88,23 +88,25 @@ Route::post('/orders/{id}/confirm', [AdminOrderController::class, 'confirm'])
         ->name('admin.dashboard');
 
 
-        Route::get('/admin/news', [NewsController::class, 'index'])
+        Route::get('/news', [NewsController::class, 'index'])
     ->name('admin.news');
 
-Route::get('/admin/news/create', [NewsController::class, 'create'])
+Route::get('/news/create', [NewsController::class, 'create'])
     ->name('admin.news.create');
 
-Route::post('/admin/news', [NewsController::class, 'store'])
+Route::post('/news', [NewsController::class, 'store'])
     ->name('admin.news.store');
 
-Route::get('/admin/news/{news}/edit', [NewsController::class, 'edit'])
+Route::get('/news/{news}/edit', [NewsController::class, 'edit'])
     ->name('admin.news.edit');
 
-Route::put('/admin/news/{news}', [NewsController::class, 'update'])
+Route::put('/news/{news}', [NewsController::class, 'update'])
     ->name('admin.news.update');
 
-Route::delete('/admin/news/{news}', [NewsController::class, 'destroy'])
+Route::delete('/news/{news}', [NewsController::class, 'destroy'])
     ->name('admin.news.destroy');
-    Route::resource('/admin/promocodes', PromocodeController::class)
+    Route::resource('/promocodes', PromocodeController::class)
     ->names('admin.promocodes');
+    Route::get('/orders/{order}/messages', [AdminOrderController::class, 'messages'])
+    ->name('admin.orders.messages');
 });

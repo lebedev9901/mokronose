@@ -177,7 +177,11 @@ Route::post('/cart/promocode/remove', [CartController::class, 'removePromocode']
     ->name('orders.repeat');
     Route::post('/checkout/address', [AddressController::class, 'storeAjax'])
     ->name('checkout.address.store');
+    Route::get('/support/{chat}/messages', [SupportController::class, 'messages'])
+    ->name('support.messages');
 
+Route::post('/support/{chat}/send-ajax', [SupportController::class, 'sendAjax'])
+    ->name('support.send.ajax');
     });
 
 

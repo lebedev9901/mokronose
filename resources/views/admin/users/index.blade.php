@@ -1,37 +1,83 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Товары')
+@section('title', 'Пользователи')
+@section('page-title', 'Пользователи')
+@section('page-subtitle', 'Управление аккаунтами пользователей')
 
 @section('content')
 
-<table class="table">
-    <tr>
-        <th>ID</th>
-        <th>Имя</th>
-        <th>Email</th>
-        <th>Роль</th>
-        <th>Дата регитсрации</th>
-        <th>Действия</th>
-    </tr>
+<div class="admin-page-head">
+    <div>
+        <h2>Список пользователей</h2>
+        <p>Всего пользователей: {{ $users->count() }}</p>
+    </div>
+</div>
 
-    @foreach($users as $user)
-    <tr>
-        <td>{{ $user->id }}</td>
-        <td>{{ $user->name }}</td>
-        <td>{{ $user->email }}</td>
-        <td>{{ $user->role }}</td>
-        <td>{{ $user->created_at }}</td>
-        <td>
-            <a href="{{ route('admin.users.edit', $user->id) }}">Edit</a>
+<div class="admin-table-wrap">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Пользователь</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th>Дата регистрации</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
 
-            <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}">
-                @csrf
-                @method('DELETE')
-                <button>Delete</button>
-            </form>
-        </td>
-    </tr>
-    @endforeach
-</table>
+        <tbody>
+            @forelse($users as $user)
+                <tr>
+                    <td class="admin-muted">#{{ $user->id }}</td>
+
+                    <td>
+                        <strong>{{ $user->name }}</strong>
+                    </td>
+
+                    <td>{{ $user->email }}</td>
+
+                    <td>
+                        @if($user->role === 'admin')
+                            <span class="admin-status admin-status--danger">Админ</span>
+                        @elseif($user->role === 'support')
+                            <span class="admin-status admin-status--info">Поддержка</span>
+                        @else
+                            <span class="admin-status admin-status--success">Пользователь</span>
+                        @endif
+                    </td>
+
+                    <td>{{ $user->created_at->format('d.m.Y H:i') }}</td>
+
+                    <td>
+                        <div class="admin-actions">
+                            <a href="{{ route('admin.users.edit', $user->id) }}"
+                               class="admin-btn-light">
+                                Изменить
+                            </a>
+
+                            <form method="POST"
+                                  action="{{ route('admin.users.destroy', $user->id) }}"
+                                  onsubmit="return confirm('Удалить пользователя?')">
+                                @csrf
+                                @method('DELETE')
+
+                                <button class="admin-btn-danger">
+                                    Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="admin-empty">
+                        Пользователи не найдены
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
 @endsection

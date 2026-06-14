@@ -24,19 +24,25 @@
         ? asset('storage/' . $preview->image)
         : asset('assets/img/no-image.png');
 
-    $ages = [
-        'all' => 'Все возрасты',
-        'puppy' => 'Щенки',
-        'junior' => 'Юниоры',
-        'adult' => 'Взрослые',
+    $ageLabels = [
+        'puppy' => 'Щенкам',
+        'junior' => 'Юниорам',
+        'adult' => 'Взрослым',
     ];
 
-    $breeds = [
-        'all' => 'Все породы',
-        'small' => 'Мелкие породы',
-        'medium' => 'Средние породы',
-        'large' => 'Крупные породы',
+    $breedLabels = [
+        'small' => 'Мелким породам',
+        'medium' => 'Средним породам',
+        'large' => 'Крупным породам',
     ];
+
+    $productAgeGroups = is_array($product->age_group)
+        ? $product->age_group
+        : (json_decode($product->age_group, true) ?: []);
+
+    $productBreedSizes = is_array($product->breed_size)
+        ? $product->breed_size
+        : (json_decode($product->breed_size, true) ?: []);
 ?>
 
 <div class="container">
@@ -166,15 +172,26 @@
             <h3>Характеристики</h3>
 
             <div class="product-spec-row">
-                <span>Подходит для</span>
-                <strong>
-                    <?php echo e($ages[$product->age_group ?? 'all'] ?? 'Все возрасты'); ?>
+    <span>Возраст</span>
+    <strong>
+        <?php $__empty_1 = true; $__currentLoopData = $productAgeGroups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $age): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <?php echo e($ageLabels[$age] ?? $age); ?><?php if(!$loop->last): ?>, <?php endif; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            Для всех возрастов
+        <?php endif; ?>
+    </strong>
+</div>
 
-                    /
-                    <?php echo e($breeds[$product->breed_size ?? 'all'] ?? 'Все породы'); ?>
-
-                </strong>
-            </div>
+<div class="product-spec-row">
+    <span>Размер породы</span>
+    <strong>
+        <?php $__empty_1 = true; $__currentLoopData = $productBreedSizes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $breed): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <?php echo e($breedLabels[$breed] ?? $breed); ?><?php if(!$loop->last): ?>, <?php endif; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            Для всех пород
+        <?php endif; ?>
+    </strong>
+</div>
 
             <?php if($product->weight): ?>
                 <div class="product-spec-row">

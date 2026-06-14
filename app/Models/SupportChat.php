@@ -34,7 +34,7 @@ class SupportChat extends Model
         return match ($this->status) {
             'open' => 'Открыт',
             'waiting' => 'Ожидает ответа поддержки',
-            'answered' => 'Есть ответ поддержки',
+            'answered' => 'Ответ поддержки',
             'closed' => 'Закрыт',
             default => 'Неизвестно',
         };

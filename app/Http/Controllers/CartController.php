@@ -77,30 +77,32 @@ class CartController extends Controller
         })->first();
 
 
-        $pets = auth()->check()
-        ? auth()->user()->pets()->first()
-        : null;
+        
 
+        $firstPet = auth()->check()
+            ? auth()->user()->pets()->first()
+            : null;
 
-        $firstPet = $pets->first();
+        $recommendedProducts = Product::with(['images', 'categories']);
 
-        $recommendedProducts = Product::with('images')
-            ->when($firstPet?->age_group, function ($query) use ($firstPet) {
-                $query->where(function ($q) use ($firstPet) {
-                    $q->where('age_group', $firstPet->age_group)
-                    ->orWhereNull('age_group')
-                    ->orWhere('age_group', '')
-                    ->orWhere('age_group', 'all');
-                });
-            })
-            ->when($firstPet?->breed_size, function ($query) use ($firstPet) {
-                $query->where(function ($q) use ($firstPet) {
-                    $q->where('breed_size', $firstPet->breed_size)
+        if ($firstPet) {
+            $recommendedProducts->where(function ($query) use ($firstPet) {
+                if (!empty($firstPet->age_group)) {
+                    $query->orWhereJsonContains('age_group', $firstPet->age_group);
+                }
+
+                if (!empty($firstPet->breed_size)) {
+                    $query->orWhereJsonContains('breed_size', $firstPet->breed_size);
+                }
+
+                $query->orWhereNull('age_group')
+                    ->orWhereJsonLength('age_group', 0)
                     ->orWhereNull('breed_size')
-                    ->orWhere('breed_size', '')
-                    ->orWhere('breed_size', 'all');
-                });
-            })
+                    ->orWhereJsonLength('breed_size', 0);
+            });
+        }
+
+        $recommendedProducts = $recommendedProducts
             ->latest()
             ->take(4)
             ->get();

@@ -13,43 +13,65 @@ class ProductController extends Controller
     
 
     public function show(Product $product)
-    {
-        
-        // // Подгружаем категории и изображения для продукта
-        $product->load('categories', 'images', 'reviews.user', 'reviews.images');
-        // // dd($product);
+{
+    $product->load('categories', 'images', 'reviews.user', 'reviews.images');
 
-         $favoriteIds = auth()->check()
-            ? auth()->user()->favoriteProducts()->pluck('products.id')->toArray()
-            : [];
-        $categoryIds = $product->categories->pluck('id');
+    $favoriteIds = auth()->check()
+        ? auth()->user()->favoriteProducts()->pluck('products.id')->toArray()
+        : [];
 
-        $similarProducts = Product::with(['images', 'categories'])
-            ->where('id', '!=', $product->id)
-            ->where(function ($query) use ($product, $categoryIds) {
+    $categoryIds = $product->categories->pluck('id')->toArray();
+
+    $ageGroups = is_array($product->age_group)
+        ? $product->age_group
+        : (json_decode($product->age_group, true) ?: []);
+
+    $breedSizes = is_array($product->breed_size)
+        ? $product->breed_size
+        : (json_decode($product->breed_size, true) ?: []);
+
+    $similarProducts = Product::with(['images', 'categories'])
+        ->where('id', '!=', $product->id)
+        ->where(function ($query) use ($categoryIds, $ageGroups, $breedSizes) {
+
+            if (!empty($categoryIds)) {
                 $query->whereHas('categories', function ($q) use ($categoryIds) {
                     $q->whereIn('categories.id', $categoryIds);
-                })
-                ->orWhere('age_group', $product->age_group)
-                ->orWhere('breed_size', $product->breed_size);
-            })
+                });
+            }
+
+            foreach ($ageGroups as $age) {
+                $query->orWhereJsonContains('age_group', $age);
+            }
+
+            foreach ($breedSizes as $breed) {
+                $query->orWhereJsonContains('breed_size', $breed);
+            }
+
+        })
+        ->latest()
+        ->limit(4)
+        ->get();
+
+    if ($similarProducts->count() < 4) {
+        $extraProducts = Product::with(['images', 'categories'])
+            ->where('id', '!=', $product->id)
+            ->whereNotIn('id', $similarProducts->pluck('id'))
             ->latest()
-            ->limit(4)
+            ->limit(4 - $similarProducts->count())
             ->get();
 
-        if ($similarProducts->count() < 4) {
-            $extraProducts = Product::with(['images', 'categories'])
-                ->where('id', '!=', $product->id)
-                ->whereNotIn('id', $similarProducts->pluck('id'))
-                ->latest()
-                ->limit(4 - $similarProducts->count())
-                ->get();
-
-            $similarProducts = $similarProducts->merge($extraProducts);
-        }
-
-        return view('product.show', compact('product', 'favoriteIds', 'similarProducts'));
+        $similarProducts = $similarProducts->merge($extraProducts);
     }
+
+    return view('product.show', compact(
+        'product',
+        'favoriteIds',
+        'similarProducts',
+        'ageGroups',
+        'breedSizes'
+    ));
+}
 
 
      

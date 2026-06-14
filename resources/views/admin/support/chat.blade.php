@@ -1,115 +1,117 @@
 @extends('admin.layouts.app')
 
 @section('title', 'Чат поддержки')
+@section('page-title', 'Чат поддержки #' . $chat->id)
+@section('page-subtitle', $chat->user->name ?? 'Пользователь удалён')
 
 @section('content')
 
-<div style="display:flex; gap:20px;">
+<div class="admin-support-chat-layout">
 
-    {{-- LEFT --}}
-    <div style="width:320px; border-right:1px solid #ddd;">
+    <aside class="admin-support-sidebar">
 
-        @foreach($allChats as $item)
+        <div class="admin-support-sidebar__head">
+            <h3>Все чаты</h3>
+        </div>
 
-            <a href="{{ route('admin.support.chat', $item->id) }}"
-               style="display:block;
-                      padding:15px;
-                      border-bottom:1px solid #eee;
-                      text-decoration:none;">
+        <div class="admin-support-sidebar__list">
+            @foreach($allChats as $item)
 
-                <strong>
-                    {{ $item->user->name }}
-                </strong>
+                <a href="{{ route('admin.support.chat', $item->id) }}"
+                   class="admin-support-sidebar__item {{ $chat->id === $item->id ? 'active' : '' }}">
 
-                <div>
-                    #{{ $item->id }}
-                </div>
+                    <strong>{{ $item->user->name ?? 'Удалён' }}</strong>
 
-            </a>
+                    <span>
+                        Чат #{{ $item->id }}
+                    </span>
 
-        @endforeach
+                    @if($item->message->last())
+                        <p>{{ \Illuminate\Support\Str::limit($item->message->last()->message, 35) }}</p>
+                    @endif
 
-    </div>
+                </a>
 
-    {{-- RIGHT --}}
-    <div style="flex:1;">
+            @endforeach
+        </div>
 
-        <h2>
-            Чат #{{ $chat->id }}
-        </h2>
+    </aside>
 
-        <div style="
-            height:500px;
-            overflow-y:auto;
-            border:1px solid #ddd;
-            padding:20px;
-            margin-bottom:20px;
-            border-radius:12px;
-        ">
+    <section class="admin-chat-panel">
 
-            @foreach($chat->message as $message)
+        <div class="admin-chat-panel__head">
+            <div>
+                <h3>{{ $chat->user->name ?? 'Удалён' }}</h3>
+                <p>Чат #{{ $chat->id }}</p>
+            </div>
 
-                <div style="
-                    margin-bottom:15px;
-                    display:flex;
-                    justify-content:
-                        {{ $message->sender_type === 'support'
-                            ? 'flex-end'
-                            : 'flex-start' }};
-                ">
+            @if($chat->status === 'open')
+                <span class="admin-status admin-status--success">Открыт</span>
+            @elseif($chat->status === 'waiting')
+                <span class="admin-status admin-status--warning">Ждёт ответа</span>
+            @elseif($chat->status === 'answered')
+                <span class="admin-status admin-status--info">Ответили</span>
+            @elseif($chat->status === 'closed')
+                <span class="admin-status admin-status--danger">Закрыт</span>
+            @else
+                <span class="admin-status">{{ $chat->status }}</span>
+            @endif
+        </div>
 
-                    <div style="
-                        max-width:70%;
-                        padding:12px;
-                        border-radius:12px;
-                        background:
-                            {{ $message->sender_type === 'support'
-                                ? '#2563eb'
-                                : '#f3f4f6' }};
-                        color:
-                            {{ $message->sender_type === 'support'
-                                ? 'white'
-                                : 'black' }};
-                    ">
+        <div class="admin-chat-panel__body" id="adminSupportChatBox">
 
-                        <div>
+            @forelse($chat->message as $message)
+
+                <div class="admin-chat-msg admin-chat-msg--{{ $message->sender_type }}">
+                    <div class="admin-chat-msg__bubble">
+                        <div class="admin-chat-msg__name">
+                            {{ $message->user->name ?? 'Система' }}
+                        </div>
+
+                        <div class="admin-chat-msg__text">
                             {{ $message->message }}
                         </div>
 
-                        <small>
-                            {{ $message->created_at->format('d.m H:i') }}
-                        </small>
-
+                        <div class="admin-chat-msg__time">
+                            {{ $message->created_at->format('d.m.Y H:i') }}
+                        </div>
                     </div>
-
                 </div>
 
-            @endforeach
+            @empty
+
+                <div class="admin-chat-empty">
+                    Сообщений пока нет
+                </div>
+
+            @endforelse
 
         </div>
 
         <form method="POST"
-              action="{{ route('admin.support.send', $chat->id) }}">
+              action="{{ route('admin.support.send', $chat->id) }}"
+              class="admin-chat-panel__form">
 
             @csrf
 
-            <div style="display:flex; gap:10px;">
+            <textarea name="message" placeholder="Введите сообщение..." required></textarea>
 
-                <input type="text"
-                       name="message"
-                       placeholder="Введите сообщение..."
-                       style="flex:1;">
-
-                <button>
-                    Отправить
-                </button>
-
-            </div>
+            <button class="admin-btn">
+                Отправить
+            </button>
 
         </form>
 
-    </div>
+    </section>
 
 </div>
+
+<script>
+const adminSupportChatBox = document.getElementById('adminSupportChatBox');
+
+if (adminSupportChatBox) {
+    adminSupportChatBox.scrollTop = adminSupportChatBox.scrollHeight;
+}
+</script>
 
 @endsection

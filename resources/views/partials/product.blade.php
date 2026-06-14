@@ -1,26 +1,30 @@
 @if($products->count())
 
     @foreach ($products as $product)
-        @php
-            $preview = $product->images->where('is_preview', true)->first()
-                ?? $product->images->first();
+           @php
+    $preview = $product->images->where('is_preview', true)->first()
+        ?? $product->images->first();
 
-            $ageLabels = [
-                'puppy' => 'Щенкам',
-                'junior' => 'Юниорам',
-                'adult' => 'Взрослым',
-            ];
+    $ageLabels = [
+        'puppy' => 'Щенкам',
+        'junior' => 'Юниорам',
+        'adult' => 'Взрослым',
+    ];
 
-            $breedLabels = [
-                'small' => 'Маленьким породам',
-                'medium' => 'Средним породам',
-                'large' => 'Крупным породам',
-                'all' => 'Для всех пород',
-            ];
+    $breedLabels = [
+        'small' => 'Мелким породам',
+        'medium' => 'Средним породам',
+        'large' => 'Крупным породам',
+    ];
 
-            $ageLabel = $ageLabels[$product->age_group] ?? null;
-            $breedLabel = $breedLabels[$product->breed_size] ?? null;
-        @endphp
+    $productAgeGroups = is_array($product->age_group)
+        ? $product->age_group
+        : (json_decode($product->age_group, true) ?: []);
+
+    $productBreedSizes = is_array($product->breed_size)
+        ? $product->breed_size
+        : (json_decode($product->breed_size, true) ?: []);
+@endphp
 
         <article
             class="product-card"
@@ -66,13 +70,21 @@
             <div class="product-info">
 
                 <div class="product-badges">
-                    @if($ageLabel)
-                        <span class="product-badge">{{ $ageLabel }}</span>
-                    @endif
+                    @foreach($productAgeGroups as $age)
+                        @if(isset($ageLabels[$age]))
+                            <span class="product-badge">
+                                {{ $ageLabels[$age] }}
+                            </span>
+                        @endif
+                    @endforeach
 
-                    @if($breedLabel)
-                        <span class="product-badge product-badge--soft">{{ $breedLabel }}</span>
-                    @endif
+                    @foreach($productBreedSizes as $breed)
+                        @if(isset($breedLabels[$breed]))
+                            <span class="product-badge product-badge--soft">
+                                {{ $breedLabels[$breed] }}
+                            </span>
+                        @endif
+                    @endforeach
                 </div>
 
                 <a href="{{ route('product', $product->id) }}" class="product-title">

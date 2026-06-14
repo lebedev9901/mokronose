@@ -30,6 +30,11 @@ class Product extends Model
         'breed_size',
         ]; 
 
+        protected $casts = [
+            'age_group' => 'array',
+            'breed_size' => 'array',
+        ];
+
     public function images()
     {
         return $this->hasMany(ProductImage::class);

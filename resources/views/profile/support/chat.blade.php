@@ -61,15 +61,15 @@
                         {{ $chat->subject ?? 'Чат поддержки' }}
                     </h2>
 
-                    <div class="support-chat-status">
+                    <!-- <div class="support-chat-status">
 
                         Статус:
 
-                        <span class="{{ $chat->status }}">
+                        <span id="supportChatStatus" class="{{ $chat->status }}">
                             {{ strtoupper($chat->status_label) }}
                         </span>
 
-                    </div>
+                    </div> -->
 
                 </div>
 
@@ -77,63 +77,34 @@
 
             {{-- MESSAGES --}}
             <div class="support-messages"
-                 id="chat-box">
+                id="chat-box"
+                data-url="{{ route('support.messages', $chat->id) }}">
 
-                @forelse($chat->message as $message)
-
-                    <div class="support-message
-                        {{ $message->sender_type === 'user'
-                            ? 'user'
-                            : 'support' }}">
-
-                        <div class="support-message-content">
-
-                            <div class="support-message-author">
-
-                                {{ $message->user->name }}
-
-                            </div>
-
-                            <div class="support-message-text">
-                                {{ $message->message }}
-                            </div>
-
-                            <div class="support-message-time">
-                                {{ $message->created_at->format('d.m.Y H:i') }}
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                @empty
-
-                    <div class="support-empty-chat">
-                        Сообщений пока нет
-                    </div>
-
-                @endforelse
+                @include('profile.support.partials.messages', [
+                    'messages' => $chat->message
+                ])
 
             </div>
 
             {{-- FORM --}}
             @if($chat->status !== 'closed')
 
-                <form action="{{ route('support.send', $chat->id) }}"
-                      method="POST"
-                      class="support-form">
+                <form action="{{ route('support.send.ajax', $chat->id) }}"
+      method="POST"
+      class="support-form"
+      id="supportChatForm">
 
-                    @csrf
+    @csrf
 
-                    <textarea name="message"
-                              placeholder="Введите сообщение..."
-                              required></textarea>
+    <textarea name="message"
+              placeholder="Введите сообщение..."
+              required></textarea>
 
-                    <button type="submit">
-                        Отправить
-                    </button>
+    <button type="submit">
+        Отправить
+    </button>
 
-                </form>
+</form>
 
             @else
 
@@ -154,17 +125,72 @@
 
 
 
-
 @push('scripts')
-
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const chatBox = document.getElementById('chat-box');
+    const supportChatForm = document.getElementById('supportChatForm');
+    const supportChatStatus = document.getElementById('supportChatStatus');
 
-const chatBox = document.getElementById('chat-box');
+    function scrollSupportChatToBottom() {
+        if (!chatBox) return;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-if(chatBox){
-    chatBox.scrollTop = chatBox.scrollHeight;
+    function loadSupportMessages() {
+    if (!chatBox) return;
+
+    const isNearBottom =
+        chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 80;
+
+    fetch(chatBox.dataset.url, {
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (chatBox.innerHTML !== data.html) {
+                chatBox.innerHTML = data.html;
+
+                if (isNearBottom) {
+                    scrollSupportChatToBottom();
+                }
+            }
+
+            if (supportChatStatus && data.status) {
+                supportChatStatus.className = data.status;
+                supportChatStatus.innerText = data.status_label;
+            }
+        });
 }
 
-</script>
+    if (supportChatForm) {
+        supportChatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
 
+            const formData = new FormData(supportChatForm);
+            const textarea = supportChatForm.querySelector('textarea');
+
+            fetch(supportChatForm.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': formData.get('_token'),
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(() => {
+                    textarea.value = '';
+                    loadSupportMessages();
+                });
+        });
+    }
+
+    scrollSupportChatToBottom();
+    loadSupportMessages();
+    setInterval(loadSupportMessages, 3000);
+});
+</script>
 @endpush

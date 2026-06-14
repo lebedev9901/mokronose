@@ -97,4 +97,42 @@ class SupportController extends Controller
 
         return back();
     }
+    public function messages(SupportChat $chat)
+{
+    abort_if($chat->user_id !== auth()->id(), 403);
+
+    $chat->load('message.user');
+
+    return response()->json([
+        'html' => view('profile.support.partials.messages', [
+            'messages' => $chat->message,
+        ])->render(),
+        'status' => $chat->status,
+        'status_label' => $chat->status_label,
+        'count' => $chat->message->count(),
+    ]);
+}
+
+public function sendAjax(Request $request, SupportChat $chat)
+{
+    abort_if($chat->user_id !== auth()->id(), 403);
+
+    $request->validate([
+        'message' => 'required',
+    ]);
+
+    $chat->message()->create([
+        'user_id' => auth()->id(),
+        'message' => $request->message,
+        'sender_type' => 'user',
+    ]);
+
+    $chat->update([
+        'status' => 'waiting',
+    ]);
+
+    return response()->json([
+        'success' => true,
+    ]);
+}
 }

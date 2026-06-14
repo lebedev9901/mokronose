@@ -56,23 +56,30 @@ class CatalogController extends Controller
         }
 
         if ($request->filled('age_group')) {
-            $ages = (array) $request->age_group;
+    $ages = (array) $request->age_group;
 
-            $query->where(function ($q) use ($ages) {
-                $q->whereIn('age_group', $ages)
-                    ->orWhereNull('age_group');
-            });
+    $query->where(function ($q) use ($ages) {
+        foreach ($ages as $age) {
+            $q->orWhereJsonContains('age_group', $age);
         }
 
-        if ($request->filled('breed_size')) {
-            $sizes = (array) $request->breed_size;
+        $q->orWhereNull('age_group')
+            ->orWhereJsonLength('age_group', 0);
+    });
+}
 
-            $query->where(function ($q) use ($sizes) {
-                $q->whereIn('breed_size', $sizes)
-                    ->orWhereNull('breed_size')
-                    ->orWhere('breed_size', 'all');
-            });
+if ($request->filled('breed_size')) {
+    $sizes = (array) $request->breed_size;
+
+    $query->where(function ($q) use ($sizes) {
+        foreach ($sizes as $size) {
+            $q->orWhereJsonContains('breed_size', $size);
         }
+
+        $q->orWhereNull('breed_size')
+            ->orWhereJsonLength('breed_size', 0);
+    });
+}
 
         match ($request->get('sort')) {
             'price_asc' => $query->orderBy('price', 'asc'),
