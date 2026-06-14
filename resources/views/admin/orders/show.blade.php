@@ -183,5 +183,21 @@ scrollAdminChatToBottom();
 loadAdminOrderMessages();
 setInterval(loadAdminOrderMessages, 3000);
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('{{ route('notifications.markByData') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            type: 'new_order',
+            key: 'order_id',
+            value: '{{ $order->id }}'
+        })
+    });
+});
+</script>
 
 @endsection

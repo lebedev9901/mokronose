@@ -9,6 +9,8 @@ use App\Models\OrderItem;
 use App\Models\Promocode;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
 use App\Services\VkMessageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -127,7 +129,11 @@ class OrderController extends Controller
             }
 
             $order = Order::create($orderData);
-
+            User::where('role', 'admin')->get()->each(function ($admin) use ($order) {
+                $admin->notify(
+                    new NewOrderNotification($order)
+                );
+            });
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,

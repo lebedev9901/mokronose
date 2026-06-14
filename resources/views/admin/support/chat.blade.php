@@ -113,5 +113,21 @@ if (adminSupportChatBox) {
     adminSupportChatBox.scrollTop = adminSupportChatBox.scrollHeight;
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('{{ route('notifications.markByData') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            type: 'support_message',
+            key: 'chat_id',
+            value: '{{ $chat->id }}'
+        })
+    });
+});
+</script>
 
 @endsection

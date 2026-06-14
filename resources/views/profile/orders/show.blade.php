@@ -236,4 +236,20 @@
 
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('{{ route('notifications.markByData') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            type: 'order_status',
+            key: 'order_id',
+            value: '{{ $order->id }}'
+        })
+    });
+});
+</script>
 @endsection

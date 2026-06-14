@@ -117,6 +117,22 @@ if (adminSupportChatBox) {
     adminSupportChatBox.scrollTop = adminSupportChatBox.scrollHeight;
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('<?php echo e(route('notifications.markByData')); ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
+        },
+        body: JSON.stringify({
+            type: 'support_message',
+            key: 'chat_id',
+            value: '<?php echo e($chat->id); ?>'
+        })
+    });
+});
+</script>
 
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('admin.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/admin/support/chat.blade.php ENDPATH**/ ?>

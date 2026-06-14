@@ -190,3 +190,91 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+function loadNotificationCount() {
+    const count = document.getElementById('notificationCount');
+
+    if (!count) return;
+
+    fetch('/notifications/count')
+        .then(res => res.json())
+        .then(data => {
+            count.innerText = data.count;
+            count.classList.toggle('is-hidden', parseInt(data.count) <= 0);
+        })
+        .catch(() => {});
+}
+
+function getNotificationIcon(type) {
+    if (type === 'support_message') return '💬';
+    if (type === 'new_order') return '🛒';
+    if (type === 'order_status') return '📦';
+
+    return '🔔';
+}
+
+function loadNotifications() {
+    const list = document.getElementById('notificationList');
+
+    if (!list) return;
+
+    fetch('/notifications/list')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.notifications.length) {
+                list.innerHTML = '<div class="notification-empty">Уведомлений нет</div>';
+                return;
+            }
+
+            list.innerHTML = data.notifications.map(item => `
+                <a href="${item.url}" class="notification-item" data-id="${item.id}">
+                    <div class="notification-item__icon">${getNotificationIcon(item.type)}</div>
+                    <div class="notification-item__body">
+                        <strong>${item.title}</strong>
+                        <span>${item.message}</span>
+                        <small>${item.created_at}</small>
+                    </div>
+                </a>
+            `).join('');
+        })
+        .catch(() => {
+            list.innerHTML = '<div class="notification-empty">Ошибка загрузки</div>';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadNotificationCount();
+
+    setInterval(loadNotificationCount, 5000);
+
+    const btn = document.getElementById('notificationBtn');
+    const dropdown = document.getElementById('notificationDropdown');
+    const readAll = document.getElementById('notificationReadAll');
+
+    if (btn && dropdown) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+            loadNotifications();
+        });
+    }
+
+    if (readAll) {
+        readAll.addEventListener('click', () => {
+            fetch('/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(() => {
+                loadNotificationCount();
+                loadNotifications();
+            });
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.notification-widget')) {
+            dropdown?.classList.remove('active');
+        }
+    });
+});

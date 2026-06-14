@@ -61,7 +61,7 @@
                         {{ $chat->subject ?? 'Чат поддержки' }}
                     </h2>
 
-                    <!-- <div class="support-chat-status">
+                    <div class="support-chat-status">
 
                         Статус:
 
@@ -69,7 +69,7 @@
                             {{ strtoupper($chat->status_label) }}
                         </span>
 
-                    </div> -->
+                    </div>
 
                 </div>
 
@@ -126,6 +126,22 @@
 
 
 @push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('{{ route('notifications.markByData') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            type: 'support_message',
+            key: 'chat_id',
+            value: '{{ $chat->id }}'
+        })
+    });
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const chatBox = document.getElementById('chat-box');

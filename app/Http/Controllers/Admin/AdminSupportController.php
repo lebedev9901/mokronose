@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SupportChat;
+use App\Notifications\SupportMessageNotification;
 use Illuminate\Http\Request;
 
 class AdminSupportController extends Controller
@@ -52,7 +53,7 @@ class AdminSupportController extends Controller
             'message' => 'required'
         ]);
 
-        $chat->message()->create([
+        $message = $chat->message()->create([
             'user_id' => auth()->id(),
             'message' => $request->message,
             'sender_type' => 'support'
@@ -61,6 +62,10 @@ class AdminSupportController extends Controller
         $chat->update([
             'status' => 'answered'
         ]);
+
+        $chat->user->notify(
+            new SupportMessageNotification($chat, $message, 'user')
+        );
 
         return back();
     }

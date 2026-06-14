@@ -66,7 +66,7 @@
                                 <a href="{{route('pay')}}">Доставка и оплата</a>
                             </li>
                         </ul>
-                                              
+                                            
                         <div class="header__enter flex">
                             @if(auth()->check())
                                 <a href="{{ route('profile.index') }}" class="header-user">
@@ -101,6 +101,25 @@
                                 {{ $cartCount ?? 0 }}
                             </span>
                         </a>
+                        @auth
+                        <div class="notification-widget">
+                            <button type="button" class="notification-btn" id="notificationBtn">
+                                🔔
+                                <span id="notificationCount" class="notification-count is-hidden">0</span>
+                            </button>
+
+                            <div class="notification-dropdown" id="notificationDropdown">
+                                <div class="notification-dropdown__head">
+                                    <strong>Уведомления</strong>
+                                    <button type="button" id="notificationReadAll">Прочитать всё</button>
+                                </div>
+
+                                <div id="notificationList" class="notification-list">
+                                    <div class="notification-empty">Загрузка...</div>
+                                </div>
+                            </div>
+                        </div>
+                        @endauth  
                         </div>
                     </div>
                 </div>

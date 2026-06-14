@@ -183,6 +183,22 @@ scrollAdminChatToBottom();
 loadAdminOrderMessages();
 setInterval(loadAdminOrderMessages, 3000);
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('<?php echo e(route('notifications.markByData')); ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
+        },
+        body: JSON.stringify({
+            type: 'new_order',
+            key: 'order_id',
+            value: '<?php echo e($order->id); ?>'
+        })
+    });
+});
+</script>
 
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('admin.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/admin/orders/show.blade.php ENDPATH**/ ?>

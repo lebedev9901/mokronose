@@ -64,7 +64,7 @@
 
                     </h2>
 
-                    <!-- <div class="support-chat-status">
+                    <div class="support-chat-status">
 
                         Статус:
 
@@ -73,7 +73,7 @@
 
                         </span>
 
-                    </div> -->
+                    </div>
 
                 </div>
 

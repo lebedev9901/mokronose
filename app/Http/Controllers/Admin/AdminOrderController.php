@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Notifications\OrderStatusNotification;
 use Illuminate\Http\Request;
 
 class AdminOrderController extends Controller
@@ -33,56 +34,67 @@ class AdminOrderController extends Controller
     public function sendMessage(Request $request, Order $order)
     {
         $request->validate([
-            'message' => 'required'
-        ]);
-
-        $chat = $order->chat;
-
-        if (!$chat) {
-            $chat = $order->chat()->create([
-                'user_id' => $order->user_id,
+                'message' => 'required'
             ]);
-        }
 
-        $chat->message()->create([
-            'user_id' => auth()->id(),
-            'message' => $request->message,
-            'sender_type' => auth()->user()->role === 'support'
-                ? 'support'
-                : 'system',
-        ]);
+            $chat = $order->chat;
 
-        return response()->json([
-            'success' => true,
-        ]);
-}
+            if (!$chat) {
+                $chat = $order->chat()->create([
+                    'user_id' => $order->user_id,
+                ]);
+            }
+
+            $chat->message()->create([
+                'user_id' => auth()->id(),
+                'message' => $request->message,
+                'sender_type' => auth()->user()->role === 'support'
+                    ? 'support'
+                    : 'system',
+            ]);
+
+            return response()->json([
+                'success' => true,
+            ]);
+    }
 
     public function confirm($id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with('user')->findOrFail($id);
 
-        $order->status = 'confirmed';
-        $order->save();
+        $order->update([
+            'status' => 'confirmed',
+        ]);
+
+        if ($order->user) {
+            $order->user->notify(
+                new OrderStatusNotification(
+                    $order,
+                    'Заказ подтверждён',
+                    'Ваш заказ №' . $order->id . ' подтверждён'
+                )
+            );
+        }
 
         return back()->with('success', 'Заказ подтверждён');
     }
 
     public function messages(Order $order)
-{
-    $order->load('chat.message.user');
+    {
+        $order->load('chat.message.user');
 
-    if (!$order->chat) {
+        if (!$order->chat) {
+            return response()->json([
+                'html' => '<div class="admin-chat-empty">Сообщений пока нет</div>',
+                'count' => 0,
+            ]);
+        }
+
         return response()->json([
-            'html' => '<div class="admin-chat-empty">Сообщений пока нет</div>',
-            'count' => 0,
+            'html' => view('admin.orders.partials.messages', [
+                'messages' => $order->chat->message,
+            ])->render(),
+            'count' => $order->chat->message->count(),
         ]);
     }
-
-    return response()->json([
-        'html' => view('admin.orders.partials.messages', [
-            'messages' => $order->chat->message,
-        ])->render(),
-        'count' => $order->chat->message->count(),
-    ]);
-}
 }
