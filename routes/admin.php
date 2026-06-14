@@ -35,7 +35,7 @@ Route::middleware(['admin'])->group(function () {
     Route::post('/products/images/{image}/preview', [ProductController::class, 'setPreview'])
         ->name('admin.products.image.preview');
 
-    Route::resource('subcategories', SubcategoryController::class);
+
 
     Route::get('/categories', [CategoryController::class, 'index'])
         ->name('admin.categories');
