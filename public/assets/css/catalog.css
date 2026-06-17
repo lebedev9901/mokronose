@@ -34,6 +34,8 @@ body.modal-open {
 
 .catalog-content {
   min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .catalog-filters {
@@ -669,7 +671,7 @@ body.modal-open {
   display: none;
 }
 
-.qty-btn {
+ qty-btn {
   width: 32px;
   height: 32px;
   border: none;
@@ -682,12 +684,12 @@ body.modal-open {
   transition: .2s ease;
 }
 
-.qty-btn:hover {
+ qty-btn:hover {
   background: var(--color-accent);
   color: white;
 }
 
-.qty-value {
+ qty-value {
   min-width: 24px;
   text-align: center;
   font-size: 17px;
@@ -1105,4 +1107,15 @@ body.modal-open {
     width: 38px;
     height: 38px;
   }
+}
+
+
+
+@media (max-width: 700px) {
+    .catalog-main-categories {
+        flex-direction: row;
+        overflow-x: auto;
+        flex-direction: column;
+        padding-bottom: 8px;
+    }
 }

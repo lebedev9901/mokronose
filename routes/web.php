@@ -42,6 +42,8 @@ Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('c
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::put('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
 
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
 
 Route::view('/aboute', 'pages.aboute')->name('aboute');
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');

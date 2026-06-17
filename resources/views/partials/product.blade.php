@@ -65,7 +65,8 @@
                 <img
                     src="{{ $preview ? asset('storage/' . $preview->image) : asset('assets/img/no-image.png') }}"
                     alt="{{ $product->title }}"
-                    loading="lazy"
+                     loading="lazy"
+                    decoding="async"
                 >
             </div>
 

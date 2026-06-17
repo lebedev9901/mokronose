@@ -62,6 +62,49 @@ class CartController extends Controller
         return back()->with('success', 'Товар добавлен в корзину');
     }
 
+     public function addById(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => ['required', 'integer', 'exists:products,id'],
+            'quantity' => ['sometimes', 'integer', 'min:1'],
+        ]);
+
+        $product = Product::findOrFail($data['product_id']);
+        $quantity = $data['quantity'] ?? 1;
+
+        $cart = self::currentCart();
+
+        $item = CartItem::firstOrCreate(
+            [
+                'cart_id' => $cart->id,
+                'product_id' => $product->id,
+            ],
+            [
+                'user_id' => Auth::id(),
+                'session_id' => Auth::check() ? null : session()->getId(),
+                'qty' => 0,
+            ]
+        );
+
+        if ($quantity > 1) {
+            $item->increment('qty', $quantity);
+        } else {
+            $item->increment('qty');
+        }
+
+        $item->refresh();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'qty' => $item->qty,
+                'cart_count' => $cart->items()->sum('qty'),
+            ]);
+        }
+
+        return back()->with('success', 'Товар добавлен в корзину');
+    }
+
     public function index()
     {
         $sessionId = session()->getId();

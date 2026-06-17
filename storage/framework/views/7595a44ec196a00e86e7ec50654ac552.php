@@ -65,7 +65,8 @@
                 <img
                     src="<?php echo e($preview ? asset('storage/' . $preview->image) : asset('assets/img/no-image.png')); ?>"
                     alt="<?php echo e($product->title); ?>"
-                    loading="lazy"
+                     loading="lazy"
+                    decoding="async"
                 >
             </div>
 
