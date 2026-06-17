@@ -86,7 +86,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
     <script src="<?php echo e(asset('assets/js/catalog.js')); ?>" defer></script>
-    <script src="<?php echo e(asset('assets/js/cart-page.js')); ?>" defer></script>
+    <?php if(request()->routeIs('cart')): ?>
+        <script src="<?php echo e(asset('assets/js/cart-page.js')); ?>"></script>
+    <?php endif; ?>
     <script src="<?php echo e(asset('assets/js/cart.js')); ?>" defer></script>
     <script src="<?php echo e(asset('assets/js/script.js')); ?>" defer></script>
     <script src="https://api-maps.yandex.ru/2.1/?apikey=6ddd0b57-b0eb-4daa-aed7-5147db0f1650&lang=ru_RU" type="text/javascript"></script>
