@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderStatusMail;
 use App\Models\Order;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
@@ -9,6 +10,7 @@ use App\Models\User;
 use App\Notifications\OrderStatusNotification;
 use App\Notifications\SupportMessageNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class SupportController extends Controller
 {
@@ -24,6 +26,16 @@ class SupportController extends Controller
                 'Ваш заказ №' . $order->id . ' подтверждён поддержкой'
             )
         );
+
+        if ($order->user && $order->user->email) {
+            Mail::to($order->user->email)->send(
+                new OrderStatusMail(
+                    $order,
+                    'Заказ подтверждён',
+                    'Ваш заказ №' . $order->id . ' подтверждён поддержкой.'
+                )
+            );
+        }
 
         if ($order->chat) {
             SupportMessage::create([

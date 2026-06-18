@@ -133,8 +133,8 @@ Route::post('/addresses/{id}/main', [AddressController::class, 'setMain']);
 
         return response()->json(['success' => true]);
     });
-
-     Route::get('/profile/support', [SupportController::class, 'index'])
+       
+    Route::get('/profile/support', [SupportController::class, 'index'])
         ->name('support.index');
 
     Route::get('/profile/support/create', [SupportController::class, 'create'])
@@ -143,12 +143,18 @@ Route::post('/addresses/{id}/main', [AddressController::class, 'setMain']);
     Route::post('/profile/support/store', [SupportController::class, 'store'])
         ->name('support.store');
 
+    Route::get('/profile/support/{chat}/messages', [SupportController::class, 'messages'])
+        ->name('support.messages');
+
+    Route::post('/profile/support/{chat}/send-ajax', [SupportController::class, 'sendAjax'])
+        ->name('support.send.ajax');
+
     Route::get('/profile/support/{chat}', [SupportController::class, 'chat'])
         ->name('support.chat');
 
     Route::post('/profile/support/{chat}/send', [SupportController::class, 'send'])
         ->name('support.send');
-
+    
  
 
     Route::get('/profile/pet/list', [PetController::class, 'index'])

@@ -70,7 +70,11 @@ class Order extends Model
     {
         return match ($this->status) {
             'new' => 'Новый',
+            'pending' => 'Ожидает обработки',
+            'confirmed' => 'Подтверждён',
             'processing' => 'В обработке',
+            'shipped' => 'Отправлен',
+            'delivered' => 'Доставлен',
             'completed' => 'Завершён',
             'cancelled' => 'Отменён',
             default => 'Неизвестно',

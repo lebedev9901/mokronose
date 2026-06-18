@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SupportMessageMail;
 use App\Models\SupportChat;
 use App\Notifications\SupportMessageNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AdminSupportController extends Controller
 {
@@ -66,6 +69,8 @@ class AdminSupportController extends Controller
         $chat->user->notify(
             new SupportMessageNotification($chat, $message, 'user')
         );
+
+       
 
         return back();
     }

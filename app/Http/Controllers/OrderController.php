@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderMail;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
@@ -14,6 +15,8 @@ use App\Notifications\NewOrderNotification;
 use App\Services\VkMessageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -24,7 +27,13 @@ class OrderController extends Controller
 
     public function checkout()
     {
-        $cartItems = CartItem::where('user_id', auth()->id())
+        $cart = Cart::where('user_id', auth()->id())->first();
+
+        if (!$cart) {
+            return redirect()->route('cart')->with('error', 'Корзина пуста');
+        }
+
+        $cartItems = CartItem::where('cart_id', $cart->id)
             ->with('product')
             ->whereHas('product')
             ->get();
@@ -33,7 +42,7 @@ class OrderController extends Controller
             return redirect()->route('cart')->with('error', 'Корзина пуста');
         }
 
-        $total = $cartItems->sum(fn($item) => $item->product->price * $item->qty);
+        $total = $cartItems->sum(fn ($item) => $item->product->price * $item->qty);
 
         return view('orders.checkout', compact('cartItems', 'total'));
     }
@@ -68,7 +77,13 @@ class OrderController extends Controller
             'phone' => $request->phone,
         ]);
 
-        $cartItems = CartItem::where('user_id', auth()->id())
+        $cart = Cart::where('user_id', auth()->id())->first();
+
+        if (!$cart) {
+            return redirect()->route('cart')->with('error', 'Корзина пуста');
+        }
+
+        $cartItems = CartItem::where('cart_id', $cart->id)
             ->with('product')
             ->whereHas('product')
             ->get();
@@ -77,8 +92,8 @@ class OrderController extends Controller
             return redirect()->route('cart')->with('error', 'Корзина пуста');
         }
 
-        $order = DB::transaction(function () use ($cartItems, $request) {
-            $totalBeforeDiscount = $cartItems->sum(fn($item) => $item->product->price * $item->qty);
+        $order = DB::transaction(function () use ($cartItems, $request, $cart) {
+            $totalBeforeDiscount = $cartItems->sum(fn ($item) => $item->product->price * $item->qty);
 
             $promocode = session('promocode');
             $discountAmount = 0;
@@ -86,17 +101,19 @@ class OrderController extends Controller
             if ($promocode) {
                 $discountAmount = (float) ($promocode['discount'] ?? 0);
             }
+
             if (session('promocode') && auth()->check()) {
                 auth()->user()->update([
                     'promocode_used_at' => now(),
                 ]);
             }
+
             if (session('promocode.id')) {
                 Promocode::where('id', session('promocode.id'))->increment('used_count');
             }
 
             $totalAfterDiscount = max($totalBeforeDiscount - $discountAmount, 0);
-            
+
             $orderData = [
                 'user_id' => auth()->id(),
                 'promocode_id' => $promocode['id'] ?? null,
@@ -129,11 +146,13 @@ class OrderController extends Controller
             }
 
             $order = Order::create($orderData);
+
             User::where('role', 'admin')->get()->each(function ($admin) use ($order) {
                 $admin->notify(
                     new NewOrderNotification($order)
                 );
             });
+
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -157,7 +176,8 @@ class OrderController extends Controller
                 'message' => 'Заказ создан и передан в поддержку',
             ]);
 
-            CartItem::where('user_id', auth()->id())->delete();
+            CartItem::where('cart_id', $cart->id)->delete();
+
             session()->forget('promocode');
 
             return $order;
@@ -165,14 +185,36 @@ class OrderController extends Controller
 
         $user = auth()->user();
 
-        if ($user->vk_id) {
-            $vk->sendToUser(
-                $user->vk_id,
-                "Здравствуйте, {$user->first_name}!\n\n" .
-                "Ваш заказ №{$order->id} успешно оформлен и передан в поддержку.\n" .
-                "Сумма заказа: {$order->total_after_discount} ₽\n\n" .
-                "Мы свяжемся с вами в ближайшее время."
-            );
+        try {
+            if ($user->vk_id) {
+                $vk->sendToUser(
+                    $user->vk_id,
+                    "Здравствуйте, {$user->first_name}!\n\n" .
+                    "Ваш заказ №{$order->id} успешно оформлен и передан в поддержку.\n" .
+                    "Сумма заказа: {$order->total_after_discount} ₽\n\n" .
+                    "Мы свяжемся с вами в ближайшее время."
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки VK уведомления о заказе', [
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        try {
+            if ($order->user && $order->user->email) {
+                Mail::to($order->user->email)->send(
+                    new NewOrderMail($order)
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки email после оформления заказа', [
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+                'error' => $e->getMessage(),
+            ]);
         }
 
         return redirect()->route('order.confirm')->with('success', 'Заказ оформлен');
