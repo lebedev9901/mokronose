@@ -205,7 +205,7 @@ class OrderController extends Controller
 
         try {
             if ($order->user && $order->user->email) {
-                Mail::to($order->user->email)->send(
+                Mail::to($order->user->email)->queue(
                     new NewOrderMail($order)
                 );
             }
