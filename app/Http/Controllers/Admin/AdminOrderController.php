@@ -91,7 +91,7 @@ class AdminOrderController extends Controller
                     $chat->user->vk_id,
                     "💬 МокроНос\n\n" .
                     "Новое сообщение от поддержки:\n\n" .
-                    $message->message.
+                    $message->message."\n\n".
                     "Открыть чат:\n" .
                 route('support.chat', $chat->id)
                 );
@@ -156,7 +156,7 @@ class AdminOrderController extends Controller
                 "Ваш заказ №{$order->id} подтверждён.\n\n" .
                 "Мы начали обработку заказа и скоро свяжемся с вами.\n\n".
                 "Посмотреть заказ:\n" .
-             route('profile.order.show', $order->id)
+             route('order.show', $order->id)
             );
         }
     } catch (\Throwable $e) {

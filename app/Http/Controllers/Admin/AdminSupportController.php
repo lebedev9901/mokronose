@@ -99,7 +99,7 @@ class AdminSupportController extends Controller
                     $chat->user->vk_id,
                     "💬 МокроНос\n\n" .
                     "В чате поддержки появилось новое сообщение:\n\n" .
-                    $message->message.
+                    $message->message."\n\n".
                     "Открыть чат:\n" .
                 route('support.chat', $chat->id)
                 );

@@ -28,7 +28,7 @@ class SupportController extends Controller
         );
 
         if ($order->user && $order->user->email) {
-            Mail::to($order->user->email)->send(
+            Mail::to($order->user->email)->queue(
                 new OrderStatusMail(
                     $order,
                     'Заказ подтверждён',
