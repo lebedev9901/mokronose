@@ -156,7 +156,7 @@ class AdminOrderController extends Controller
                 "Ваш заказ №{$order->id} подтверждён.\n\n" .
                 "Мы начали обработку заказа и скоро свяжемся с вами.\n\n".
                 "Посмотреть заказ:\n" .
-             route('order.show', $order->id)
+                route('orders.show', $order->id)
             );
         }
     } catch (\Throwable $e) {

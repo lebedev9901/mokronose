@@ -24,12 +24,13 @@ jobs:
             php artisan migrate --force
             php artisan optimize:clear
             php artisan storage:link || true
+            php artisan sitemap:generate
             chown -R www-data:www-data storage bootstrap/cache
             chmod -R 775 storage bootstrap/cache
             systemctl reload php8.3-fpm
             systemctl reload nginx
             npm run build
-            php artisan sitemap:generate
+            
 
             
             
