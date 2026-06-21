@@ -43,7 +43,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/product.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/cart.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/modal-login.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/advantages.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/faq.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/process.css') }}">

@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -103,6 +104,33 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Product::class, 'favorites')
             ->withTimestamps();
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = url(route('password.reset', [
+            'token' => $token,
+            'email' => $this->email,
+        ], false));
+
+        $this->notify(new class($url) extends \Illuminate\Auth\Notifications\ResetPassword {
+            public function __construct(public string $url)
+            {
+                parent::__construct('');
+            }
+
+            public function toMail($notifiable)
+            {
+                return (new MailMessage)
+                    ->subject('Восстановление пароля — МокроНос')
+                    ->greeting('Здравствуйте!')
+                    ->line('Вы получили это письмо, потому что был запрошен сброс пароля для вашего аккаунта.')
+                    ->action('Сбросить пароль', $this->url)
+                    ->line('Ссылка для сброса пароля действует ограниченное время.')
+                    ->line('Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.')
+                    ->salutation('С заботой, команда МокроНос');
+            }
+        });
     }
 
 }

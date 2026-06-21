@@ -29,6 +29,7 @@ jobs:
             systemctl reload php8.3-fpm
             systemctl reload nginx
             npm run build
+            php artisan sitemap:generate
 
             
             

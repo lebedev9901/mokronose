@@ -1,39 +1,58 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">🐶</div>
+                <h1>Новый пароль</h1>
+                <p>Придумайте новый пароль для вашего аккаунта</p>
+            </div>
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+            <form method="POST" action="{{ route('password.store') }}" class="auth-form">
+                @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+                <div class="auth-field">
+                    <label for="email">Email</label>
+                    <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        value="{{ old('email', $request->email) }}"
+                        required
+                        autofocus
+                        autocomplete="username"
+                    >
+                    <x-input-error :messages="$errors->get('email')" class="auth-error" />
+                </div>
+
+                <div class="auth-field">
+                    <label for="password">Новый пароль</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password">
+                    <x-input-error :messages="$errors->get('password')" class="auth-error" />
+                </div>
+
+                <div class="auth-field">
+                    <label for="password_confirmation">Повторите пароль</label>
+                    <input
+                        id="password_confirmation"
+                        type="password"
+                        name="password_confirmation"
+                        required
+                        autocomplete="new-password"
+                    >
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="auth-error" />
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    Сохранить новый пароль
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Уже есть доступ?
+                <a href="{{ route('login') }}">Войти</a>
+            </div>
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
+    </div>
 </x-guest-layout>

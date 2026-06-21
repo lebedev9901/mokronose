@@ -8,6 +8,8 @@ use App\Mail\OrderStatusMail;
 use App\Mail\SupportMessageMail;
 use App\Models\Order;
 use App\Notifications\OrderStatusNotification;
+use App\Notifications\SupportMessageNotification;
+use App\Services\VkMessageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -36,58 +38,77 @@ class AdminOrderController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
-    public function sendMessage(Request $request, Order $order)
+   public function sendMessage(Request $request, Order $order, VkMessageService $vk)
     {
         $request->validate([
-                'message' => 'required'
+            'message' => 'required|string',
+        ]);
+
+        $chat = $order->chat;
+
+        if (!$chat) {
+            $chat = $order->chat()->create([
+                'user_id' => $order->user_id,
             ]);
+        }
 
-            $chat = $order->chat;
+        $chat->load('user');
 
-            if (!$chat) {
-                $chat = $order->chat()->create([
-                    'user_id' => $order->user_id,
-                ]);
+        $message = $chat->message()->create([
+            'user_id' => auth()->id(),
+            'message' => $request->message,
+            'sender_type' => 'support',
+        ]);
+
+        if ($chat->user) {
+            $chat->user->notify(
+                new SupportMessageNotification($chat, $message, 'user')
+            );
+        }
+
+        try {
+            if ($chat->user && $chat->user->email) {
+                Mail::to($chat->user->email)->send(
+                    new SupportMessageMail(
+                        $chat,
+                        $message,
+                        'Новое сообщение от поддержки'
+                    )
+                );
             }
-            
-
-            $message = $chat->message()->create([
-                'user_id' => auth()->id(),
-                'message' => $request->message,
-                'sender_type' => auth()->user()->role === 'support'
-                    ? 'support'
-                    : 'system',
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки email поддержки из заказа', [
+                'chat_id' => $chat->id,
+                'order_id' => $order->id,
+                'user_id' => $chat->user_id,
+                'error' => $e->getMessage(),
             ]);
+        }
 
-         
-            
-          
-
-            try {
-                if ($chat->user && $chat->user->email) {
-                    Mail::to($chat->user->email)->send(
-                        new SupportMessageMail(
-                            $chat,
-                            $message,
-                            'Новое сообщение от поддержки'
-                        )
-                    );
-                }
-            } catch (\Throwable $e) {
-                Log::error('Ошибка отправки email поддержки из заказа', [
-                    'chat_id' => $chat->id,
-                    'order_id' => $order->id,
-                    'user_id' => $chat->user_id,
-                    'error' => $e->getMessage(),
-                ]);
+       try {
+            if ($chat->user?->vk_id) {
+                $vk->sendToUser(
+                    $chat->user->vk_id,
+                    "💬 МокроНос\n\n" .
+                    "Новое сообщение от поддержки:\n\n" .
+                    $message->message
+                );
             }
-
-            return response()->json([
-                'success' => true,
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки VK сообщения поддержки из заказа', [
+                'chat_id' => $chat->id,
+                'order_id' => $order->id,
+                'user_id' => $chat->user_id,
+                'error' => $e->getMessage(),
             ]);
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
-    public function confirm($id)
+    public function confirm($id, VkMessageService $vk)
     {
         $order = Order::with('user')->findOrFail($id);
 
@@ -124,6 +145,23 @@ class AdminOrderController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+
+        try {
+    if ($order->user?->vk_id) {
+            $vk->sendToUser(
+                $order->user->vk_id,
+                "🐶 МокроНос\n\n" .
+                "Ваш заказ №{$order->id} подтверждён.\n\n" .
+                "Мы начали обработку заказа и скоро свяжемся с вами."
+            );
+        }
+    } catch (\Throwable $e) {
+        Log::error('Ошибка отправки VK уведомления о статусе заказа', [
+            'order_id' => $order->id,
+            'user_id' => $order->user_id,
+            'error' => $e->getMessage(),
+        ]);
+    }
 
         return back()->with('success', 'Заказ подтверждён');
     }

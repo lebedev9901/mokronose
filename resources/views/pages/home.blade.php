@@ -373,6 +373,54 @@
         </div>
     </div>
 </section>
+<div class="site-notice-modal" id="orderNoticeModal">
+    <div class="site-notice-modal__overlay" data-notice-close></div>
+
+    <div class="site-notice-modal__card">
+        <button type="button" class="site-notice-modal__close" data-notice-close>
+            ×
+        </button>
+
+        <div class="site-notice-modal__icon">🐶</div>
+
+        <h2>Приём заказов в выходные</h2>
+
+        <p>
+        МокроНос принимает заказы без выходных. Если вы оформили заказ после 18:00 пятницы или в выходные дни, мы обработаем его в понедельник и свяжемся с вами для подтверждения.
+        </p>
+
+        <button type="button" class="site-notice-modal__btn" data-notice-close>
+            Понятно
+        </button>
+    </div>
+</div>
+
+<div class="site-notice-modal" id="vkNoticeModal">
+    <div class="site-notice-modal__overlay" data-vk-notice-close></div>
+
+    <div class="site-notice-modal__card">
+        <button type="button" class="site-notice-modal__close" data-vk-notice-close>
+            ×
+        </button>
+
+        <div class="site-notice-modal__icon">💬</div>
+
+        <h2>Уведомления в VK</h2>
+
+        <p>
+            Для получения уведомлений о заказе, необходимо написать нам в сообщество, если ранее чата с сообществом не было. 
+            <a href="https://vk.me/mokronose" target="_blank" class="btn-secondary">
+                Написать в VK
+            </a>
+        </p>
+
+        <button type="button" class="site-notice-modal__btn" data-vk-notice-close>
+            Хорошо
+        </button>
+    </div>
+</div>
+
+
 <script>
 console.log('JS работает');
 </script>

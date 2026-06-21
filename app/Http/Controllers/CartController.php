@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    private static function currentCart()
+    public static function currentCart()
     {
         if (Auth::check()) {
             return Cart::firstOrCreate(

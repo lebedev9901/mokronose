@@ -5,35 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use App\Models\Product;
 use App\Models\Review;
-use App\Models\VkReview;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Product::with('images');
 
-        // 🔍 поиск
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        // ⭐ фильтр рейтинга
         $query->where('rating', '>', 4.5)
             ->orderBy('rating', 'desc');
 
         $products = $query->take(3)->get();
 
-        // fallback если пусто
         if ($products->isEmpty()) {
-            $products = Product::latest()->take(3)->get();
+            $products = Product::with('images')->latest()->take(3)->get();
         }
 
         $reviews = Review::with(['user', 'product'])
-           ->latest()
+            ->latest()
             ->paginate(3);
 
+        $cart = Cart::with('items')
+            ->when(auth()->check(), function ($query) {
+                $query->where('user_id', auth()->id());
+            }, function ($query) use ($request) {
+                $query->where('session_id', $request->session()->getId());
+            })
+            ->first();
+
+        $cartQuantities = $cart
+            ? $cart->items->pluck('qty', 'product_id')
+            : collect();
+
+        $cartCount = $cartQuantities->sum();
 
         $news = News::where('is_active', true)
             ->where(function ($query) {
@@ -44,8 +54,12 @@ class HomeController extends Controller
             ->latest()
             ->get();
 
-
-        return view('pages.home', compact('products', 'reviews', 'news'));
+        return view('pages.home', compact(
+            'products',
+            'reviews',
+            'news',
+            'cartQuantities',
+            'cartCount'
+        ));
     }
-
 }

@@ -27,6 +27,9 @@ use Laravel\Socialite\Socialite;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/info', function(){
+    return view('pages.info');
+})->name('info');
 Route::get('/catalog', [CatalogController::class, 'catalog'])->name('catalog');
 Route::get('/product/{product}', [ProductController::class, 'show'])->name('product');
 Route::get('/catalog/product/{product}/quick', [CatalogController::class, 'quick'])
@@ -42,7 +45,7 @@ Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('c
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::put('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
 
-Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+
 
 
 Route::view('/aboute', 'pages.aboute')->name('aboute');

@@ -132,26 +132,49 @@
                     {{ $product->price }} ₽
                 </div>
 
-                <div class="product-actions" data-product-id="{{ $product->id }}">
-                    <button type="button" class="btn product-btn add-to-cart" data-id="{{ $product->id }}">
-                        В корзину
-                    </button>
+                <div class="product-actions">
 
-                    @auth
-                        @php
-                            $isFavorite = in_array($product->id, $favoriteIds ?? []);
-                        @endphp
+    <div class="product-cart-control" data-product="{{ $product->id }}">
 
-                        <button
-                            type="button"
-                            class="favorite__btn {{ $isFavorite ? 'is-active' : '' }}"
-                            data-product-id="{{ $product->id }}"
-                            onclick="toggleFavorite(this)"
-                        >
-                            {{ $isFavorite ? 'В избранном' : 'В избранное' }}
-                        </button>
-                    @endauth
-                </div>
+        <button
+            type="button"
+            class="btn product-btn add-to-cart"
+            data-id="{{ $product->id }}"
+            style="{{ $cartQty > 0 ? 'display:none;' : '' }}"
+        >
+            В корзину
+        </button>
+
+        <div class="cart-qty-control {{ $cartQty > 0 ? '' : 'hidden' }}">
+            <button type="button" class="qty-btn qty-minus">−</button>
+
+            <span class="qty-value">
+                {{ $cartQty > 0 ? $cartQty : 1 }}
+            </span>
+
+            <button type="button" class="qty-btn qty-plus">+</button>
+        </div>
+
+    </div>
+
+    @auth
+        @php
+            $isFavorite = in_array($product->id, $favoriteIds ?? []);
+        @endphp
+
+        <button
+            type="button"
+            class="favorite__btn {{ $isFavorite ? 'is-active' : '' }}"
+            data-product-id="{{ $product->id }}"
+            onclick="toggleFavorite(this)"
+        >
+            {{ $isFavorite ? 'В избранном' : 'В избранное' }}
+        </button>
+    @endauth
+
+</div>
+
+                    
 
                 <div class="product-benefits">
                     <div>🐶 100% натуральный состав</div>

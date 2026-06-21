@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <url>
-    <loc>https://mokronos.test</loc>
+    <loc>http://mokronose.test</loc>
     <priority>1.0</priority>
             </url>
     <url>
-    <loc>https://mokronos.test/catalog/123</loc>
+    <loc>http://mokronose.test/catalog/soluta-nihil-voluptatibus-odit-doloremque-repellat-nisi-dolorum-officia</loc>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://mokronos.test/catalog/56456456</loc>
+    <loc>http://mokronose.test/catalog/veritatis-beatae-illo-eligendi-ut</loc>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://mokronos.test/product</loc>
+    <loc>http://mokronose.test/catalog/ea-modi-labore-aperiam-ea-et-harum</loc>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>http://mokronose.test/catalog/quo-et-ex-voluptas-odit-at-quis-reiciendis</loc>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>http://mokronose.test/catalog/blanditiis-error-et-aperiam-dolor-adipisci-et</loc>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>http://mokronose.test/product</loc>
     <priority>0.9</priority>
             </url>
 </urlset>

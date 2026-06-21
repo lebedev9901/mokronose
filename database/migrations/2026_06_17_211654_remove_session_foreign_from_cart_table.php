@@ -2,8 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 
 return new class extends Migration
 {
@@ -12,6 +10,11 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'sqlite') {
+            return;
+        }
+
+        if ($driver === 'pgsql') {
+            DB::statement('ALTER TABLE cart DROP CONSTRAINT IF EXISTS cart_session_id_foreign');
             return;
         }
 

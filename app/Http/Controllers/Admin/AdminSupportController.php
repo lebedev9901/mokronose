@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\SupportMessageMail;
 use App\Models\SupportChat;
 use App\Notifications\SupportMessageNotification;
+use App\Services\VkMessageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -50,27 +51,49 @@ class AdminSupportController extends Controller
         );
     }
 
-    public function send(Request $request, SupportChat $chat)
+    public function send(Request $request, SupportChat $chat, VkMessageService $vk)
     {
+     
         $request->validate([
-            'message' => 'required'
+            'message' => 'required|string',
         ]);
+
+        $chat->load('user');
 
         $message = $chat->message()->create([
             'user_id' => auth()->id(),
             'message' => $request->message,
-            'sender_type' => 'support'
+            'sender_type' => 'support',
         ]);
 
         $chat->update([
-            'status' => 'answered'
+            'status' => 'answered',
         ]);
 
-        $chat->user->notify(
-            new SupportMessageNotification($chat, $message, 'user')
-        );
+        if ($chat->user) {
+            $chat->user->notify(
+                new SupportMessageNotification($chat, $message, 'user')
+            );
+        }
 
-       
+        try {
+            if ($chat->user?->vk_id) {
+                $vk->sendToUser(
+                    $chat->user->vk_id,
+                    "💬 МокроНос\n\n" .
+                    "В чате поддержки появилось новое сообщение:\n\n" .
+                    $message->message
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки VK уведомления поддержки', [
+                'chat_id' => $chat->id,
+                'user_id' => $chat->user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+   
 
         return back();
     }

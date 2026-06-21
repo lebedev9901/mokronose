@@ -20,6 +20,14 @@ class ProductController extends Controller
         ? auth()->user()->favoriteProducts()->pluck('products.id')->toArray()
         : [];
 
+        $cart = CartController::currentCart();
+
+    $cartQty = $cart
+        ? (int) $cart->items()
+            ->where('product_id', $product->id)
+            ->value('qty')
+        : 0;
+
     $categoryIds = $product->categories->pluck('id')->toArray();
 
     $ageGroups = is_array($product->age_group)
@@ -69,7 +77,8 @@ class ProductController extends Controller
         'favoriteIds',
         'similarProducts',
         'ageGroups',
-        'breedSizes'
+        'breedSizes',
+        'cartQty'
     ));
 }
 

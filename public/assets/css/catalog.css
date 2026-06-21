@@ -608,7 +608,7 @@ body.modal-open {
 }
 
 .product-cart-control {
-  width: 100%;
+  width: fit-content;
 }
 
 .product-btn {
