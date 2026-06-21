@@ -77,12 +77,31 @@ class AdminSupportController extends Controller
         }
 
         try {
+            if ($chat->user && $chat->user->email) {
+                Mail::to($chat->user->email)->queue(
+                    new SupportMessageMail(
+                        $chat,
+                        $message,
+                        'Новое сообщение от поддержки'
+                    )
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки email поддержки из заказа', [
+                'chat_id' => $chat->id,
+                'user_id' => $chat->user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+        try {
             if ($chat->user?->vk_id) {
                 $vk->sendToUser(
                     $chat->user->vk_id,
                     "💬 МокроНос\n\n" .
                     "В чате поддержки появилось новое сообщение:\n\n" .
-                    $message->message
+                    $message->message.
+                    "Открыть чат:\n" .
+                route('support.chat', $chat->id)
                 );
             }
         } catch (\Throwable $e) {

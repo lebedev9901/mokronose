@@ -68,7 +68,7 @@ class AdminOrderController extends Controller
 
         try {
             if ($chat->user && $chat->user->email) {
-                Mail::to($chat->user->email)->send(
+                Mail::to($chat->user->email)->queue(
                     new SupportMessageMail(
                         $chat,
                         $message,
@@ -91,7 +91,9 @@ class AdminOrderController extends Controller
                     $chat->user->vk_id,
                     "💬 МокроНос\n\n" .
                     "Новое сообщение от поддержки:\n\n" .
-                    $message->message
+                    $message->message.
+                    "Открыть чат:\n" .
+                route('support.chat', $chat->id)
                 );
             }
         } catch (\Throwable $e) {
@@ -130,7 +132,7 @@ class AdminOrderController extends Controller
 
         try {
             if ($order->user && $order->user->email) {
-                Mail::to($order->user->email)->send(
+                Mail::to($order->user->email)->queue(
                     new OrderStatusMail(
                         $order,
                         'Статус заказа изменён',
@@ -152,7 +154,9 @@ class AdminOrderController extends Controller
                 $order->user->vk_id,
                 "🐶 МокроНос\n\n" .
                 "Ваш заказ №{$order->id} подтверждён.\n\n" .
-                "Мы начали обработку заказа и скоро свяжемся с вами."
+                "Мы начали обработку заказа и скоро свяжемся с вами.\n\n".
+                "Посмотреть заказ:\n" .
+             route('profile.order.show', $order->id)
             );
         }
     } catch (\Throwable $e) {
