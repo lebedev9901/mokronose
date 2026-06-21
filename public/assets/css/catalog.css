@@ -1090,6 +1090,14 @@ body.modal-open {
     .quick-product__image img {
         height: 240px;
     }
+
+     .catalog-main-categories {
+        flex-direction: column;
+        
+    }
+    .catalog-subcategories-row{
+      flex-direction: column;
+    }
 }
 
 @media (max-width: 360px) {
@@ -1106,10 +1114,3 @@ body.modal-open {
     height: 38px;
   }
 }
-
-@media (max-width: 700px) {
-    .catalog-main-categories {
-        flex-direction: column;
-        
-    }
-  }
