@@ -14,7 +14,6 @@ class PaymentController extends Controller
         YooKassaService $yooKassaService
     )
     {
-
         // защита от повторной оплаты
 
         if ($order->payment_status === 'succeeded') {
@@ -27,13 +26,8 @@ class PaymentController extends Controller
                 );
 
         }
-
-
-
         $payment = $yooKassaService
             ->createPayment($order);
-
-
 
         return redirect(
             $payment

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\VkAuthController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\YooKassaWebController;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -24,6 +25,7 @@ use Illuminate\Validation\Rules\Password;
 Route::post('/yookassa/webhook', [PaymentController::class, 'webhook'])
     ->name('yookassa.webhook');
 
+Route::post('/yookassa/webhook', [YooKassaWebController::class,'handle']);
 
 Route::get('/products', function () {
     return Product::query()
