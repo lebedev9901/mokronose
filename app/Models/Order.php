@@ -23,6 +23,8 @@ class Order extends Model
         'total_before_discount',
         'discount_amount',
         'total_after_discount',
+        'payment_id',
+        'payment_status',
     ];
 
     public function items()
@@ -78,6 +80,23 @@ class Order extends Model
             'completed' => 'Завершён',
             'cancelled' => 'Отменён',
             default => 'Неизвестно',
+        };
+    }
+
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return match ($this->payment_status) {
+
+            'pending' => 'Ожидает оплаты',
+
+            'waiting_for_capture' => 'Ожидает подтверждения',
+
+            'succeeded' => 'Оплачен',
+
+            'canceled' => 'Отменён',
+
+            default => 'Неизвестно',
+
         };
     }
 }

@@ -32,7 +32,9 @@
                     <td class="admin-muted">#{{ $user->id }}</td>
 
                     <td>
-                        <strong>{{ $user->name }}</strong>
+                        <a href="{{ route('admin.users.show', $user) }}" class="admin-user-link">
+                            <strong>{{ $user->name }}</strong>
+                        </a>
                     </td>
 
                     <td>{{ $user->email }}</td>
@@ -51,21 +53,30 @@
 
                     <td>
                         <div class="admin-actions">
-                            <a href="{{ route('admin.users.edit', $user->id) }}"
-                               class="admin-btn-light">
+
+                            <a href="{{ route('admin.users.show', $user) }}"
+                            class="admin-btn-primary">
+                                Открыть
+                            </a>
+
+                            <a href="{{ route('admin.users.edit', $user) }}"
+                            class="admin-btn-light">
                                 Изменить
                             </a>
 
                             <form method="POST"
-                                  action="{{ route('admin.users.destroy', $user->id) }}"
-                                  onsubmit="return confirm('Удалить пользователя?')">
+                                action="{{ route('admin.users.destroy', $user) }}"
+                                onsubmit="return confirm('Удалить пользователя?')">
+
                                 @csrf
                                 @method('DELETE')
 
                                 <button class="admin-btn-danger">
                                     Удалить
                                 </button>
+
                             </form>
+
                         </div>
                     </td>
                 </tr>

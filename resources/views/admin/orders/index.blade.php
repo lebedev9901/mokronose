@@ -38,7 +38,9 @@
                     <td class="admin-muted">#{{ $order->id }}</td>
 
                     <td>
-                        <strong>{{ $order->user->name ?? 'Удалён' }}</strong>
+                         <a href="{{ route('admin.users.show', $order->user) }}" class="admin-user-link">
+                            <strong>{{ $order->user->name }}</strong>
+                        </a>
                     </td>
 
                     <td>{{ $order->user->phone ?? '-' }}</td>
@@ -57,7 +59,7 @@
                         @elseif($order->status === 'confirmed')
                             <span class="admin-status admin-status--success">Подтверждён</span>
                         @else
-                            <span class="admin-status">{{ $order->status }}</span>
+                            <span class="admin-status">{{ $order->status_label }}</span>
                         @endif
                     </td>
 

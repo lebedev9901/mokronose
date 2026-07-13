@@ -43,4 +43,37 @@ class UserController extends Controller
 
         return back();
     }
+
+    public function show(User $user)
+    {
+        $user->load([
+            'pets',
+            'orders',
+            'reviews.product',
+            'favorites.product',
+            'addresses',
+        ]);
+
+        $stats = [
+            'orders' => $user->orders->count(),
+            'spent' => $user->orders
+                ->where('status', 'completed')
+                ->sum('total_after_discount'),
+
+            'pets' => $user->pets->count(),
+
+            'reviews' => $user->reviews->count(),
+
+            'favorites' => $user->favorites->count(),
+
+            'last_order' => $user->orders
+                ->sortByDesc('created_at')
+                ->first(),
+        ];
+
+        return view('admin.users.show', compact(
+            'user',
+            'stats'
+        ));
+    }
 }

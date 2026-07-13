@@ -192,4 +192,77 @@ class AdminOrderController extends Controller
 
         
     }
+
+
+public function updateStatus(Request $request, Order $order, VkMessageService $vk)
+{
+    $data = $request->validate([
+        'status' => 'required|string|in:new,confirmed,processing,shipped,completed,cancelled',
+    ]);
+
+    $oldStatus = $order->status;
+
+    $order->update([
+        'status' => $data['status'],
+    ]);
+
+    // если уже есть сервис уведомлений — потом сюда подключим VK/email
+    Log::info('Статус заказа изменён', [
+        'order_id' => $order->id,
+        'old_status' => $oldStatus,
+        'new_status' => $order->status,
+        'admin_id' => auth()->id(),
+    ]);
+
+    if ($order->user) {
+            $order->user->notify(
+                new OrderStatusNotification(
+                    $order,
+                    'Статус заказа',
+                    'Ваш заказ №' . $order->id . ' ' . $order->status_label
+                )
+            );
+        }
+        $order->refresh();
+        $order->load('user', 'items.product', 'address');
+
+        try {
+            if ($order->user && $order->user->email) {
+                Mail::to($order->user->email)->queue(
+                    new OrderStatusMail(
+                        $order,
+                        'Статус заказа изменён',
+                        'Статус вашего заказа №' . $order->id . ' изменён на: ' . $order->status_label
+                    )
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('Ошибка отправки email при смене статуса заказа', [
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        try {
+    if ($order->user?->vk_id) {
+            $vk->sendToUser(
+                $order->user->vk_id,
+                "🐶 МокроНос\n\n" .
+                "Ваш заказ №{$order->id} подтверждён.\n\n" .
+                "Мы начали обработку заказа и скоро свяжемся с вами.\n\n".
+                "Посмотреть заказ:\n" .
+                route('orders.show', $order->id)
+            );
+        }
+    } catch (\Throwable $e) {
+        Log::error('Ошибка отправки VK уведомления о статусе заказа', [
+            'order_id' => $order->id,
+            'user_id' => $order->user_id,
+            'error' => $e->getMessage(),
+        ]);
+    }
+
+    return back()->with('success', 'Статус заказа обновлён');
+}
 }

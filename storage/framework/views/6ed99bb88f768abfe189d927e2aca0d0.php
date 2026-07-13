@@ -1,23 +1,21 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Оформление заказа'); ?>
 
-@section('title', 'Оформление заказа')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <div class="container">
 
     <div class="checkout-page">
 
-        {{-- LEFT --}}
+        
         <div class="checkout-left">
 
             <form id="checkout-form"
-                  action="{{ route('order.confirm') }}"
+                  action="<?php echo e(route('order.confirm')); ?>"
                   method="POST">
 
-                @csrf
+                <?php echo csrf_field(); ?>
 
-                {{-- CONTACTS --}}
+                
                 <div class="checkout-card">
 
                     <h2>Контактные данные</h2>
@@ -27,7 +25,7 @@
 
                         <input type="text"
                                name="name"
-                               value="{{ auth()->user()->name ?? '' }}"
+                               value="<?php echo e(auth()->user()->name ?? ''); ?>"
                                required>
                     </div>
 
@@ -36,13 +34,13 @@
 
                         <input type="text"
                                name="phone"
-                               value="{{ auth()->user()->phone ?? '' }}"
+                               value="<?php echo e(auth()->user()->phone ?? ''); ?>"
                                required>
                     </div>
 
                 </div>
 
-                {{-- DELIVERY --}}
+                
                 <div class="checkout-card">
 
                     <h2>Способ доставки</h2>
@@ -84,15 +82,15 @@
 
                     </div>
 
-                    {{-- dynamic --}}
+                    
                     <div id="delivery-extra"></div>
 
-                    {{-- selected --}}
+                    
                     <div id="selected-delivery"></div>
 
                 </div>
 
-                {{-- COMMENT --}}
+                
                 <div class="checkout-card">
 
                     <h2>Комментарий к заказу</h2>
@@ -103,7 +101,7 @@
 
                 </div>
 
-                {{-- PAYMENT --}}
+                
                 <div class="checkout-card">
 
                     <h2>Оплата</h2>
@@ -143,7 +141,7 @@
 
         </div>
 
-        {{-- RIGHT --}}
+        
         <div class="checkout-right">
 
             <div class="checkout-summary">
@@ -152,41 +150,42 @@
 
                 <div class="checkout-items">
 
-                    @foreach($cartItems as $item)
+                    <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                         <div class="checkout-item">
 
                             <div class="checkout-item-info">
 
-                                @php
+                                <?php
                                     $preview = $item->product->images
                                         ->where('is_preview', 1)
                                         ->first();
-                                @endphp
+                                ?>
 
-                                @if($preview)
-                                    <img src="{{ asset('storage/' . $preview->image) }}">
-                                @endif
+                                <?php if($preview): ?>
+                                    <img src="<?php echo e(asset('storage/' . $preview->image)); ?>">
+                                <?php endif; ?>
 
                                 <div>
                                     <div class="title">
-                                        {{ $item->product->title }}
+                                        <?php echo e($item->product->title); ?>
+
                                     </div>
 
                                     <div class="qty">
-                                        {{ $item->qty }} шт
+                                        <?php echo e($item->qty); ?> шт
                                     </div>
                                 </div>
 
                             </div>
 
                             <div class="price">
-                                {{ number_format($item->product->price * $item->qty, 2) }} ₽
+                                <?php echo e(number_format($item->product->price * $item->qty, 2)); ?> ₽
                             </div>
 
                         </div>
 
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                 </div>
 
@@ -195,7 +194,7 @@
                     <span>Итого:</span>
 
                     <strong>
-                        {{ number_format($total, 2) }} ₽
+                        <?php echo e(number_format($total, 2)); ?> ₽
                     </strong>
 
                 </div>
@@ -245,7 +244,7 @@
         </div>
 
         <form id="addressAjaxForm">
-            @csrf
+            <?php echo csrf_field(); ?>
 
             <input type="text" name="city" placeholder="Город">
 
@@ -259,11 +258,11 @@
         </form>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
-window.userAddresses = @json(auth()->user()->addresses ?? []);
+window.userAddresses = <?php echo json_encode(auth()->user()->addresses ?? [], 15, 512) ?>;
 
 let checkoutMap = null;
 let checkoutPlacemark = null;
@@ -503,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const form = this;
         const formData = new FormData(form);
 
-        fetch('{{ route('checkout.address.store') }}', {
+        fetch('<?php echo e(route('checkout.address.store')); ?>', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -618,4 +617,6 @@ document.getElementById('saveMapAddress')?.addEventListener('click', function ()
     closeCheckoutMap();
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/orders/checkout.blade.php ENDPATH**/ ?>

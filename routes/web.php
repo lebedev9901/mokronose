@@ -11,6 +11,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -135,6 +136,8 @@ Route::post('/addresses/{id}/main', [AddressController::class, 'setMain']);
         ]);
 
         return response()->json(['success' => true]);
+
+        
     });
        
     Route::get('/profile/support', [SupportController::class, 'index'])
@@ -207,6 +210,12 @@ Route::post('/cart/promocode/remove', [CartController::class, 'removePromocode']
 
     Route::post('/notifications/mark-by-data', [NotificationController::class, 'markByData'])
         ->name('notifications.markByData');
+
+    Route::post('/payment/{order}', [PaymentController::class,'create'])->name('payment.create');
+
+    Route::get('/payment/success', [PaymentController::class,'success'])->name('payment.success');
+
+
     });
 
     

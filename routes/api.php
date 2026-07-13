@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\VkAuthController;
+use App\Http\Controllers\PaymentController;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
+
+Route::post('/yookassa/webhook', [PaymentController::class, 'webhook'])
+    ->name('yookassa.webhook');
+
 
 Route::get('/products', function () {
     return Product::query()

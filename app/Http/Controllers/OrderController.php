@@ -13,6 +13,7 @@ use App\Models\SupportMessage;
 use App\Models\User;
 use App\Notifications\NewOrderNotification;
 use App\Services\VkMessageService;
+use App\Services\YooKassaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -47,7 +48,7 @@ class OrderController extends Controller
         return view('orders.checkout', compact('cartItems', 'total'));
     }
 
-    public function confirm(Request $request, VkMessageService $vk)
+    public function confirm(Request $request, VkMessageService $vk, YooKassaService $yooKassa)
     {
         $request->validate([
             'name' => 'required',
@@ -179,7 +180,7 @@ class OrderController extends Controller
             CartItem::where('cart_id', $cart->id)->delete();
 
             session()->forget('promocode');
-
+            
             return $order;
         });
 
@@ -216,7 +217,11 @@ class OrderController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
-
+        if ($order->payment_method === 'online') {
+            return redirect()->away(
+                $yooKassa->getConfirmationUrl($order)
+            );
+        }
         return redirect()->route('order.confirm')->with('success', 'Заказ оформлен');
     }
 

@@ -1,10 +1,10 @@
-@extends('admin.layouts.app')
 
-@section('title', 'Заказ #' . $order->id)
-@section('page-title', 'Заказ #' . $order->id)
-@section('page-subtitle', 'Карточка заказа и чат с клиентом')
 
-@section('content')
+<?php $__env->startSection('title', 'Заказ #' . $order->id); ?>
+<?php $__env->startSection('page-title', 'Заказ #' . $order->id); ?>
+<?php $__env->startSection('page-subtitle', 'Карточка заказа и чат с клиентом'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <div class="admin-order-layout">
 
@@ -13,67 +13,67 @@
         <div class="admin-order-top">
             <h3>Информация о заказе</h3>
 
-            @if($order->status === 'confirmed')
+            <?php if($order->status === 'confirmed'): ?>
                 <span class="admin-status admin-status--success">Подтверждён</span>
-            @elseif($order->status === 'new')
+            <?php elseif($order->status === 'new'): ?>
                 <span class="admin-status admin-status--warning">Новый</span>
-            @else
-                <span class="admin-status">{{ $order->status_label }}</span>
-            @endif
+            <?php else: ?>
+                <span class="admin-status"><?php echo e($order->status_label); ?></span>
+            <?php endif; ?>
         </div>
 
         <div class="admin-info-list">
             <div>
                 <span>Клиент</span>
-                <strong>{{ $order->user->name ?? 'Удалён' }}</strong>
+                <strong><?php echo e($order->user->name ?? 'Удалён'); ?></strong>
             </div>
 
             <div>
                 <span>Email</span>
-                <strong>{{ $order->user->email ?? '-' }}</strong>
+                <strong><?php echo e($order->user->email ?? '-'); ?></strong>
             </div>
 
             <div>
                 <span>Телефон</span>
-                <strong>{{ $order->user->phone ?? '-' }}</strong>
+                <strong><?php echo e($order->user->phone ?? '-'); ?></strong>
             </div>
 
             <div>
                 <span>Дата заказа</span>
-                <strong>{{ $order->created_at->format('d.m.Y H:i') }}</strong>
+                <strong><?php echo e($order->created_at->format('d.m.Y H:i')); ?></strong>
             </div>
         </div>
 
         <h3 class="admin-section-title">Товары</h3>
 
         <div class="admin-order-products">
-            @foreach($order->items as $item)
+            <?php $__currentLoopData = $order->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="admin-order-product">
                     <div>
-                        <strong>{{ $item->product->title ?? 'Удалён товар' }}</strong>
-                        <span>x{{ $item->qty }}</span>
+                        <strong><?php echo e($item->product->title ?? 'Удалён товар'); ?></strong>
+                        <span>x<?php echo e($item->qty); ?></span>
                     </div>
 
-                    <strong>{{ number_format($item->price, 0, ',', ' ') }} ₽</strong>
+                    <strong><?php echo e(number_format($item->price, 0, ',', ' ')); ?> ₽</strong>
                 </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
         <div class="admin-order-total">
             <span>Итого</span>
-            <strong>{{ number_format($order->total_price, 0, ',', ' ') }} ₽</strong>
+            <strong><?php echo e(number_format($order->total_price, 0, ',', ' ')); ?> ₽</strong>
         </div>
 
-        @if($order->status !== 'confirmed')
-            <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST">
-                @csrf
+        <?php if($order->status !== 'confirmed'): ?>
+            <form action="<?php echo e(route('admin.orders.confirm', $order->id)); ?>" method="POST">
+                <?php echo csrf_field(); ?>
                 <button class="admin-btn">
                     Подтвердить заказ
                 </button>
             </form>
-        @endif
+        <?php endif; ?>
 
-        @php
+        <?php
     $statuses = [
         'new' => 'Новый',
         'pending' => 'Ожидает обработки',
@@ -84,7 +84,7 @@
         'completed' => 'Завершён',
         'cancelled' => 'Отменён',
     ];
-@endphp
+?>
 
 <div class="order-status-card">
 
@@ -94,27 +94,29 @@
             <p>Изменение текущего статуса заказа</p>
         </div>
 
-        <span class="status-badge status-{{ $order->status }}">
-            {{ $order->status_label }}
+        <span class="status-badge status-<?php echo e($order->status); ?>">
+            <?php echo e($order->status_label); ?>
+
         </span>
     </div>
 
     <form method="POST"
-          action="{{ route('admin.orders.updateStatus', $order) }}"
+          action="<?php echo e(route('admin.orders.updateStatus', $order)); ?>"
           class="order-status-form">
 
-        @csrf
-        @method('PATCH')
+        <?php echo csrf_field(); ?>
+        <?php echo method_field('PATCH'); ?>
 
         <div class="status-select">
             <label for="status">Выберите новый статус</label>
 
             <select name="status" id="status">
-                @foreach($statuses as $value => $label)
-                    <option value="{{ $value }}" @selected($order->status === $value)>
-                        {{ $label }}
+                <?php $__currentLoopData = $statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($value); ?>" <?php if($order->status === $value): echo 'selected'; endif; ?>>
+                        <?php echo e($label); ?>
+
                     </option>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </div>
 
@@ -133,32 +135,32 @@
         <div class="admin-chat-panel__head">
             <div>
                 <h3>Чат с клиентом</h3>
-                <p>Сообщения по заказу #{{ $order->id }}</p>
+                <p>Сообщения по заказу #<?php echo e($order->id); ?></p>
             </div>
         </div>
 
         <div class="admin-chat-panel__body"
              id="adminOrderChatMessages"
-             data-url="{{ route('admin.orders.messages', $order->id) }}">
+             data-url="<?php echo e(route('admin.orders.messages', $order->id)); ?>">
 
-            @if($order->chat && $order->chat->message->count())
-                @include('admin.orders.partials.messages', [
+            <?php if($order->chat && $order->chat->message->count()): ?>
+                <?php echo $__env->make('admin.orders.partials.messages', [
                     'messages' => $order->chat->message
-                ])
-            @else
+                ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+            <?php else: ?>
                 <div class="admin-chat-empty">
                     Сообщений пока нет
                 </div>
-            @endif
+            <?php endif; ?>
 
         </div>
 
-        <form action="{{ route('admin.orders.message', $order->id) }}"
+        <form action="<?php echo e(route('admin.orders.message', $order->id)); ?>"
               method="POST"
               class="admin-chat-panel__form"
               id="adminOrderChatForm">
 
-            @csrf
+            <?php echo csrf_field(); ?>
 
             <textarea name="message" placeholder="Написать клиенту..." required></textarea>
 
@@ -238,19 +240,20 @@ setInterval(loadAdminOrderMessages, 3000);
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('{{ route('notifications.markByData') }}', {
+    fetch('<?php echo e(route('notifications.markByData')); ?>', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
         },
         body: JSON.stringify({
             type: 'new_order',
             key: 'order_id',
-            value: '{{ $order->id }}'
+            value: '<?php echo e($order->id); ?>'
         })
     });
 });
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\AdminPC\Herd\mokronose\resources\views/admin/orders/show.blade.php ENDPATH**/ ?>

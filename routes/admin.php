@@ -67,6 +67,9 @@ Route::middleware(['admin'])->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('admin.users.destroy');
 
+        Route::get('/admin/users/{user}', [UserController::class, 'show'])
+    ->name('admin.users.show');
+
         Route::get('/orders', [AdminOrderController::class, 'index'])
     ->name('admin.orders');
 
@@ -109,4 +112,6 @@ Route::delete('/news/{news}', [NewsController::class, 'destroy'])
     ->names('admin.promocodes');
     Route::get('/orders/{order}/messages', [AdminOrderController::class, 'messages'])
     ->name('admin.orders.messages');
+    Route::patch('/admin/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
+    ->name('admin.orders.updateStatus');
 });
